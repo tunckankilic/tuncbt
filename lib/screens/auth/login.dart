@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tuncbt/screens/auth/forget_pass.dart';
 import 'package:tuncbt/screens/auth/register.dart';
+import 'package:tuncbt/services/global_methods.dart';
 
 class Login extends StatefulWidget {
+  const Login({super.key});
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -18,6 +22,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
       TextEditingController(text: '');
   FocusNode _passFocusNode = FocusNode();
   bool _obscureText = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
   final _loginFormKey = GlobalKey<FormState>();
   @override
   void dispose() {
@@ -31,7 +37,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 20));
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
     _animation =
         CurvedAnimation(parent: _animationController, curve: Curves.linear)
           ..addListener(() {
@@ -47,9 +53,28 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     super.initState();
   }
 
-  void _submitFormOnLogin() {
+  void _submitFormOnLogin() async {
     final isValid = _loginFormKey.currentState!.validate();
-    if (isValid) {}
+    if (isValid) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        await _auth.signInWithEmailAndPassword(
+            email: _emailTextController.text.trim().toLowerCase(),
+            password: _passTextController.text.trim());
+        Navigator.canPop(context) ? Navigator.pop(context) : null;
+      } catch (errorrr) {
+        setState(() {
+          _isLoading = false;
+        });
+        GlobalMethod.showErrorDialog(error: errorrr.toString(), ctx: context);
+        print('error occured $errorrr');
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -66,7 +91,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
             'assets/images/wallpaper.jpg',
             fit: BoxFit.fill,
           ),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
           width: double.infinity,
           height: double.infinity,
           fit: BoxFit.cover,
@@ -81,33 +106,33 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
               SizedBox(
                 height: size.height * 0.1,
               ),
-              Text(
+              const Text(
                 'Login',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 30),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RichText(
                 text: TextSpan(
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: 'Don\'t have an account',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
                     ),
-                    TextSpan(text: '    '),
+                    const TextSpan(text: '    '),
                     TextSpan(
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignUp(),
+                                builder: (context) => const SignUp(),
                               ),
                             ),
                       text: 'Register',
@@ -120,7 +145,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Form(
@@ -140,8 +165,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           return null;
                         }
                       },
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
                         hintText: 'Email',
                         hintStyle: TextStyle(color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
@@ -155,7 +180,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     //Password
@@ -172,7 +197,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           return null;
                         }
                       },
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -188,14 +213,14 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           ),
                         ),
                         hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        errorBorder: UnderlineInputBorder(
+                        errorBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                         ),
                       ),
@@ -203,7 +228,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Align(
@@ -213,11 +238,11 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ForgetPasswordScreen(),
+                        builder: (context) => const ForgetPasswordScreen(),
                       ),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     'Forget password?',
                     style: TextStyle(
                         color: Colors.white,
@@ -227,7 +252,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               MaterialButton(
@@ -236,8 +261,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                 elevation: 8,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(13)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

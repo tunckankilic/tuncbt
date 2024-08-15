@@ -1,13 +1,19 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/services/global_methods.dart';
 
 class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -15,24 +21,27 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late TextEditingController _fullNameController =
+  late final TextEditingController _fullNameController =
       TextEditingController(text: '');
-  late TextEditingController _emailTextController =
+  late final TextEditingController _emailTextController =
       TextEditingController(text: '');
-  late TextEditingController _passTextController =
+  late final TextEditingController _passTextController =
       TextEditingController(text: '');
-  late TextEditingController _postitionCPTextController =
+  late final TextEditingController _postitionCPTextController =
       TextEditingController(text: '');
-  late TextEditingController _phoneNumberController =
+  late final TextEditingController _phoneNumberController =
       TextEditingController(text: '');
 
-  FocusNode _emailFocusNode = FocusNode();
-  FocusNode _passFocusNode = FocusNode();
-  FocusNode _postitionCPFocusNode = FocusNode();
-  FocusNode _phoneNumberFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passFocusNode = FocusNode();
+  final FocusNode _postitionCPFocusNode = FocusNode();
+  final FocusNode _phoneNumberFocusNode = FocusNode();
   bool _obscureText = true;
   final _signUpFormKey = GlobalKey<FormState>();
   File? imageFile;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
+  String? imageUrl;
   @override
   void dispose() {
     _animationController.dispose();
@@ -51,7 +60,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 20));
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
     _animation =
         CurvedAnimation(parent: _animationController, curve: Curves.linear)
           ..addListener(() {
@@ -67,9 +76,51 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     super.initState();
   }
 
-  void _submitFormOnSignUp() {
+  void _submitFormOnSignUp() async {
     final isValid = _signUpFormKey.currentState!.validate();
-    if (isValid) {}
+    if (isValid) {
+      if (imageFile == null) {
+        GlobalMethod.showErrorDialog(
+            error: 'Please pick an image', ctx: context);
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        await _auth.createUserWithEmailAndPassword(
+            email: _emailTextController.text.trim().toLowerCase(),
+            password: _passTextController.text.trim());
+        final User? user = _auth.currentUser;
+        final uid = user!.uid;
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('userImages')
+            .child('$uid.jpg');
+        await ref.putFile(imageFile!);
+        imageUrl = await ref.getDownloadURL();
+        FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'id': uid,
+          'name': _fullNameController.text,
+          'email': _emailTextController.text,
+          'userImage': imageUrl,
+          'phoneNumber': _phoneNumberController.text,
+          'positionInCompany': _postitionCPTextController.text,
+          'createdAt': Timestamp.now(),
+        });
+        Navigator.canPop(context) ? Navigator.pop(context) : null;
+      } catch (errorrr) {
+        setState(() {
+          _isLoading = false;
+        });
+        GlobalMethod.showErrorDialog(error: errorrr.toString(), ctx: context);
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -86,7 +137,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             'assets/images/wallpaper.jpg',
             fit: BoxFit.fill,
           ),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
           width: double.infinity,
           height: double.infinity,
           fit: BoxFit.cover,
@@ -101,27 +152,27 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
               SizedBox(
                 height: size.height * 0.1,
               ),
-              Text(
+              const Text(
                 'SignUp',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 30),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RichText(
                 text: TextSpan(
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: 'Already have an account',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
                     ),
-                    TextSpan(text: '    '),
+                    const TextSpan(text: '    '),
                     TextSpan(
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => Navigator.canPop(context)
@@ -137,7 +188,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Form(
@@ -161,8 +212,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                                 return null;
                               }
                             },
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
                               hintText: 'Full name',
                               hintStyle: TextStyle(color: Colors.white),
                               enabledBorder: UnderlineInputBorder(
@@ -234,7 +285,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 
@@ -253,8 +304,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           return null;
                         }
                       },
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
                         hintText: 'Email',
                         hintStyle: TextStyle(color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
@@ -268,7 +319,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     //Password
@@ -288,7 +339,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           return null;
                         }
                       },
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -304,19 +355,19 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           ),
                         ),
                         hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        errorBorder: UnderlineInputBorder(
+                        errorBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     TextFormField(
@@ -336,8 +387,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       onChanged: (v) {
                         // print(' Phone number ${_phoneNumberController.text}');
                       },
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
                         hintText: 'Phone number',
                         hintStyle: TextStyle(color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
@@ -351,7 +402,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     //Position in the company
@@ -374,8 +425,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                             return null;
                           }
                         },
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
                           hintText: 'Position in the company',
                           hintStyle: TextStyle(color: Colors.white),
                           enabledBorder: UnderlineInputBorder(
@@ -396,38 +447,46 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 80,
               ),
-              MaterialButton(
-                onPressed: _submitFormOnSignUp,
-                color: Colors.pink.shade700,
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(13)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'SignUp',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
+              _isLoading
+                  ? Center(
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        child: const CircularProgressIndicator(),
                       ),
-                      SizedBox(
-                        width: 8,
+                    )
+                  : MaterialButton(
+                      onPressed: _submitFormOnSignUp,
+                      color: Colors.pink.shade700,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13)),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'SignUp',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.person_add,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
                       ),
-                      Icon(
-                        Icons.person_add,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              )
+                    )
             ],
           ),
         ),
@@ -440,7 +499,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Please choose an option'),
+            title: const Text('Please choose an option'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -448,10 +507,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   onTap: () {
                     _getFromCamera();
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: EdgeInsets.all(4.0),
                         child: Icon(
                           Icons.camera,
                           color: Colors.purple,
@@ -468,10 +527,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   onTap: () {
                     _getFromGallery();
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: EdgeInsets.all(4.0),
                         child: Icon(
                           Icons.image,
                           color: Colors.purple,
@@ -491,7 +550,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   }
 
   void _getFromGallery() async {
-    PickedFile? pickedFile = await ImagePicker().getImage(
+    XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       maxHeight: 1080,
       maxWidth: 1080,
@@ -504,7 +563,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   }
 
   void _getFromCamera() async {
-    PickedFile? pickedFile = await ImagePicker().getImage(
+    XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
       maxHeight: 1080,
       maxWidth: 1080,
@@ -517,12 +576,12 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   }
 
   void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper.cropImage(
-        sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    CroppedFile? croppedImage = await ImageCropper()
+        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
     if (croppedImage != null) {
-      // setState(() {
-      //   imageFile = croppedImage;
-      // });
+      setState(() {
+        imageFile = croppedImage as File?;
+      });
     }
   }
 
@@ -576,7 +635,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 onPressed: () {
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
             ],
           );

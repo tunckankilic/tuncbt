@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "610259100358",
+    "project_id": "tuncbt-e4824",
+    "storage_bucket": "tuncbt-e4824.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610259100358:android:078ec1c194844113346dc7",
+        "android_client_info": {
+          "package_name": "site.tunckankilic.tuncbt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkwiNCCAf5AKgwP2xnsOiIAVp42Iddjg4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

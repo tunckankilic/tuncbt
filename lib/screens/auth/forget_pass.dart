@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:tuncbt/screens/auth/register.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
+  const ForgetPasswordScreen({super.key});
+
   @override
   _ForgetPasswordScreenState createState() => _ForgetPasswordScreenState();
 }
@@ -27,7 +29,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 20));
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
     _animation =
         CurvedAnimation(parent: _animationController, curve: Curves.linear)
           ..addListener(() {
@@ -61,7 +63,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
             'assets/images/wallpaper.jpg',
             fit: BoxFit.fill,
           ),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
           width: double.infinity,
           height: double.infinity,
           fit: BoxFit.cover,
@@ -76,17 +78,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
               SizedBox(
                 height: size.height * 0.1,
               ),
-              Text(
+              const Text(
                 'Forget password',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 30),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Text(
+              const Text(
                 'Email address',
                 style: TextStyle(
                     color: Colors.white,
@@ -94,12 +96,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               TextField(
                 controller: _forgetPassTextController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   enabledBorder: UnderlineInputBorder(
@@ -110,7 +112,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 60,
               ),
               MaterialButton(
@@ -119,8 +121,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen>
                 elevation: 8,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(13)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   child: Text(
                     'Reset now',
                     style: TextStyle(

@@ -1,18 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tuncbt/constants/constants.dart';
-import 'package:tuncbt/inner_screens/profile.dart';
-import 'package:tuncbt/inner_screens/upload_task.dart';
-import 'package:tuncbt/screens/all_workers.dart';
-import 'package:tuncbt/screens/tasks_screen.dart';
+import 'package:tuncbt/screens/inner_screens/profile.dart';
+import 'package:tuncbt/screens/inner_screens/upload_task.dart';
+import 'package:tuncbt/screens/all_workers/all_workers.dart';
+import 'package:tuncbt/screens/tasks_screen/tasks_screen.dart';
+
+import '../user_state.dart';
 
 class DrawerWidget extends StatelessWidget {
+  const DrawerWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Colors.cyan),
+            decoration: const BoxDecoration(color: Colors.cyan),
             child: Column(
               children: [
                 Flexible(
@@ -20,7 +25,7 @@ class DrawerWidget extends StatelessWidget {
                   child: Image.network(
                       'https://image.flaticon.com/icons/png/128/1055/1055672.png'),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Flexible(
@@ -36,7 +41,7 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           _listTiles(
@@ -64,7 +69,7 @@ class DrawerWidget extends StatelessWidget {
             },
             icon: Icons.add_task,
           ),
-          Divider(
+          const Divider(
             thickness: 1,
           ),
           _listTiles(
@@ -80,10 +85,15 @@ class DrawerWidget extends StatelessWidget {
   }
 
   void _navigateToProfileScreen(context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final String uid = user!.uid;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => ProfileScreen(),
+        builder: (context) => ProfileScreen(
+          userID: uid,
+        ),
       ),
     );
   }
@@ -92,7 +102,7 @@ class DrawerWidget extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => AllWorkersScreen(),
+        builder: (context) => const AllWorkersScreen(),
       ),
     );
   }
@@ -101,7 +111,7 @@ class DrawerWidget extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => TasksScreen(),
+        builder: (context) => const TasksScreen(),
       ),
     );
   }
@@ -110,12 +120,13 @@ class DrawerWidget extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => UploadTask(),
+        builder: (context) => const UploadTask(),
       ),
     );
   }
 
   void _logout(context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
     showDialog(
         context: context,
         builder: (context) {
@@ -130,9 +141,9 @@ class DrawerWidget extends StatelessWidget {
                     width: 20,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text(
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
                     'Sign out',
                   ),
                 ),
@@ -150,11 +161,20 @@ class DrawerWidget extends StatelessWidget {
                 onPressed: () {
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {},
-                child: Text(
+                onPressed: () {
+                  auth.signOut();
+                  Navigator.canPop(context) ? Navigator.pop(context) : null;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserState(),
+                    ),
+                  );
+                },
+                child: const Text(
                   'OK',
                   style: TextStyle(color: Colors.red),
                 ),

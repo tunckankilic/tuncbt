@@ -1,15 +1,25 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/uuid.dart';
 import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/services/global_methods.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
 
 class UploadTask extends StatefulWidget {
+  const UploadTask({super.key});
+
   @override
   _UploadTaskState createState() => _UploadTaskState();
 }
 
 class _UploadTaskState extends State<UploadTask> {
-  TextEditingController _taskCategoryController =
-      TextEditingController(text: 'Choose task  category');
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _taskCategoryController =
+      TextEditingController(text: 'Choose task category');
 
   TextEditingController _taskTitleController = TextEditingController();
   TextEditingController _taskDescriptionController = TextEditingController();
@@ -17,6 +27,8 @@ class _UploadTaskState extends State<UploadTask> {
       TextEditingController(text: 'Choose task Deadline date');
   final _formKey = GlobalKey<FormState>();
   DateTime? picked;
+  Timestamp? deadlineDateTimeStamp;
+  bool _isLoading = false;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -27,12 +39,53 @@ class _UploadTaskState extends State<UploadTask> {
     _deadlineDateController.dispose();
   }
 
-  void _uploadTask() {
+  void _uploadTask() async {
+    final taskID = const Uuid().v4();
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
-      print('it is valid');
+      if (_deadlineDateController.text == 'Choose task Deadline date' ||
+          _taskCategoryController.text == 'Choose task category') {
+        GlobalMethod.showErrorDialog(
+            error: 'Please pick everything', ctx: context);
+        return;
+      }
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        await FirebaseFirestore.instance.collection('tasks').doc(taskID).set({
+          'taskId': taskID,
+          'uploadedBy': uid,
+          'taskTitle': _taskTitleController.text,
+          'taskDescription': _taskDescriptionController.text,
+          'deadlineDate': _deadlineDateController.text,
+          'deadlineDateTimeStamp': deadlineDateTimeStamp,
+          'taskCategory': _taskCategoryController.text,
+          'taskComments': [],
+          'isDone': false,
+          'createdAt': Timestamp.now(),
+        });
+        await Fluttertoast.showToast(
+            msg: "The task has been uploaded",
+            toastLength: Toast.LENGTH_LONG,
+            // gravity: ToastGravity.,
+            backgroundColor: Colors.grey,
+            fontSize: 18.0);
+        _taskTitleController.clear();
+        _taskDescriptionController.clear();
+        setState(() {
+          _taskCategoryController.text = 'Choose task category';
+          _deadlineDateController.text = 'Choose task Deadline date';
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } else {
-      print('it is not valid');
+      log('it is not valid');
     }
   }
 
@@ -45,7 +98,7 @@ class _UploadTaskState extends State<UploadTask> {
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      drawer: DrawerWidget(),
+      drawer: const DrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(7),
         child: Card(
@@ -53,7 +106,7 @@ class _UploadTaskState extends State<UploadTask> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Align(
@@ -70,10 +123,10 @@ class _UploadTaskState extends State<UploadTask> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Divider(
+                const Divider(
                   thickness: 1,
                 ),
                 // SizedBox(height: 10,),
@@ -127,36 +180,38 @@ class _UploadTaskState extends State<UploadTask> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 30),
-                    child: MaterialButton(
-                      onPressed: _uploadTask,
-                      color: Colors.pink.shade700,
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(13)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Upload Task',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : MaterialButton(
+                            onPressed: _uploadTask,
+                            color: Colors.pink.shade700,
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(13)),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upload Task',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Icon(
+                                    Icons.upload_file,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Icon(
-                              Icons.upload_file,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          ),
                   ),
                 )
               ],
@@ -200,13 +255,13 @@ class _UploadTaskState extends State<UploadTask> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Theme.of(context).scaffoldBackgroundColor,
-            enabledBorder: UnderlineInputBorder(
+            enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.pink),
             ),
-            errorBorder: UnderlineInputBorder(
+            errorBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.red),
             ),
           ),
@@ -265,7 +320,7 @@ class _UploadTaskState extends State<UploadTask> {
                 onPressed: () {
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
             ],
           );
@@ -277,7 +332,7 @@ class _UploadTaskState extends State<UploadTask> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(
-        Duration(days: 0),
+        const Duration(days: 0),
       ),
       lastDate: DateTime(2100),
     );
@@ -286,6 +341,8 @@ class _UploadTaskState extends State<UploadTask> {
       setState(() {
         _deadlineDateController.text =
             '${picked!.year}-${picked!.month}-${picked!.day}';
+        deadlineDateTimeStamp = Timestamp.fromMicrosecondsSinceEpoch(
+            picked!.microsecondsSinceEpoch);
       });
     }
   }
