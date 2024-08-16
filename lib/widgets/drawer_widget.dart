@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tuncbt/constants/constants.dart';
-import 'package:tuncbt/screens/inner_screens/profile.dart';
-import 'package:tuncbt/screens/inner_screens/upload_task.dart';
-import 'package:tuncbt/screens/all_workers/all_workers.dart';
-import 'package:tuncbt/screens/tasks_screen/tasks_screen.dart';
+import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
+import 'package:tuncbt/screens/inner_screens/screens/upload_task.dart';
+import 'package:tuncbt/screens/all_workers/screens/all_workers.dart';
+import 'package:tuncbt/screens/tasks_screen/screens/tasks_screen.dart';
 
 import '../user_state.dart';
 

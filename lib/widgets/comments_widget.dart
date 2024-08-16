@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tuncbt/screens/inner_screens/profile.dart';
+import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 
 class CommentWidget extends StatefulWidget {
   final String commentId;

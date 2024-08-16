@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tuncbt/screens/auth/login.dart';
-import 'package:tuncbt/screens/tasks_screen/tasks_screen.dart';
+import 'package:tuncbt/screens/auth/screens/login.dart';
+import 'package:tuncbt/screens/tasks_screen/screens/tasks_screen.dart';
 
 class UserState extends StatelessWidget {
   const UserState({super.key});

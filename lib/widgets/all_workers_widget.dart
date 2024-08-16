@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tuncbt/constants/constants.dart';
-import 'package:tuncbt/screens/inner_screens/profile.dart';
+import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 
 class AllWorkersWidget extends StatefulWidget {
   final String userID;

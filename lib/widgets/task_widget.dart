@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tuncbt/constants/constants.dart';
-import 'package:tuncbt/screens/inner_screens/task_details.dart';
+import 'package:tuncbt/screens/inner_screens/screens/task_details.dart';
 import 'package:tuncbt/services/global_methods.dart';
 
 class TaskWidget extends StatefulWidget {
