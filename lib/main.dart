@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tuncbt/constants/constants.dart';
 import 'package:tuncbt/firebase_options.dart';
 import 'package:tuncbt/user_state.dart';
 
@@ -16,13 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TuncBT',
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFEDE7DC),
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme,
       home: const UserState(),
     );
   }

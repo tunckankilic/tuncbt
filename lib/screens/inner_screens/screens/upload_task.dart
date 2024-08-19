@@ -1,93 +1,13 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:uuid/uuid.dart';
+import 'package:get/get.dart';
 import 'package:tuncbt/constants/constants.dart';
-import 'package:tuncbt/services/global_methods.dart';
+import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
 
-class UploadTask extends StatefulWidget {
-  const UploadTask({super.key});
+class UploadTask extends GetView<InnerScreenController> {
+  static const routeName = "/upload-task";
 
-  @override
-  _UploadTaskState createState() => _UploadTaskState();
-}
-
-class _UploadTaskState extends State<UploadTask> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _taskCategoryController =
-      TextEditingController(text: 'Choose task category');
-
-  TextEditingController _taskTitleController = TextEditingController();
-  TextEditingController _taskDescriptionController = TextEditingController();
-  TextEditingController _deadlineDateController =
-      TextEditingController(text: 'Choose task Deadline date');
-  final _formKey = GlobalKey<FormState>();
-  DateTime? picked;
-  Timestamp? deadlineDateTimeStamp;
-  bool _isLoading = false;
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _taskCategoryController.dispose();
-    _taskTitleController.dispose();
-    _taskDescriptionController.dispose();
-    _deadlineDateController.dispose();
-  }
-
-  void _uploadTask() async {
-    final taskID = const Uuid().v4();
-    User? user = _auth.currentUser;
-    final uid = user!.uid;
-    final isValid = _formKey.currentState!.validate();
-    if (isValid) {
-      if (_deadlineDateController.text == 'Choose task Deadline date' ||
-          _taskCategoryController.text == 'Choose task category') {
-        GlobalMethod.showErrorDialog(
-            error: 'Please pick everything', ctx: context);
-        return;
-      }
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        await FirebaseFirestore.instance.collection('tasks').doc(taskID).set({
-          'taskId': taskID,
-          'uploadedBy': uid,
-          'taskTitle': _taskTitleController.text,
-          'taskDescription': _taskDescriptionController.text,
-          'deadlineDate': _deadlineDateController.text,
-          'deadlineDateTimeStamp': deadlineDateTimeStamp,
-          'taskCategory': _taskCategoryController.text,
-          'taskComments': [],
-          'isDone': false,
-          'createdAt': Timestamp.now(),
-        });
-        await Fluttertoast.showToast(
-            msg: "The task has been uploaded",
-            toastLength: Toast.LENGTH_LONG,
-            // gravity: ToastGravity.,
-            backgroundColor: Colors.grey,
-            fontSize: 18.0);
-        _taskTitleController.clear();
-        _taskDescriptionController.clear();
-        setState(() {
-          _taskCategoryController.text = 'Choose task category';
-          _deadlineDateController.text = 'Choose task Deadline date';
-        });
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } else {
-      log('it is not valid');
-    }
-  }
+  const UploadTask({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +18,7 @@ class _UploadTaskState extends State<UploadTask> {
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      drawer: const DrawerWidget(),
+      drawer: DrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(7),
         child: Card(
@@ -106,15 +26,13 @@ class _UploadTaskState extends State<UploadTask> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.center,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'All Field are required',
+                      'All Fields are required',
                       style: TextStyle(
                         color: Constants.darkBlue,
                         fontSize: 25,
@@ -123,95 +41,89 @@ class _UploadTaskState extends State<UploadTask> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Divider(
-                  thickness: 1,
-                ),
-                // SizedBox(height: 10,),
+                const SizedBox(height: 10),
+                const Divider(thickness: 1),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Form(
-                    key: _formKey,
+                    key: controller.formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _textTitles(label: 'Task Category*'),
                         _textFormFields(
-                            valueKey: 'TaskCategory',
-                            controller: _taskCategoryController,
-                            enabled: false,
-                            fct: () {
-                              _showTaskCategoriesDialog(size: size);
-                            },
-                            maxLength: 100),
-                        //title
+                          valueKey: 'TaskCategory',
+                          controller: controller.taskCategoryController,
+                          enabled: false,
+                          fct: () =>
+                              controller.showTaskCategoriesDialog(context),
+                          maxLength: 100,
+                        ),
                         _textTitles(label: 'Task title*'),
                         _textFormFields(
-                            valueKey: 'TaskTitle',
-                            controller: _taskTitleController,
-                            enabled: true,
-                            fct: () {},
-                            maxLength: 100),
-                        //description
+                          valueKey: 'TaskTitle',
+                          controller: controller.taskTitleController,
+                          enabled: true,
+                          fct: () {},
+                          maxLength: 100,
+                        ),
                         _textTitles(label: 'Task description*'),
                         _textFormFields(
-                            valueKey: 'TaskDescription',
-                            controller: _taskDescriptionController,
-                            enabled: true,
-                            fct: () {},
-                            maxLength: 1000),
-                        //deadline date
+                          valueKey: 'TaskDescription',
+                          controller: controller.taskDescriptionController,
+                          enabled: true,
+                          fct: () {},
+                          maxLength: 1000,
+                        ),
                         _textTitles(label: 'Task deadline date*'),
                         _textFormFields(
-                            valueKey: 'Taskdeadline',
-                            controller: _deadlineDateController,
-                            enabled: false,
-                            fct: () {
-                              _pickDateDialog();
-                            },
-                            maxLength: 100),
+                          valueKey: 'Taskdeadline',
+                          controller: controller.deadlineDateController,
+                          enabled: false,
+                          fct: () => controller.pickDateDialog(context),
+                          maxLength: 100,
+                        ),
                       ],
                     ),
                   ),
                 ),
-
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 30),
-                    child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : MaterialButton(
-                            onPressed: _uploadTask,
-                            color: Colors.pink.shade700,
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(13)),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 14),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Upload Task',
-                                    style: TextStyle(
+                    child: Obx(
+                      () => controller.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : MaterialButton(
+                              onPressed: controller.uploadTask,
+                              color: Colors.pink.shade700,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(13),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 14),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Upload Task',
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Icon(
-                                    Icons.upload_file,
-                                    color: Colors.white,
-                                  ),
-                                ],
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.upload_file,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
+                    ),
                   ),
                 )
               ],
@@ -222,18 +134,17 @@ class _UploadTaskState extends State<UploadTask> {
     );
   }
 
-  Widget _textFormFields(
-      {required String valueKey,
-      required TextEditingController controller,
-      required bool enabled,
-      required Function fct,
-      required int maxLength}) {
+  Widget _textFormFields({
+    required String valueKey,
+    required TextEditingController controller,
+    required bool enabled,
+    required Function fct,
+    required int maxLength,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: InkWell(
-        onTap: () {
-          fct();
-        },
+        onTap: () => fct(),
         child: TextFormField(
           validator: (value) {
             if (value!.isEmpty) {
@@ -244,17 +155,17 @@ class _UploadTaskState extends State<UploadTask> {
           controller: controller,
           enabled: enabled,
           key: ValueKey(valueKey),
-          // initialValue: 'heloo',
           style: TextStyle(
-              color: Constants.darkBlue,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic),
+            color: Constants.darkBlue,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+          ),
           maxLines: valueKey == 'TaskDescription' ? 3 : 1,
           maxLength: maxLength,
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Theme.of(context).scaffoldBackgroundColor,
+            fillColor: Get.theme.scaffoldBackgroundColor,
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
@@ -268,83 +179,6 @@ class _UploadTaskState extends State<UploadTask> {
         ),
       ),
     );
-  }
-
-  _showTaskCategoriesDialog({required Size size}) {
-    showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            title: Text(
-              'Task Category',
-              style: TextStyle(fontSize: 20, color: Colors.pink.shade800),
-            ),
-            content: Container(
-              width: size.width * 0.9,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: Constants.taskCategoryList.length,
-                  itemBuilder: (ctxx, index) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _taskCategoryController.text =
-                              Constants.taskCategoryList[index];
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle_rounded,
-                            color: Colors.red.shade200,
-                          ),
-                          // SizedBox(width: 10,),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              Constants.taskCategoryList[index],
-                              style: TextStyle(
-                                  color: Constants.darkBlue,
-                                  fontSize: 18,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.canPop(context) ? Navigator.pop(context) : null;
-                },
-                child: const Text('Cancel'),
-              ),
-            ],
-          );
-        });
-  }
-
-  void _pickDateDialog() async {
-    picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(
-        const Duration(days: 0),
-      ),
-      lastDate: DateTime(2100),
-    );
-
-    if (picked != null) {
-      setState(() {
-        _deadlineDateController.text =
-            '${picked!.year}-${picked!.month}-${picked!.day}';
-        deadlineDateTimeStamp = Timestamp.fromMicrosecondsSinceEpoch(
-            picked!.microsecondsSinceEpoch);
-      });
-    }
   }
 
   Widget _textTitles({required String label}) {

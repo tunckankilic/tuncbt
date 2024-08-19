@@ -1,205 +1,161 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/screens/bindings.dart';
 import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 import 'package:tuncbt/screens/inner_screens/screens/upload_task.dart';
 import 'package:tuncbt/screens/all_workers/screens/all_workers.dart';
 import 'package:tuncbt/screens/tasks_screen/screens/tasks_screen.dart';
+import 'package:tuncbt/user_state.dart';
 
-import '../user_state.dart';
+class DrawerController extends GetxController {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void navigateToAllTasks() {
+    Get.off(() => TasksScreen(), binding: InnerScreenBindings());
+  }
+
+  void navigateToProfile() {
+    final String uid = _auth.currentUser!.uid;
+    Get.off(() => ProfileScreen(userID: uid), binding: InnerScreenBindings());
+  }
+
+  void navigateToAllWorkers() {
+    Get.off(() => AllWorkersScreen(), binding: AllWorkersBindings());
+  }
+
+  void navigateToAddTask() {
+    Get.to(() => const UploadTask(), binding: InnerScreenBindings());
+  }
+
+  void logout() {
+    Get.dialog(
+      AlertDialog(
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.network(
+                'https://image.flaticon.com/icons/png/128/1252/1252006.png',
+                height: 20,
+                width: 20,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Sign out'),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Do you want to Sign out?',
+          style: TextStyle(
+            fontSize: 20,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _auth.signOut();
+              Get.offAll(() => const UserState());
+            },
+            child: const Text('OK', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key});
+  DrawerWidget({Key? key}) : super(key: key);
+
+  final DrawerController controller = Get.put(DrawerController());
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(color: Colors.cyan),
-            child: Column(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Image.network(
-                      'https://image.flaticon.com/icons/png/128/1055/1055672.png'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Flexible(
-                  child: Text(
-                    'Work OS English',
-                    style: TextStyle(
-                        color: Constants.darkBlue,
-                        fontSize: 22,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
+          _buildDrawerHeader(),
+          const SizedBox(height: 30),
+          _buildListTile(
+            label: 'All Tasks',
+            icon: Icons.task_outlined,
+            onTap: controller.navigateToAllTasks,
           ),
-          const SizedBox(
-            height: 30,
+          _buildListTile(
+            label: 'My account',
+            icon: Icons.settings_outlined,
+            onTap: controller.navigateToProfile,
           ),
-          _listTiles(
-              label: 'All Tasks',
-              fct: () {
-                _navigateToAllTasksScreen(context);
-              },
-              icon: Icons.task_outlined),
-          _listTiles(
-              label: 'My account',
-              fct: () {
-                _navigateToProfileScreen(context);
-              },
-              icon: Icons.settings_outlined),
-          _listTiles(
-              label: 'Registered Workers',
-              fct: () {
-                _navigateToAllWorkersScreen(context);
-              },
-              icon: Icons.workspaces_outline),
-          _listTiles(
+          _buildListTile(
+            label: 'Registered Workers',
+            icon: Icons.workspaces_outline,
+            onTap: controller.navigateToAllWorkers,
+          ),
+          _buildListTile(
             label: 'Add a task',
-            fct: () {
-              _navigateToAddTaskScreen(context);
-            },
             icon: Icons.add_task,
+            onTap: controller.navigateToAddTask,
           ),
-          const Divider(
-            thickness: 1,
-          ),
-          _listTiles(
+          const Divider(thickness: 1),
+          _buildListTile(
             label: 'Logout',
-            fct: () {
-              _logout(context);
-            },
             icon: Icons.logout,
+            onTap: controller.logout,
           ),
         ],
       ),
     );
   }
 
-  void _navigateToProfileScreen(context) {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final String uid = user!.uid;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileScreen(
-          userID: uid,
-        ),
-      ),
-    );
-  }
-
-  void _navigateToAllWorkersScreen(context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AllWorkersScreen(),
-      ),
-    );
-  }
-
-  void _navigateToAllTasksScreen(context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TasksScreen(),
-      ),
-    );
-  }
-
-  void _navigateToAddTaskScreen(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const UploadTask(),
-      ),
-    );
-  }
-
-  void _logout(context) {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                    'https://image.flaticon.com/icons/png/128/1252/1252006.png',
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Sign out',
-                  ),
-                ),
-              ],
+  Widget _buildDrawerHeader() {
+    return DrawerHeader(
+      decoration: const BoxDecoration(color: Colors.cyan),
+      child: Column(
+        children: [
+          Flexible(
+            flex: 1,
+            child: Image.network(
+                'https://image.flaticon.com/icons/png/128/1055/1055672.png'),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Work OS English',
+            style: TextStyle(
+              color: Constants.darkBlue,
+              fontSize: 22,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
             ),
-            content: Text(
-              'Do you wanna Sign out',
-              style: TextStyle(
-                  color: Constants.darkBlue,
-                  fontSize: 20,
-                  fontStyle: FontStyle.italic),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.canPop(context) ? Navigator.pop(context) : null;
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  auth.signOut();
-                  Navigator.canPop(context) ? Navigator.pop(context) : null;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const UserState(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          );
-        });
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _listTiles(
-      {required String label, required Function fct, required IconData icon}) {
+  Widget _buildListTile({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return ListTile(
-      onTap: () {
-        fct();
-      },
-      leading: Icon(
-        icon,
-        color: Constants.darkBlue,
-      ),
+      onTap: onTap,
+      leading: Icon(icon, color: Constants.darkBlue),
       title: Text(
         label,
         style: TextStyle(
-            color: Constants.darkBlue,
-            fontSize: 20,
-            fontStyle: FontStyle.italic),
+          color: Constants.darkBlue,
+          fontSize: 20,
+          fontStyle: FontStyle.italic,
+        ),
       ),
     );
   }

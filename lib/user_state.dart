@@ -15,10 +15,10 @@ class UserState extends StatelessWidget {
         builder: (ctx, userSnapshot) {
           if (userSnapshot.data == null) {
             log('user is not signed in yet');
-            return const Login();
+            return Login();
           } else if (userSnapshot.hasData) {
             log('user is already signed in');
-            return const TasksScreen();
+            return TasksScreen();
           } else if (userSnapshot.hasError) {
             return const Scaffold(
               body: Center(
