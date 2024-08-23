@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 
 class TasksScreenController extends GetxController {
   final RxBool isLoading = false.obs;

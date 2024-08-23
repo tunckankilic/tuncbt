@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
 
@@ -11,122 +12,43 @@ class UploadTask extends GetView<InnerScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Constants.darkBlue),
+        title: const Text('Upload Task',
+            style: TextStyle(color: AppTheme.textColor)),
+        backgroundColor: AppTheme.backgroundColor,
         elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        iconTheme: const IconThemeData(color: AppTheme.primaryColor),
       ),
       drawer: DrawerWidget(),
-      body: Padding(
-        padding: const EdgeInsets.all(7),
-        child: Card(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'All Fields are required',
-                      style: TextStyle(
-                        color: Constants.darkBlue,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Form(
+                  key: controller.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(),
+                      SizedBox(height: 20.h),
+                      _buildTaskCategory(),
+                      _buildTaskTitle(),
+                      _buildTaskDescription(),
+                      _buildTaskDeadline(),
+                      SizedBox(height: 20.h),
+                      _buildUploadButton(),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Divider(thickness: 1),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Form(
-                    key: controller.formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _textTitles(label: 'Task Category*'),
-                        _textFormFields(
-                          valueKey: 'TaskCategory',
-                          controller: controller.taskCategoryController,
-                          enabled: false,
-                          fct: () =>
-                              controller.showTaskCategoriesDialog(context),
-                          maxLength: 100,
-                        ),
-                        _textTitles(label: 'Task title*'),
-                        _textFormFields(
-                          valueKey: 'TaskTitle',
-                          controller: controller.taskTitleController,
-                          enabled: true,
-                          fct: () {},
-                          maxLength: 100,
-                        ),
-                        _textTitles(label: 'Task description*'),
-                        _textFormFields(
-                          valueKey: 'TaskDescription',
-                          controller: controller.taskDescriptionController,
-                          enabled: true,
-                          fct: () {},
-                          maxLength: 1000,
-                        ),
-                        _textTitles(label: 'Task deadline date*'),
-                        _textFormFields(
-                          valueKey: 'Taskdeadline',
-                          controller: controller.deadlineDateController,
-                          enabled: false,
-                          fct: () => controller.pickDateDialog(context),
-                          maxLength: 100,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: Obx(
-                      () => controller.isLoading.value
-                          ? const CircularProgressIndicator()
-                          : MaterialButton(
-                              onPressed: controller.uploadTask,
-                              color: Colors.pink.shade700,
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(13),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 14),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Upload Task',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Icon(
-                                      Icons.upload_file,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                )
-              ],
+              ),
             ),
           ),
         ),
@@ -134,63 +56,140 @@ class UploadTask extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _textFormFields({
-    required String valueKey,
+  Widget _buildHeader() {
+    return Text(
+      'All Fields are required',
+      style: TextStyle(
+        color: AppTheme.primaryColor,
+        fontSize: 20.sp,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildTaskCategory() {
+    return _buildFormField(
+      label: 'Task Category*',
+      controller: controller.taskCategoryController,
+      onTap: () => controller.showTaskCategoriesDialog(Get.context!),
+      enabled: false,
+      icon: Icons.category,
+    );
+  }
+
+  Widget _buildTaskTitle() {
+    return _buildFormField(
+      label: 'Task Title*',
+      controller: controller.taskTitleController,
+      maxLength: 100,
+      icon: Icons.title,
+    );
+  }
+
+  Widget _buildTaskDescription() {
+    return _buildFormField(
+      label: 'Task Description*',
+      controller: controller.taskDescriptionController,
+      maxLength: 1000,
+      maxLines: 3,
+      icon: Icons.description,
+    );
+  }
+
+  Widget _buildTaskDeadline() {
+    return _buildFormField(
+      label: 'Task Deadline Date*',
+      controller: controller.deadlineDateController,
+      onTap: () => controller.pickDateDialog(Get.context!),
+      enabled: false,
+      icon: Icons.calendar_today,
+    );
+  }
+
+  Widget _buildFormField({
+    required String label,
     required TextEditingController controller,
-    required bool enabled,
-    required Function fct,
-    required int maxLength,
+    VoidCallback? onTap,
+    bool enabled = true,
+    int maxLength = 100,
+    int maxLines = 1,
+    IconData? icon,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: InkWell(
-        onTap: () => fct(),
-        child: TextFormField(
-          validator: (value) {
-            if (value!.isEmpty) {
-              return "Value is missing";
-            }
-            return null;
-          },
-          controller: controller,
-          enabled: enabled,
-          key: ValueKey(valueKey),
-          style: TextStyle(
-            color: Constants.darkBlue,
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
-          ),
-          maxLines: valueKey == 'TaskDescription' ? 3 : 1,
-          maxLength: maxLength,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Get.theme.scaffoldBackgroundColor,
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.pink),
-            ),
-            errorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: AppTheme.primaryColor,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
+          SizedBox(height: 8.h),
+          InkWell(
+            onTap: onTap,
+            child: TextFormField(
+              controller: controller,
+              enabled: enabled,
+              maxLength: maxLength,
+              maxLines: maxLines,
+              style: const TextStyle(color: AppTheme.textColor),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: AppTheme.backgroundColor,
+                prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: const BorderSide(color: AppTheme.primaryColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: const BorderSide(color: AppTheme.primaryColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide:
+                      const BorderSide(color: AppTheme.accentColor, width: 2),
+                ),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "This field is required";
+                }
+                return null;
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _textTitles({required String label}) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Colors.pink[800],
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+  Widget _buildUploadButton() {
+    return Center(
+      child: Obx(
+        () => controller.isLoading.value
+            ? const CircularProgressIndicator()
+            : ElevatedButton.icon(
+                onPressed: controller.uploadTask,
+                icon: const Icon(Icons.upload_file),
+                label: const Text('Upload Task'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.accentColor,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
       ),
     );
   }

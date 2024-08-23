@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/screens/task_details.dart';
 import 'package:tuncbt/services/global_methods.dart';
 
@@ -24,40 +25,84 @@ class TaskWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      child: ListTile(
-        onTap: () => _navigateToTaskDetails(context),
-        onLongPress: () => _showDeleteDialog(context),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        leading: _buildLeadingIcon(),
-        title: _buildTitle(),
-        subtitle: _buildSubtitle(),
-        trailing: Icon(
-          Icons.keyboard_arrow_right,
-          size: 30,
-          color: Colors.pink.shade800,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      child: Dismissible(
+        key: Key(taskId),
+        background: _buildDismissibleBackground(),
+        direction: DismissDirection.endToStart,
+        confirmDismiss: (direction) async {
+          return await _showDeleteDialog(context);
+        },
+        onDismissed: (direction) {
+          _deleteTask(context);
+        },
+        child: GestureDetector(
+          onTap: () => _navigateToTaskDetails(context),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(15.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16.r),
+              child: Row(
+                children: [
+                  _buildLeadingIcon(),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTitle(),
+                        SizedBox(height: 8.h),
+                        _buildSubtitle(),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_right,
+                    size: 30.sp,
+                    color: AppTheme.accentColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildDismissibleBackground() {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 20.w),
+      color: Colors.red,
+      child: Icon(Icons.delete, color: Colors.white, size: 30.sp),
+    );
+  }
+
   Widget _buildLeadingIcon() {
     return Container(
-      padding: const EdgeInsets.only(right: 12),
-      decoration: const BoxDecoration(
-        border: Border(right: BorderSide(width: 1)),
+      width: 50.w,
+      height: 50.w,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isDone ? AppTheme.successColor : AppTheme.warningColor,
       ),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 20,
-        child: Image.network(
-          isDone
-              ? 'https://image.flaticon.com/icons/png/128/390/390973.png'
-              : 'https://image.flaticon.com/icons/png/128/850/850960.png',
-        ),
+      child: Icon(
+        isDone ? Icons.check : Icons.access_time,
+        color: Colors.white,
+        size: 24.sp,
       ),
     );
   }
@@ -69,26 +114,21 @@ class TaskWidget extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Constants.darkBlue,
+        fontSize: 16.sp,
+        color: AppTheme.primaryColor,
       ),
     );
   }
 
   Widget _buildSubtitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.linear_scale_outlined,
-          color: Colors.pink.shade800,
-        ),
-        Text(
-          taskDescription,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 16),
-        ),
-      ],
+    return Text(
+      taskDescription,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: 14.sp,
+        color: AppTheme.secondaryColor,
+      ),
     );
   }
 
@@ -104,31 +144,34 @@ class TaskWidget extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: const Text('Are you sure you want to delete this task?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+  Future<bool> _showDeleteDialog(BuildContext context) async {
+    return await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Delete Task',
+                style: TextStyle(color: AppTheme.primaryColor)),
+            content: Text('Are you sure you want to delete this task?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Cancel',
+                    style: TextStyle(color: AppTheme.secondaryColor)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete, color: Colors.red),
+                    SizedBox(width: 8.w),
+                    Text('Delete', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => _deleteTask(ctx),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.delete, color: Colors.red),
-                SizedBox(width: 8),
-                Text('Delete', style: TextStyle(color: Colors.red)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        ) ??
+        false;
   }
 
   Future<void> _deleteTask(BuildContext context) async {
@@ -151,7 +194,6 @@ class TaskWidget extends StatelessWidget {
         backgroundColor: Colors.grey,
         fontSize: 18.0,
       );
-      Navigator.of(context).pop(); // Close the dialog
     } catch (error) {
       GlobalMethod.showErrorDialog(
         error: 'This task cannot be deleted',

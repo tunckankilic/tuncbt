@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 
 class AllWorkersWidget extends StatelessWidget {
@@ -25,30 +27,74 @@ class AllWorkersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      child: ListTile(
-        onTap: () => _navigateToProfile(context),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        leading: _buildLeadingAvatar(),
-        title: _buildTitle(),
-        subtitle: _buildSubtitle(),
-        trailing: _buildTrailingButton(),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      child: OpenContainer(
+        transitionDuration: Duration(milliseconds: 500),
+        openBuilder: (context, _) => ProfileScreen(userID: userID),
+        closedElevation: 5,
+        closedShape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+        closedColor: Theme.of(context).cardColor,
+        closedBuilder: (context, openContainer) => InkWell(
+          onTap: openContainer,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+            child: Row(
+              children: [
+                _buildLeadingAvatar(),
+                SizedBox(width: 15.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTitle(),
+                      SizedBox(height: 5.h),
+                      _buildSubtitle(),
+                    ],
+                  ),
+                ),
+                _buildTrailingButton(context),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildLeadingAvatar() {
-    return Container(
-      padding: const EdgeInsets.only(right: 12),
-      decoration: const BoxDecoration(
-        border: Border(right: BorderSide(width: 1)),
-      ),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 20,
-        backgroundImage: NetworkImage(userImageUrl),
+    return Hero(
+      tag: 'avatar_$userID',
+      child: Container(
+        width: 50.w,
+        height: 50.w,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white,
+            width: 2.w,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(25.r),
+          child: Image.network(
+            userImageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              Icons.person,
+              size: 30.sp,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -56,11 +102,12 @@ class AllWorkersWidget extends StatelessWidget {
   Widget _buildTitle() {
     return Text(
       userName,
-      maxLines: 2,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Constants.darkBlue,
+        fontSize: 16.sp,
+        color: AppTheme.primaryColor,
       ),
     );
   }
@@ -68,41 +115,50 @@ class AllWorkersWidget extends StatelessWidget {
   Widget _buildSubtitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Icon(Icons.linear_scale_outlined, color: Colors.pink.shade800),
         Text(
-          '$positionInCompany/$phoneNumber',
-          maxLines: 2,
+          positionInCompany,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: AppTheme.secondaryColor,
+          ),
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          phoneNumber,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: AppTheme.lightTextColor,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildTrailingButton() {
+  Widget _buildTrailingButton(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.mail_outline, size: 30, color: Colors.pink.shade800),
-      onPressed: _mailTo,
-    );
-  }
-
-  void _navigateToProfile(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileScreen(userID: userID),
+      icon: Icon(
+        Icons.mail_outline,
+        size: 24.sp,
+        color: AppTheme.accentColor,
       ),
+      onPressed: () => _mailTo(context),
     );
   }
 
-  void _mailTo() async {
+  void _mailTo(BuildContext context) async {
     final mailUrl = 'mailto:$userEmail';
     if (await canLaunchUrl(Uri.parse(mailUrl))) {
       await launchUrl(Uri.parse(mailUrl));
     } else {
-      log('Error: Unable to launch email client');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('E-posta uygulaması açılamadı'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
     }
   }
 }

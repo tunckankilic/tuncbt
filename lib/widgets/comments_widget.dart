@@ -1,4 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 
 class CommentWidget extends StatelessWidget {
@@ -17,77 +20,109 @@ class CommentWidget extends StatelessWidget {
     required this.commenterImageUrl,
   }) : super(key: key);
 
-  static const List<Color> _colors = [
-    Colors.amber,
-    Colors.orange,
-    Colors.pink,
-    Colors.brown,
-    Colors.cyan,
-    Colors.blue,
-    Colors.deepOrange,
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final Color borderColor =
-        _colors[DateTime.now().microsecond % _colors.length];
-
-    return InkWell(
-      onTap: () => _navigateToProfile(context),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCommenterAvatar(borderColor),
-          const SizedBox(width: 6),
-          Expanded(child: _buildCommentContent()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCommenterAvatar(Color borderColor) {
-    return Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-        border: Border.all(width: 2, color: borderColor),
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          image: NetworkImage(commenterImageUrl),
-          fit: BoxFit.cover,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      child: OpenContainer(
+        transitionDuration: Duration(milliseconds: 500),
+        openBuilder: (context, _) => ProfileScreen(userID: commenterId),
+        closedElevation: 0,
+        closedColor: Colors.transparent,
+        closedBuilder: (context, openContainer) => InkWell(
+          onTap: openContainer,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCommenterAvatar(context),
+              SizedBox(width: 12.w),
+              Expanded(child: _buildCommentContent(context)),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildCommentContent() {
+  Widget _buildCommenterAvatar(BuildContext context) {
+    return Hero(
+      tag: 'avatar_$commenterId',
+      child: Container(
+        height: 40.w,
+        width: 40.w,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            width: 2.w,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
+          child: Image.network(
+            commenterImageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              Icons.person,
+              size: 24.sp,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommentContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           commenterName,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 16.sp,
+            color: Theme.of(context).primaryColor,
           ),
         ),
-        Text(
-          commentBody,
-          style: TextStyle(
-            color: Colors.grey.shade700,
-            fontStyle: FontStyle.italic,
+        SizedBox(height: 4.h),
+        Container(
+          padding: EdgeInsets.all(12.r),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12.r),
           ),
+          child: Text(
+            commentBody,
+            style: TextStyle(
+              color: AppTheme.textColor,
+              fontSize: 14.sp,
+            ),
+          ),
+        ),
+        SizedBox(height: 4.h),
+        Row(
+          children: [
+            Icon(Icons.access_time,
+                size: 12.sp, color: AppTheme.lightTextColor),
+            SizedBox(width: 4.w),
+            Text(
+              '2 saat önce', // Bu kısmı gerçek zamana göre güncelleyebilirsiniz
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: AppTheme.lightTextColor,
+              ),
+            ),
+          ],
         ),
       ],
-    );
-  }
-
-  void _navigateToProfile(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileScreen(userID: commenterId),
-      ),
     );
   }
 }

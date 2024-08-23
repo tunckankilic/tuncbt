@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
+import 'package:tuncbt/config/router.dart';
 import 'package:tuncbt/firebase_options.dart';
+import 'package:tuncbt/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/user_state.dart';
 
 void main() async {
@@ -18,11 +21,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TuncBT',
-      theme: AppTheme.lightTheme,
-      home: const UserState(),
+    return ScreenUtilInit(
+      designSize: const Size(640, 1136),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TuncBT',
+        theme: AppTheme.lightTheme,
+        initialBinding: AuthBindings(),
+        getPages: RouteManager.routes,
+        home: const UserState(),
+      ),
     );
   }
 }

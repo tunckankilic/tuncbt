@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:font_awesome_icon_class/font_awesome_icon_class.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
@@ -17,200 +18,135 @@ class ProfileScreen extends GetView<InnerScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       drawer: DrawerWidget(),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
       body: Obx(
         () => controller.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: Stack(
-                    children: [
-                      _buildProfileCard(context),
-                      _buildProfileImage(size, context),
-                    ],
+            ? Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                slivers: [
+                  _buildSliverAppBar(context),
+                  SliverToBoxAdapter(
+                    child: _buildProfileContent(context),
                   ),
-                ),
+                ],
               ),
       ),
     );
   }
 
-  Widget _buildProfileCard(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(30),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 200.h,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          controller.name.value,
+          style: TextStyle(color: Colors.white, fontSize: 20.sp),
+        ),
+        background: Stack(
+          fit: StackFit.expand,
           children: [
-            const SizedBox(height: 100),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                controller.name.value,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.bold),
-              ),
+            Image.network(
+              controller.imageUrl.value,
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                '${controller.job.value} Since joined ${controller.joinedAt.value}',
-                style: TextStyle(
-                  color: Constants.darkBlue,
-                  fontSize: 18,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold,
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
                 ),
               ),
             ),
-            const SizedBox(height: 15),
-            const Divider(thickness: 1),
-            const SizedBox(height: 20),
-            Text(
-              'Contact Info',
-              style: _titleTextStyle,
-            ),
-            const SizedBox(height: 15),
-            _userInfo(title: 'Email:', content: controller.email.value),
-            _userInfo(
-                title: 'Phone number:', content: controller.phoneNumber.value),
-            const SizedBox(height: 15),
-            if (!controller.isSameUser.value) ...[
-              const Divider(thickness: 1),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _contactBy(
-                    color: Colors.green,
-                    fct: controller.openWhatsAppChat,
-                    icon: FontAwesomeIcons.whatsapp,
-                  ),
-                  _contactBy(
-                    color: Colors.red,
-                    fct: controller.mailTo,
-                    icon: Icons.mail_outline,
-                  ),
-                  _contactBy(
-                    color: Colors.purple,
-                    fct: controller.callPhoneNumber,
-                    icon: Icons.call_outlined,
-                  ),
-                ],
-              ),
-            ],
-            const SizedBox(height: 25),
-            const Divider(thickness: 1),
-            const SizedBox(height: 25),
-            if (controller.isSameUser.value)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: MaterialButton(
-                    onPressed: () {
-                      controller.signOut();
-                      Get.offAll(() => const UserState());
-                    },
-                    color: Colors.pink.shade700,
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13)),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.logout, color: Colors.white),
-                          SizedBox(width: 8),
-                          Text(
-                            'Logout',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileImage(Size size, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: size.width * 0.26,
-          height: size.width * 0.26,
-          decoration: BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.circle,
-            border: Border.all(
-              width: 8,
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            image: DecorationImage(
-              image: NetworkImage(controller.imageUrl.value),
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
-      ],
+  Widget _buildProfileContent(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildJobInfo(),
+          SizedBox(height: 20.h),
+          _buildContactInfo(),
+          SizedBox(height: 20.h),
+          if (!controller.isSameUser.value) _buildContactButtons(),
+          if (controller.isSameUser.value) _buildLogoutButton(),
+        ],
+      ),
     );
   }
 
-  Widget _contactBy(
-      {required Color color, required Function fct, required IconData icon}) {
-    return CircleAvatar(
-      backgroundColor: color,
-      radius: 25,
-      child: CircleAvatar(
-        radius: 23,
-        backgroundColor: Colors.white,
-        child: IconButton(
-          icon: Icon(icon, color: color),
-          onPressed: () => fct(),
+  Widget _buildJobInfo() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Job Information',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryColor,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            _infoRow(Icons.work, controller.job.value),
+            _infoRow(Icons.calendar_today, 'Joined ${controller.joinedAt.value}'),
+          ],
         ),
       ),
     );
   }
 
-  Widget _userInfo({required String title, required String content}) {
+  Widget _buildContactInfo() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Contact Information',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryColor,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            _infoRow(Icons.email, controller.email.value),
+            _infoRow(Icons.phone, controller.phoneNumber.value),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.all(3.0),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         children: [
-          Text(title, style: _titleTextStyle),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+          Icon(icon, color: AppTheme.secondaryColor, size: 20.sp),
+          SizedBox(width: 10.w),
+          Expanded(
             child: Text(
-              content,
-              style: TextStyle(
-                color: Constants.darkBlue,
-                fontSize: 18,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.bold,
-              ),
+              text,
+              style: TextStyle(fontSize: 16.sp, color: AppTheme.textColor),
             ),
           ),
         ],
@@ -218,9 +154,63 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  TextStyle get _titleTextStyle => const TextStyle(
-        fontSize: 22,
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.bold,
-      );
+  Widget _buildContactButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _contactButton(
+          color: Colors.green,
+          icon: FontAwesomeIcons.whatsapp,
+          onPressed: controller.openWhatsAppChat,
+        ),
+        _contactButton(
+          color: Colors.red,
+          icon: Icons.mail_outline,
+          onPressed: controller.mailTo,
+        ),
+        _contactButton(
+          color: Colors.purple,
+          icon: Icons.call_outlined,
+          onPressed: controller.callPhoneNumber,
+        ),
+      ],
+    );
+  }
+
+  Widget _contactButton({
+    required Color color,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: CircleBorder(),
+        padding: EdgeInsets.all(16.w),
+      ),
+      child: Icon(icon, color: Colors.white, size: 24.sp),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: () {
+          controller.signOut();
+          Get.offAll(() => const UserState());
+        },
+        icon: Icon(Icons.logout, color: Colors.white),
+        label: Text(
+          'Logout',
+          style: TextStyle(color: Colors.white, fontSize: 16.sp),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.pink.shade700,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        ),
+      ),
+    );
+  }
 }

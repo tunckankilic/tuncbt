@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/bindings.dart';
 import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
 import 'package:tuncbt/screens/inner_screens/screens/upload_task.dart';
@@ -35,13 +36,11 @@ class DrawerController extends GetxController {
         title: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.network(
-                'https://image.flaticon.com/icons/png/128/1252/1252006.png',
-                height: 20,
-                width: 20,
-              ),
-            ),
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.person,
+                  size: 20.r,
+                )),
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text('Sign out'),
@@ -81,58 +80,93 @@ class DrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        children: [
-          _buildDrawerHeader(),
-          const SizedBox(height: 30),
-          _buildListTile(
-            label: 'All Tasks',
-            icon: Icons.task_outlined,
-            onTap: controller.navigateToAllTasks,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           ),
-          _buildListTile(
-            label: 'My account',
-            icon: Icons.settings_outlined,
-            onTap: controller.navigateToProfile,
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildDrawerHeader(),
+              SizedBox(height: 20.h),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildAnimatedListTile(
+                        label: 'All Tasks',
+                        icon: Icons.task_outlined,
+                        onTap: controller.navigateToAllTasks,
+                      ),
+                      _buildAnimatedListTile(
+                        label: 'My account',
+                        icon: Icons.settings_outlined,
+                        onTap: controller.navigateToProfile,
+                      ),
+                      _buildAnimatedListTile(
+                        label: 'Registered Workers',
+                        icon: Icons.workspaces_outline,
+                        onTap: controller.navigateToAllWorkers,
+                      ),
+                      _buildAnimatedListTile(
+                        label: 'Add a task',
+                        icon: Icons.add_task,
+                        onTap: controller.navigateToAddTask,
+                      ),
+                      Divider(
+                          color: Colors.white.withOpacity(0.5),
+                          thickness: 1,
+                          height: 40.h),
+                      _buildAnimatedListTile(
+                        label: 'Logout',
+                        icon: Icons.logout,
+                        onTap: controller.logout,
+                        isLogout: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          _buildListTile(
-            label: 'Registered Workers',
-            icon: Icons.workspaces_outline,
-            onTap: controller.navigateToAllWorkers,
-          ),
-          _buildListTile(
-            label: 'Add a task',
-            icon: Icons.add_task,
-            onTap: controller.navigateToAddTask,
-          ),
-          const Divider(thickness: 1),
-          _buildListTile(
-            label: 'Logout',
-            icon: Icons.logout,
-            onTap: controller.logout,
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildDrawerHeader() {
-    return DrawerHeader(
-      decoration: const BoxDecoration(color: Colors.cyan),
+    return Container(
+      height: 150.h,
+      padding: EdgeInsets.symmetric(vertical: 20.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30.r),
+          bottomRight: Radius.circular(30.r),
+        ),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Flexible(
-            flex: 1,
-            child: Image.network(
-                'https://image.flaticon.com/icons/png/128/1055/1055672.png'),
+          Container(
+            width: 80.w,
+            height: 80.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2.w),
+            ),
+            child: ClipOval(child: Icon(Icons.person)),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 10.h),
           Text(
-            'Work OS English',
+            'TuncBT',
             style: TextStyle(
-              color: Constants.darkBlue,
-              fontSize: 22,
-              fontStyle: FontStyle.italic,
+              color: Colors.white,
+              fontSize: 22.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -141,20 +175,35 @@ class DrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile({
+  Widget _buildAnimatedListTile({
     required String label,
     required IconData icon,
     required VoidCallback onTap,
+    bool isLogout = false,
   }) {
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: Constants.darkBlue),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: Constants.darkBlue,
-          fontSize: 20,
-          fontStyle: FontStyle.italic,
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 300),
+      builder: (context, double value, child) {
+        return Transform.translate(
+          offset: Offset(-100 * (1 - value), 0),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: ListTile(
+        onTap: onTap,
+        leading: Icon(icon,
+            color: isLogout ? Colors.red : Colors.white, size: 24.sp),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: isLogout ? Colors.red : Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

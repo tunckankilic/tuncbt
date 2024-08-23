@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 
 class InnerScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -46,26 +46,47 @@ class InnerScreenController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rx<DateTime?> picked = Rx<DateTime?>(null);
   Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
-
-  // Profile Screen methods
   Future<void> getUserData(String userId) async {
     try {
       isLoading.value = true;
       final DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(userId).get();
-      email.value = userDoc.get('email');
-      name.value = userDoc.get('name');
-      job.value = userDoc.get('positionInCompany');
-      phoneNumber.value = userDoc.get('phoneNumber');
-      imageUrl.value = userDoc.get('userImage');
-      Timestamp joinedAtTimeStamp = userDoc.get('createdAt');
-      var joinedDate = joinedAtTimeStamp.toDate();
-      joinedAt.value =
-          '${joinedDate.year}-${joinedDate.month}-${joinedDate.day}';
 
-      final User? user = _auth.currentUser;
-      final uid = user!.uid;
-      isSameUser.value = uid == userId;
+      if (userDoc.exists) {
+        email.value = userDoc.get('email') as String? ?? '';
+        name.value = userDoc.get('name') as String? ?? '';
+        job.value = userDoc.get('positionInCompany') as String? ?? '';
+        phoneNumber.value = userDoc.get('phoneNumber') as String? ?? '';
+        imageUrl.value = userDoc.get('userImage') as String? ?? '';
+
+        Timestamp? joinedAtTimeStamp = userDoc.get('createdAt') as Timestamp?;
+        if (joinedAtTimeStamp != null) {
+          var joinedDate = joinedAtTimeStamp.toDate();
+          joinedAt.value =
+              '${joinedDate.year}-${joinedDate.month.toString().padLeft(2, '0')}-${joinedDate.day.toString().padLeft(2, '0')}';
+        } else {
+          joinedAt.value = '';
+        }
+
+        final User? user = _auth.currentUser;
+        final uid = user?.uid;
+        isSameUser.value = uid == userId;
+      } else {
+        // Handle the case where the user document doesn't exist
+        print('User document does not exist for userId: $userId');
+        // You might want to set default values or show an error message to the user
+        email.value = '';
+        name.value = '';
+        job.value = '';
+        phoneNumber.value = '';
+        imageUrl.value = '';
+        joinedAt.value = '';
+        isSameUser.value = false;
+      }
+    } catch (e) {
+      // Handle any other errors that might occur
+      print('Error retrieving user data: $e');
+      // You might want to show an error message to the user
     } finally {
       isLoading.value = false;
     }
@@ -104,26 +125,67 @@ class InnerScreenController extends GetxController {
 
   // Task Details Screen methods
   Future<void> getTaskData(String taskId, String taskUploadedBy) async {
-    final DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(taskUploadedBy).get();
-    authorName.value = userDoc.get('name');
-    authorPosition.value = userDoc.get('positionInCompany');
-    userImageUrl.value = userDoc.get('userImage');
+    try {
+      // Fetch user document
+      final DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(taskUploadedBy).get();
 
-    final DocumentSnapshot taskDatabase =
-        await _firestore.collection('tasks').doc(taskId).get();
-    taskTitle.value = taskDatabase.get('taskTitle');
-    taskDescription.value = taskDatabase.get('taskDescription');
-    isDone.value = taskDatabase.get('isDone');
-    Timestamp postedDateTimeStamp = taskDatabase.get('createdAt');
-    Timestamp deadlineDateTimeStamp = taskDatabase.get('deadlineDateTimeStamp');
-    deadlineDate.value = taskDatabase.get('deadlineDate');
-    uploadedBy.value = taskUploadedBy; // Yeni eklenen satır
-    var postDate = postedDateTimeStamp.toDate();
-    postedDate.value = '${postDate.year}-${postDate.month}-${postDate.day}';
+      if (userDoc.exists) {
+        authorName.value = userDoc.get('name') ?? 'Unknown';
+        authorPosition.value =
+            userDoc.get('positionInCompany') ?? 'No position';
+        userImageUrl.value = userDoc.get('userImage') ?? '';
+      } else {
+        print('User document does not exist for ID: $taskUploadedBy');
+        // Set default values or handle the case when user document doesn't exist
+        authorName.value = 'Unknown User';
+        authorPosition.value = 'No position';
+        userImageUrl.value = '';
+      }
 
-    var date = deadlineDateTimeStamp.toDate();
-    isDeadlineAvailable.value = date.isAfter(DateTime.now());
+      // Fetch task document
+      final DocumentSnapshot taskDoc =
+          await _firestore.collection('tasks').doc(taskId).get();
+
+      if (taskDoc.exists) {
+        taskTitle.value = taskDoc.get('taskTitle') ?? 'No Title';
+        taskDescription.value =
+            taskDoc.get('taskDescription') ?? 'No Description';
+        isDone.value = taskDoc.get('isDone') ?? false;
+
+        Timestamp postedDateTimeStamp = taskDoc.get('createdAt');
+        Timestamp deadlineDateTimeStamp = taskDoc.get('deadlineDateTimeStamp');
+
+        deadlineDate.value = taskDoc.get('deadlineDate') ?? 'No Deadline';
+        uploadedBy.value = taskUploadedBy;
+
+        if (postedDateTimeStamp != null) {
+          var postDate = postedDateTimeStamp.toDate();
+          postedDate.value =
+              '${postDate.year}-${postDate.month}-${postDate.day}';
+        } else {
+          postedDate.value = 'Unknown';
+        }
+
+        if (deadlineDateTimeStamp != null) {
+          var date = deadlineDateTimeStamp.toDate();
+          isDeadlineAvailable.value = date.isAfter(DateTime.now());
+        } else {
+          isDeadlineAvailable.value = false;
+        }
+      } else {
+        print('Task document does not exist for ID: $taskId');
+        // Handle the case when task document doesn't exist
+        // You might want to show an error message or navigate back
+      }
+    } catch (e) {
+      print('Error fetching task data: $e');
+      // Handle any errors that occur during the process
+      // You might want to show an error message to the user
+    } finally {
+      // Set isLoading to false here, after all operations are complete
+      isLoading.value = false;
+    }
   }
 
   Future<void> addComment(String taskID) async {

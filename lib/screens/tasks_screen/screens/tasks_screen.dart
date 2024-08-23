@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tuncbt/config/constants.dart';
+import 'package:tuncbt/screens/screens.dart';
 import 'package:tuncbt/screens/tasks_screen/tasks_screen_controller.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
 import 'package:tuncbt/widgets/task_widget.dart';
@@ -8,48 +10,122 @@ import 'package:tuncbt/widgets/task_widget.dart';
 class TasksScreen extends GetView<TasksScreenController> {
   static const routeName = "/tasks";
 
-  TasksScreen({Key? key}) : super(key: key);
-
-  final TasksScreenController controller = Get.put(TasksScreenController());
+  const TasksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Get.put(TasksScreenController());
     return Scaffold(
       drawer: DrawerWidget(),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: const Text('Tasks', style: TextStyle(color: Colors.pink)),
-        actions: [
-          IconButton(
-            onPressed: () => controller.showTaskCategoriesDialog(context),
-            icon: const Icon(Icons.filter_list_outlined, color: Colors.black),
-          )
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          _buildTasksList(),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (controller.tasks.isEmpty) {
-          return const Center(child: Text('There are no tasks'));
-        } else {
-          return ListView.builder(
-            itemCount: controller.tasks.length,
-            itemBuilder: (BuildContext context, int index) {
+      floatingActionButton: _buildFloatingActionButton(),
+    );
+  }
+
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 120.h,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          'Tasks',
+          style: TextStyle(color: Colors.white, fontSize: 20.sp),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppTheme.primaryColor, AppTheme.accentColor],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () => controller.showTaskCategoriesDialog(context),
+          icon: const Icon(Icons.filter_list_outlined, color: Colors.white),
+        )
+      ],
+    );
+  }
+
+  Widget _buildTasksList() {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator()),
+        );
+      } else if (controller.tasks.isEmpty) {
+        return SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'There are no tasks',
+              style: TextStyle(fontSize: 18.sp, color: AppTheme.textColor),
+            ),
+          ),
+        );
+      } else {
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
               final task = controller.tasks[index];
-              return TaskWidget(
-                taskTitle: task['taskTitle'],
-                taskDescription: task['taskDescription'],
-                taskId: task['taskId'],
-                uploadedBy: task['uploadedBy'],
-                isDone: task['isDone'],
+              return AnimatedSlideTransition(
+                index: index,
+                child: TaskWidget(
+                  taskTitle: task['taskTitle'],
+                  taskDescription: task['taskDescription'],
+                  taskId: task['taskId'],
+                  uploadedBy: task['uploadedBy'],
+                  isDone: task['isDone'],
+                ),
               );
             },
-          );
-        }
-      }),
+            childCount: controller.tasks.length,
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () => Get.toNamed(UploadTask.routeName),
+      backgroundColor: AppTheme.accentColor,
+      child: const Icon(Icons.add),
+    );
+  }
+}
+
+class AnimatedSlideTransition extends StatelessWidget {
+  final int index;
+  final Widget child;
+
+  const AnimatedSlideTransition(
+      {super.key, required this.index, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      tween: Tween(begin: 1.0, end: 0.0),
+      duration: Duration(milliseconds: 500 + (index * 100)),
+      curve: Curves.easeOutQuad,
+      builder: (context, double value, child) {
+        return Transform.translate(
+          offset: Offset(0, 50 * value),
+          child: Opacity(
+            opacity: 1 - value,
+            child: child,
+          ),
+        );
+      },
+      child: child,
     );
   }
 }

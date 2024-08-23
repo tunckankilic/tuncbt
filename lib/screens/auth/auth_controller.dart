@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:tuncbt/config/constants.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,7 +24,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final obscureText = true.obs;
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);
-
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // GlobalKey<FormState> formKey get _formKey;
   late AnimationController _animationController;
   late Animation<double> _animation;
   final animationValue = 0.0.obs;

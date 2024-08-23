@@ -45,5 +45,23 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>fetch</string>
+	<string>remote-notification</string>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>https</string>
+	<string>http</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Bu uygulama, profil fotoğrafı çekmeniz için kamera erişimi istiyor.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Bu uygulama, profil fotoğrafı seçmeniz için fotoğraf kütüphanenize erişim istiyor.</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Bu uygulama, video çekerken ses kaydı yapabilmek için mikrofon erişimi istiyor.</string>
 </dict>
 </plist>

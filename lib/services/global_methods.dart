@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tuncbt/constants/constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tuncbt/config/constants.dart';
 
 class GlobalMethod {
   static void showErrorDialog({
@@ -30,13 +31,11 @@ class GlobalMethod {
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.network(
-            'https://image.flaticon.com/icons/png/128/1252/1252006.png',
-            height: 20,
-            width: 20,
-          ),
-        ),
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.person,
+              size: 20.r,
+            )),
         const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text('Error occurred'),
