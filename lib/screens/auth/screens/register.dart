@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/screens/auth/auth_controller.dart';
 
@@ -34,21 +35,21 @@ class SignUp extends GetView<AuthController> {
             child: ListView(
               children: [
                 SizedBox(height: size.height * 0.1),
-                const Text('SignUp',
+                Text('Register',
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30)),
+                        fontSize: 30.sp)),
                 const SizedBox(height: 10),
                 RichText(
                   text: TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                           text: 'Already have an account',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16)),
+                              fontSize: 24.sp)),
                       const TextSpan(text: '    '),
                       TextSpan(
                         recognizer: TapGestureRecognizer()
@@ -56,14 +57,14 @@ class SignUp extends GetView<AuthController> {
                         text: 'Login',
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            color: Colors.blue.shade300,
+                            color: Colors.red[200],
                             fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontSize: 20.sp),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 20.h),
                 Form(
                   key: _signUpFormKey,
                   child: Column(
@@ -77,10 +78,10 @@ class SignUp extends GetView<AuthController> {
                               validator: (value) => value!.isEmpty
                                   ? "This Field is missing"
                                   : null,
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
                                 hintText: 'Full name',
-                                hintStyle: TextStyle(color: Colors.white),
+                                hintStyle: TextStyle(color: Colors.black),
                                 enabledBorder: UnderlineInputBorder(
                                     borderSide:
                                         BorderSide(color: Colors.white)),
@@ -102,10 +103,12 @@ class SignUp extends GetView<AuthController> {
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                             width: 1, color: Colors.white),
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius:
+                                            BorderRadius.circular(16.r),
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius:
+                                            BorderRadius.circular(16.r),
                                         child: controller.imageFile.value ==
                                                 null
                                             ? Image.network(
@@ -153,10 +156,10 @@ class SignUp extends GetView<AuthController> {
                             value!.isEmpty || !value.contains("@")
                                 ? "Please enter a valid Email address"
                                 : null,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
                           hintText: 'Email',
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white)),
                           focusedBorder: UnderlineInputBorder(
@@ -173,7 +176,7 @@ class SignUp extends GetView<AuthController> {
                                 value!.isEmpty || value.length < 7
                                     ? "Please enter a valid password"
                                     : null,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               suffixIcon: GestureDetector(
                                 onTap: controller.toggleObscureText,
@@ -184,7 +187,7 @@ class SignUp extends GetView<AuthController> {
                                     color: Colors.white),
                               ),
                               hintText: 'Password',
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: const TextStyle(color: Colors.black),
                               enabledBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white)),
                               focusedBorder: const UnderlineInputBorder(
@@ -198,10 +201,10 @@ class SignUp extends GetView<AuthController> {
                         controller: controller.phoneNumberController,
                         validator: (value) =>
                             value!.isEmpty ? "This Field is missing" : null,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
                           hintText: 'Phone number',
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white)),
                           focusedBorder: UnderlineInputBorder(
@@ -218,10 +221,14 @@ class SignUp extends GetView<AuthController> {
                           controller: controller.positionCPController,
                           validator: (value) =>
                               value!.isEmpty ? "This field is missing" : null,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                           decoration: const InputDecoration(
+                            suffixIcon: Icon(
+                              Icons.arrow_downward_rounded,
+                              color: Colors.black,
+                            ),
                             hintText: 'Position in the company',
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white)),
                             focusedBorder: UnderlineInputBorder(
@@ -236,7 +243,7 @@ class SignUp extends GetView<AuthController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 80),
+                SizedBox(height: 40.h),
                 Obx(() => controller.isLoading.value
                     ? const Center(child: CircularProgressIndicator())
                     : MaterialButton(
@@ -245,12 +252,12 @@ class SignUp extends GetView<AuthController> {
                             controller.signUp();
                           }
                         },
-                        color: Colors.pink.shade700,
+                        color: Colors.red[900],
                         elevation: 8,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(13)),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                            borderRadius: BorderRadius.circular(13.r)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14.r),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -258,9 +265,13 @@ class SignUp extends GetView<AuthController> {
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20)),
-                              SizedBox(width: 8),
-                              Icon(Icons.person_add, color: Colors.white),
+                                      fontSize: 20.sp)),
+                              SizedBox(width: 16.r),
+                              Icon(
+                                Icons.person_add,
+                                color: Colors.white,
+                                size: 30.r,
+                              ),
                             ],
                           ),
                         ),

@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tuncbt/models/comment_model.dart';
+import 'package:tuncbt/models/user_model.dart';
+import 'package:tuncbt/models/task_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:tuncbt/config/constants.dart';
@@ -11,28 +16,17 @@ class InnerScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Profile Screen variables
+  // Common variables
   final RxBool isLoading = false.obs;
-  final RxString phoneNumber = "".obs;
-  final RxString email = "".obs;
-  final RxString name = "".obs;
-  final RxString job = ''.obs;
-  final RxString imageUrl = "".obs;
-  final RxString joinedAt = " ".obs;
-  final RxBool isSameUser = false.obs;
-  final RxString uploadedBy = "".obs;
+  final RxString currentUserId = ''.obs;
 
-  // Task Details Screen variables
-  final RxBool isDone = false.obs;
-  final RxString taskTitle = "".obs;
-  final RxString taskDescription = "".obs;
-  final RxString authorName = "".obs;
-  final RxString authorPosition = "".obs;
-  final RxString userImageUrl = "".obs;
-  final RxString postedDate = "".obs;
-  final RxString deadlineDate = "".obs;
-  final RxBool isDeadlineAvailable = false.obs;
-  final isCommenting = false.obs;
+  // User related variables
+  final Rx<UserModel> currentUser = UserModel.empty().obs;
+  final RxBool isSameUser = false.obs;
+
+  // Task related variables
+  final Rx<TaskModel> currentTask = TaskModel.empty().obs;
+  final RxBool isCommenting = false.obs;
   final commentController = TextEditingController();
 
   // Upload Task variables
@@ -44,8 +38,25 @@ class InnerScreenController extends GetxController {
   final TextEditingController deadlineDateController =
       TextEditingController(text: 'Choose task Deadline date');
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  Rx<DateTime?> picked = Rx<DateTime?>(null);
-  Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
+  final Rx<DateTime?> picked = Rx<DateTime?>(null);
+  final Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(currentUserId, (_) => getUserData(currentUserId.value));
+    if (Get.arguments != null && Get.arguments['userId'] != null) {
+      currentUserId.value = Get.arguments['userId'];
+    } else {
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        currentUserId.value = user.uid;
+      } else {
+        log("No user ID provided and no user is logged in");
+      }
+    }
+  }
+
   Future<void> getUserData(String userId) async {
     try {
       isLoading.value = true;
@@ -53,137 +64,55 @@ class InnerScreenController extends GetxController {
           await _firestore.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
-        email.value = userDoc.get('email') as String? ?? '';
-        name.value = userDoc.get('name') as String? ?? '';
-        job.value = userDoc.get('positionInCompany') as String? ?? '';
-        phoneNumber.value = userDoc.get('phoneNumber') as String? ?? '';
-        imageUrl.value = userDoc.get('userImage') as String? ?? '';
-
-        Timestamp? joinedAtTimeStamp = userDoc.get('createdAt') as Timestamp?;
-        if (joinedAtTimeStamp != null) {
-          var joinedDate = joinedAtTimeStamp.toDate();
-          joinedAt.value =
-              '${joinedDate.year}-${joinedDate.month.toString().padLeft(2, '0')}-${joinedDate.day.toString().padLeft(2, '0')}';
-        } else {
-          joinedAt.value = '';
-        }
-
+        currentUser.value = UserModel.fromFirestore(userDoc);
         final User? user = _auth.currentUser;
-        final uid = user?.uid;
-        isSameUser.value = uid == userId;
+        isSameUser.value = user?.uid == userId;
       } else {
-        // Handle the case where the user document doesn't exist
-        print('User document does not exist for userId: $userId');
-        // You might want to set default values or show an error message to the user
-        email.value = '';
-        name.value = '';
-        job.value = '';
-        phoneNumber.value = '';
-        imageUrl.value = '';
-        joinedAt.value = '';
-        isSameUser.value = false;
+        log('User document does not exist for userId: $userId');
+        currentUser.value = UserModel.empty();
       }
     } catch (e) {
-      // Handle any other errors that might occur
-      print('Error retrieving user data: $e');
-      // You might want to show an error message to the user
+      log('Error retrieving user data: $e');
+      Get.snackbar('Error', 'Failed to retrieve user data');
     } finally {
       isLoading.value = false;
     }
   }
 
-  void openWhatsAppChat() async {
-    final url = 'https://wa.me/${phoneNumber.value}?text=HelloWorld';
+  Future<void> launchURL(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
-      Get.snackbar('Error', 'Could not launch WhatsApp');
+      Get.snackbar('Error', 'Could not launch $url');
     }
   }
 
-  void mailTo() async {
-    final url = 'mailto:${email.value}';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      Get.snackbar('Error', 'Could not launch email client');
-    }
-  }
-
-  void callPhoneNumber() async {
-    final url = 'tel://${phoneNumber.value}';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      Get.snackbar('Error', 'Could not make a call');
-    }
-  }
+  void openWhatsAppChat() => launchURL(
+      'https://wa.me/${currentUser.value.phoneNumber}?text=HelloWorld');
+  void mailTo() => launchURL('mailto:${currentUser.value.email}');
+  void callPhoneNumber() => launchURL('tel://${currentUser.value.phoneNumber}');
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  // Task Details Screen methods
-  Future<void> getTaskData(String taskId, String taskUploadedBy) async {
+  Future<void> getTaskData(String taskId) async {
     try {
-      // Fetch user document
-      final DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(taskUploadedBy).get();
-
-      if (userDoc.exists) {
-        authorName.value = userDoc.get('name') ?? 'Unknown';
-        authorPosition.value =
-            userDoc.get('positionInCompany') ?? 'No position';
-        userImageUrl.value = userDoc.get('userImage') ?? '';
-      } else {
-        print('User document does not exist for ID: $taskUploadedBy');
-        // Set default values or handle the case when user document doesn't exist
-        authorName.value = 'Unknown User';
-        authorPosition.value = 'No position';
-        userImageUrl.value = '';
-      }
-
-      // Fetch task document
+      isLoading.value = true;
       final DocumentSnapshot taskDoc =
           await _firestore.collection('tasks').doc(taskId).get();
 
       if (taskDoc.exists) {
-        taskTitle.value = taskDoc.get('taskTitle') ?? 'No Title';
-        taskDescription.value =
-            taskDoc.get('taskDescription') ?? 'No Description';
-        isDone.value = taskDoc.get('isDone') ?? false;
-
-        Timestamp postedDateTimeStamp = taskDoc.get('createdAt');
-        Timestamp deadlineDateTimeStamp = taskDoc.get('deadlineDateTimeStamp');
-
-        deadlineDate.value = taskDoc.get('deadlineDate') ?? 'No Deadline';
-        uploadedBy.value = taskUploadedBy;
-
-        if (postedDateTimeStamp != null) {
-          var postDate = postedDateTimeStamp.toDate();
-          postedDate.value =
-              '${postDate.year}-${postDate.month}-${postDate.day}';
-        } else {
-          postedDate.value = 'Unknown';
-        }
-
-        if (deadlineDateTimeStamp != null) {
-          var date = deadlineDateTimeStamp.toDate();
-          isDeadlineAvailable.value = date.isAfter(DateTime.now());
-        } else {
-          isDeadlineAvailable.value = false;
-        }
+        currentTask.value = TaskModel.fromFirestore(taskDoc);
+        await getUserData(currentTask.value.uploadedBy);
       } else {
-        print('Task document does not exist for ID: $taskId');
-        // Handle the case when task document doesn't exist
-        // You might want to show an error message or navigate back
+        log('Task document does not exist for ID: $taskId');
+        Get.back(); // Navigate back or show an error message
       }
     } catch (e) {
-      print('Error fetching task data: $e');
-      // Handle any errors that occur during the process
-      // You might want to show an error message to the user
+      log('Error fetching task data: $e');
+      Get.snackbar('Error', 'Failed to fetch task data');
     } finally {
-      // Set isLoading to false here, after all operations are complete
       isLoading.value = false;
     }
   }
@@ -196,23 +125,29 @@ class InnerScreenController extends GetxController {
 
     try {
       final User? user = _auth.currentUser;
-      final String uid = user!.uid;
-      final String? name = user.displayName;
-      final String? userImageUrl = user.photoURL;
+      if (user == null) {
+        Get.snackbar('Error', 'User not logged in');
+        return;
+      }
 
-      final generatedId = const Uuid().v4();
+      CommentModel newComment = CommentModel(
+        id: const Uuid().v4(),
+        userId: user.uid,
+        name: currentUser.value.name,
+        userImageUrl: currentUser.value.userImage,
+        body: commentController.text,
+        time: DateTime.now(),
+      );
+
       await _firestore.collection('tasks').doc(taskID).update({
-        'taskComments': FieldValue.arrayUnion([
-          {
-            'userId': uid,
-            'commentId': generatedId,
-            'name': name,
-            'userImageUrl': userImageUrl,
-            'commentBody': commentController.text,
-            'time': Timestamp.now(),
-          }
-        ]),
+        'taskComments': FieldValue.arrayUnion([newComment.toMap()]),
       });
+
+      currentTask.update((task) {
+        task!.comments.add(newComment);
+      });
+
+      log("Comment successfully added to Firestore");
 
       await Fluttertoast.showToast(
         msg: "Your comment has been added",
@@ -223,7 +158,10 @@ class InnerScreenController extends GetxController {
 
       commentController.clear();
       isCommenting.value = false;
+
+      log("Comment process completed successfully");
     } catch (error) {
+      log("Error adding comment: $error");
       Get.snackbar('Error', 'Failed to add comment: $error');
     }
   }
@@ -235,13 +173,15 @@ class InnerScreenController extends GetxController {
   void updateTaskStatus(String taskId, bool newStatus) async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
-    if (uid == uploadedBy.value) {
+    if (uid == currentTask.value.uploadedBy) {
       try {
         await _firestore
             .collection('tasks')
             .doc(taskId)
             .update({'isDone': newStatus});
-        isDone.value = newStatus;
+        currentTask.update((task) {
+          task!.isDone = newStatus;
+        });
         Get.snackbar('Success', 'Task status updated');
       } catch (err) {
         Get.snackbar('Error', 'Action can\'t be performed');
@@ -251,45 +191,60 @@ class InnerScreenController extends GetxController {
     }
   }
 
-  // Upload Task methods
   void uploadTask() async {
-    final taskID = const Uuid().v4();
-    User? user = _auth.currentUser;
-    final uid = user!.uid;
-    final isValid = formKey.currentState!.validate();
-    if (isValid) {
-      if (deadlineDateController.text == 'Choose task Deadline date' ||
-          taskCategoryController.text == 'Choose task category') {
-        Get.snackbar('Error', 'Please pick everything');
-        return;
-      }
-      isLoading.value = true;
-      try {
-        await _firestore.collection('tasks').doc(taskID).set({
-          'taskId': taskID,
-          'uploadedBy': uid,
-          'taskTitle': taskTitleController.text,
-          'taskDescription': taskDescriptionController.text,
-          'deadlineDate': deadlineDateController.text,
-          'deadlineDateTimeStamp': deadlineDateTimeStamp.value,
-          'taskCategory': taskCategoryController.text,
-          'taskComments': [],
-          'isDone': false,
-          'createdAt': Timestamp.now(),
-        });
-        await Fluttertoast.showToast(
-            msg: "The task has been uploaded",
-            toastLength: Toast.LENGTH_LONG,
-            backgroundColor: Colors.grey,
-            fontSize: 18.0);
-        taskTitleController.clear();
-        taskDescriptionController.clear();
-        taskCategoryController.text = 'Choose task category';
-        deadlineDateController.text = 'Choose task Deadline date';
-      } finally {
-        isLoading.value = false;
-      }
+    if (!_validateForm()) return;
+
+    isLoading.value = true;
+    try {
+      await _saveTaskToFirestore();
+      _resetForm();
+      Fluttertoast.showToast(
+          msg: "The task has been uploaded",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.grey,
+          fontSize: 18.0);
+    } catch (e) {
+      log('Error uploading task: $e');
+      Get.snackbar('Error', 'Failed to upload task');
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  bool _validateForm() {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return false;
+    if (deadlineDateController.text == 'Choose task Deadline date' ||
+        taskCategoryController.text == 'Choose task category') {
+      Get.snackbar('Error', 'Please pick everything');
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _saveTaskToFirestore() async {
+    final taskID = const Uuid().v4();
+    final uid = _auth.currentUser!.uid;
+    final newTask = TaskModel(
+      id: taskID,
+      uploadedBy: uid,
+      title: taskTitleController.text,
+      description: taskDescriptionController.text,
+      deadline: deadlineDateTimeStamp.value!.toDate(),
+      deadlineDate: deadlineDateController.text,
+      category: taskCategoryController.text,
+      comments: [],
+      isDone: false,
+      createdAt: DateTime.now(),
+    );
+    await _firestore.collection('tasks').doc(taskID).set(newTask.toFirestore());
+  }
+
+  void _resetForm() {
+    taskTitleController.clear();
+    taskDescriptionController.clear();
+    taskCategoryController.text = 'Choose task category';
+    deadlineDateController.text = 'Choose task Deadline date';
   }
 
   void showTaskCategoriesDialog(BuildContext context) {
@@ -356,8 +311,7 @@ class InnerScreenController extends GetxController {
     if (picked.value != null) {
       deadlineDateController.text =
           '${picked.value!.year}-${picked.value!.month}-${picked.value!.day}';
-      deadlineDateTimeStamp.value = Timestamp.fromMicrosecondsSinceEpoch(
-          picked.value!.microsecondsSinceEpoch);
+      deadlineDateTimeStamp.value = Timestamp.fromDate(picked.value!);
     }
   }
 }

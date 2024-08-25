@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/widgets/comments_widget.dart';
+import 'package:tuncbt/models/task_model.dart';
+import 'package:tuncbt/models/comment_model.dart';
 
 class TaskDetailsScreen extends GetView<InnerScreenController> {
   static const routeName = "/task-details";
@@ -15,7 +17,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   TaskDetailsScreen({Key? key, required this.uploadedBy, required this.taskID})
       : super(key: key) {
     Get.put(InnerScreenController());
-    controller.getTaskData(taskID, uploadedBy);
+    controller.getTaskData(taskID);
   }
 
   @override
@@ -57,7 +59,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          controller.taskTitle.value,
+          controller.currentTask.value.title,
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Container(
@@ -99,17 +101,19 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
         Text('Uploaded by', style: _titleStyle()),
         const Spacer(),
         CircleAvatar(
-          radius: 25.r,
-          backgroundImage: NetworkImage(controller.userImageUrl.value.isEmpty
+          radius: 18.r,
+          backgroundImage: NetworkImage(controller
+                  .currentUser.value.userImage.isEmpty
               ? 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
-              : controller.userImageUrl.value),
+              : controller.currentUser.value.userImage),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 5.r),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(controller.authorName.value, style: _textStyle()),
-            Text(controller.authorPosition.value, style: _textStyle()),
+            Text(controller.currentUser.value.name, style: _textStyle()),
+            Text(controller.currentUser.value.positionInCompany,
+                style: _textStyle()),
           ],
         ),
       ],
@@ -119,17 +123,19 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   Widget _buildDateSection() {
     return Column(
       children: [
-        _buildInfoRow('Uploaded on:', controller.postedDate.value),
+        _buildInfoRow('Uploaded on:',
+            controller.currentTask.value.createdAt.toString().split(' ')[0]),
         SizedBox(height: 8.h),
-        _buildInfoRow('Deadline date:', controller.deadlineDate.value,
+        _buildInfoRow(
+            'Deadline date:', controller.currentTask.value.deadlineDate,
             valueColor: Colors.red),
         SizedBox(height: 10.h),
         Text(
-          controller.isDeadlineAvailable.value
+          controller.currentTask.value.deadline.isAfter(DateTime.now())
               ? 'Deadline is not finished yet'
               : 'Deadline passed',
           style: TextStyle(
-            color: controller.isDeadlineAvailable.value
+            color: controller.currentTask.value.deadline.isAfter(DateTime.now())
                 ? Colors.green
                 : Colors.red,
             fontSize: 14.sp,
@@ -170,7 +176,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
     return ElevatedButton.icon(
       onPressed: () => controller.updateTaskStatus(taskID, isDoneStatus),
       icon: Icon(
-        controller.isDone.value == isDoneStatus
+        controller.currentTask.value.isDone == isDoneStatus
             ? Icons.check_circle
             : Icons.circle_outlined,
         color: Colors.white,
@@ -195,7 +201,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
           children: [
             Text('Task Description', style: _titleStyle()),
             SizedBox(height: 10.h),
-            Text(controller.taskDescription.value, style: _textStyle()),
+            Text(controller.currentTask.value.description, style: _textStyle()),
           ],
         ),
       ),
@@ -260,43 +266,22 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   }
 
   Widget _buildCommentsList() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('tasks').doc(taskID).get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text('No Comments for this task'));
-        }
-
-        final data = snapshot.data!.data() as Map<String, dynamic>?;
-        final comments = data?['taskComments'] as List<dynamic>?;
-
-        if (comments == null || comments.isEmpty) {
-          return const Center(child: Text('No Comments for this task'));
-        }
-
-        return ListView.separated(
+    return Obx(() => ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: comments.length,
+          itemCount: controller.currentTask.value.comments.length,
           itemBuilder: (context, index) {
-            final comment = comments[index] as Map<String, dynamic>?;
-            if (comment == null) {
-              return const SizedBox.shrink();
-            }
+            final comment = controller.currentTask.value.comments[index];
             return CommentWidget(
-              commentId: comment['commentId'] as String? ?? '',
-              commenterId: comment['userId'] as String? ?? '',
-              commentBody: comment['commentBody'] as String? ?? '',
-              commenterImageUrl: comment['userImageUrl'] as String? ?? '',
-              commenterName: comment['name'] as String? ?? '',
+              commentId: comment.id,
+              commenterId: comment.userId,
+              commentBody: comment.body,
+              commenterImageUrl: comment.userImageUrl,
+              commenterName: comment.name,
             );
           },
           separatorBuilder: (context, index) => const Divider(),
-        );
-      },
-    );
+        ));
   }
 
   Widget _dividerWidget() {
@@ -305,12 +290,12 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
 
   TextStyle _textStyle() => TextStyle(
         color: AppTheme.textColor,
-        fontSize: 14.sp,
+        fontSize: 12.sp,
       );
 
   TextStyle _titleStyle() => TextStyle(
         color: AppTheme.primaryColor,
         fontWeight: FontWeight.bold,
-        fontSize: 16.sp,
+        fontSize: 14.sp,
       );
 }

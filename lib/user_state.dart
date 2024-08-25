@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/screens/auth/auth_bindings.dart';
-import 'package:tuncbt/screens/auth/screens/auth.dart';
+import 'package:tuncbt/screens/auth/screens/login.dart';
 import 'package:tuncbt/screens/tasks_screen/screens/tasks_screen.dart';
 import 'package:tuncbt/screens/tasks_screen/tasks_screen_bindings.dart';
 
@@ -29,7 +29,7 @@ class UserState extends StatelessWidget {
           return TasksScreen();
         } else {
           Get.put(AuthBindings());
-          return AuthScreen();
+          return Login();
         }
       },
     );

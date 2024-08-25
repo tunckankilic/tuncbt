@@ -1,8 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tuncbt/config/constants.dart';
-import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
+import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
+import 'package:tuncbt/screens/screens.dart';
 
 class CommentWidget extends StatelessWidget {
   final String commentId;
@@ -26,11 +28,17 @@ class CommentWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
       child: OpenContainer(
         transitionDuration: Duration(milliseconds: 500),
-        openBuilder: (context, _) => ProfileScreen(userID: commenterId),
+        openBuilder: (context, _) => GetBuilder<InnerScreenController>(
+          init: InnerScreenController(),
+          builder: (controller) => ProfileScreen(),
+        ),
         closedElevation: 0,
         closedColor: Colors.transparent,
         closedBuilder: (context, openContainer) => InkWell(
-          onTap: openContainer,
+          onTap: () {
+            Get.toNamed(ProfileScreen.routeName,
+                arguments: {'userId': commenterId});
+          },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -66,17 +74,24 @@ class CommentWidget extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20.r),
-          child: Image.network(
-            commenterImageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Icon(
-              Icons.person,
-              size: 24.sp,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
+          child: commenterImageUrl.isNotEmpty
+              ? Image.network(
+                  commenterImageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _defaultAvatar(context),
+                )
+              : _defaultAvatar(context),
         ),
       ),
+    );
+  }
+
+  Widget _defaultAvatar(BuildContext context) {
+    return Icon(
+      Icons.person,
+      size: 24.sp,
+      color: Theme.of(context).primaryColor,
     );
   }
 

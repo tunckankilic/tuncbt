@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(640, 1136),
+      designSize: const Size(320, 568),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'TuncBT',

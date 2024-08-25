@@ -35,8 +35,7 @@ class RouteManager {
       name: ProfileScreen.routeName,
       page: () {
         final args = Get.arguments as Map<String, dynamic>?;
-        final userID = args?['userID'] as String?;
-        return ProfileScreen(userID: userID ?? '');
+        return ProfileScreen();
       },
       binding: InnerScreenBindings(),
     ),

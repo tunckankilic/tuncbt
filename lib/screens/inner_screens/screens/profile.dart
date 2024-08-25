@@ -10,11 +10,7 @@ import 'package:tuncbt/widgets/drawer_widget.dart';
 class ProfileScreen extends GetView<InnerScreenController> {
   static const routeName = "/profile";
 
-  final String userID;
-
-  ProfileScreen({Key? key, required this.userID}) : super(key: key) {
-    controller.getUserData(userID);
-  }
+  ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +38,14 @@ class ProfileScreen extends GetView<InnerScreenController> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          controller.name.value,
+          controller.currentUser.value.name,
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Stack(
           fit: StackFit.expand,
           children: [
             Image.network(
-              controller.imageUrl.value,
+              controller.currentUser.value.userImage,
               fit: BoxFit.cover,
             ),
             Container(
@@ -102,8 +98,10 @@ class ProfileScreen extends GetView<InnerScreenController> {
               ),
             ),
             SizedBox(height: 10.h),
-            _infoRow(Icons.work, controller.job.value),
-            _infoRow(Icons.calendar_today, 'Joined ${controller.joinedAt.value}'),
+            _infoRow(
+                Icons.work, controller.currentUser.value.positionInCompany),
+            _infoRow(Icons.calendar_today,
+                'Joined ${controller.currentUser.value.createdAt.toString().split(' ')[0]}'),
           ],
         ),
       ),
@@ -128,8 +126,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
               ),
             ),
             SizedBox(height: 10.h),
-            _infoRow(Icons.email, controller.email.value),
-            _infoRow(Icons.phone, controller.phoneNumber.value),
+            _infoRow(Icons.email, controller.currentUser.value.email),
+            _infoRow(Icons.phone, controller.currentUser.value.phoneNumber),
           ],
         ),
       ),
@@ -207,7 +205,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.pink.shade700,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         ),
       ),

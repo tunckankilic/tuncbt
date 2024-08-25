@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/screens/auth/auth_controller.dart';
@@ -33,27 +34,27 @@ class Login extends GetView<AuthController> {
                 alignment: FractionalOffset(controller.animationValue.value, 0),
               )),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.r),
             child: ListView(
               children: [
-                SizedBox(height: size.height * 0.1),
-                const Text(
+                SizedBox(height: size.height * 0.1.h),
+                Text(
                   'Login',
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 30),
+                      fontSize: 36.sp),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 RichText(
                   text: TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: 'Don\'t have an account',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontSize: 24.sp),
                       ),
                       const TextSpan(text: '    '),
                       TextSpan(
@@ -63,15 +64,15 @@ class Login extends GetView<AuthController> {
                         text: 'Register',
                         style: TextStyle(
                           decoration: TextDecoration.underline,
-                          color: Colors.blue.shade300,
+                          color: Colors.red[200],
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 20.sp,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 Form(
                   key: _loginFormKey,
                   child: Column(
@@ -88,10 +89,10 @@ class Login extends GetView<AuthController> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
                           hintText: 'Email',
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.black),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white)),
                           focusedBorder: UnderlineInputBorder(
@@ -100,7 +101,7 @@ class Login extends GetView<AuthController> {
                               borderSide: BorderSide(color: Colors.red)),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Obx(() => TextFormField(
                             obscureText: controller.obscureText.value,
                             keyboardType: TextInputType.visiblePassword,
@@ -111,7 +112,7 @@ class Login extends GetView<AuthController> {
                               }
                               return null;
                             },
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               suffixIcon: GestureDetector(
                                 onTap: controller.toggleObscureText,
@@ -123,7 +124,7 @@ class Login extends GetView<AuthController> {
                                 ),
                               ),
                               hintText: 'Password',
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: const TextStyle(color: Colors.black),
                               enabledBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white)),
                               focusedBorder: const UnderlineInputBorder(
@@ -135,37 +136,37 @@ class Login extends GetView<AuthController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: TextButton(
                     onPressed: () => Get.to(() => const ForgetPasswordScreen()),
-                    child: const Text(
+                    child: Text(
                       'Forget password?',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 17,
+                        fontSize: 17.sp,
                         decoration: TextDecoration.underline,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 Obx(() => MaterialButton(
                       onPressed: controller.isLoading.value
                           ? null
                           : () => _submitFormOnLogin(),
                       color: Colors.pink.shade700,
-                      elevation: 8,
+                      elevation: 8.r,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(13)),
+                          borderRadius: BorderRadius.circular(13.r)),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: controller.isLoading.value
                             ? const CircularProgressIndicator(
                                 color: Colors.white)
-                            : const Row(
+                            : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
@@ -173,10 +174,10 @@ class Login extends GetView<AuthController> {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                                        fontSize: 20.sp),
                                   ),
-                                  SizedBox(width: 8),
-                                  Icon(Icons.login, color: Colors.white),
+                                  SizedBox(width: 8.w),
+                                  const Icon(Icons.login, color: Colors.white),
                                 ],
                               ),
                       ),

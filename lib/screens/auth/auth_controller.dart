@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/config/constants.dart';
+import 'package:tuncbt/models/user_model.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -112,18 +114,28 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       await storageRef.putFile(imageFile.value!);
       String imageUrl = await storageRef.getDownloadURL();
 
-      await _firestore.collection('users').doc(uid).set({
-        'id': uid,
-        'name': fullNameController.text,
-        'email': emailController.text,
-        'userImage': imageUrl,
-        'phoneNumber': phoneNumberController.text,
-        'positionInCompany': positionCPController.text,
-        'createdAt': Timestamp.now(),
-      });
+      UserModel newUser = UserModel(
+        id: uid,
+        name: fullNameController.text,
+        email: emailController.text,
+        userImage: imageUrl,
+        phoneNumber: phoneNumberController.text,
+        positionInCompany: positionCPController.text,
+        createdAt: DateTime.now(),
+      );
+
+      await _firestore.collection('users').doc(uid).set(newUser.toFirestore());
+
+      await authResult.user!.updateDisplayName(newUser.name);
+      await authResult.user!.updatePhotoURL(newUser.userImage);
+      await authResult.user!.reload();
+
+      print(
+          "User signed up successfully. UID: $uid, Name: ${newUser.name}, PhotoURL: ${newUser.userImage}");
 
       Get.back();
     } catch (error) {
+      print("Error during sign up: $error");
       Get.snackbar('Error', error.toString());
     } finally {
       isLoading.value = false;
@@ -190,7 +202,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     Get.dialog(
       AlertDialog(
         title: Text('Choose your Job',
-            style: TextStyle(fontSize: 20, color: Colors.pink.shade800)),
+            style: TextStyle(fontSize: 20.sp, color: Colors.pink.shade800)),
         content: SizedBox(
           width: Get.width * 0.9,
           child: ListView.builder(
@@ -204,8 +216,22 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
                 },
                 child: Row(
                   children: [
-                    Icon(Icons.check_circle_rounded,
-                        color: Colors.red.shade200),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 30.r,
+                      width: 30.r,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.r),
+                          color: Colors.red[900]),
+                      child: Text(
+                        index.toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(

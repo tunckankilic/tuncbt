@@ -19,7 +19,7 @@ class DrawerController extends GetxController {
 
   void navigateToProfile() {
     final String uid = _auth.currentUser!.uid;
-    Get.off(() => ProfileScreen(userID: uid), binding: InnerScreenBindings());
+    Get.off(() => ProfileScreen(), binding: InnerScreenBindings());
   }
 
   void navigateToAllWorkers() {
@@ -140,7 +140,7 @@ class DrawerWidget extends StatelessWidget {
 
   Widget _buildDrawerHeader() {
     return Container(
-      height: 150.h,
+      height: 170.h,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
@@ -153,13 +153,17 @@ class DrawerWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 80.w,
-            height: 80.w,
+            width: 100.w,
+            height: 70.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 2.w),
             ),
-            child: ClipOval(child: Icon(Icons.person)),
+            child: ClipOval(
+                child: Icon(
+              Icons.person,
+              size: 30.r,
+            )),
           ),
           SizedBox(height: 10.h),
           Text(

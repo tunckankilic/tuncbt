@@ -31,7 +31,7 @@ class AllWorkersWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       child: OpenContainer(
         transitionDuration: Duration(milliseconds: 500),
-        openBuilder: (context, _) => ProfileScreen(userID: userID),
+        openBuilder: (context, _) => ProfileScreen(),
         closedElevation: 5,
         closedShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),

@@ -41,7 +41,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
           ),
         ),
         background: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -63,7 +63,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
   Widget _buildWorkersList() {
     return Obx(() {
       if (controller.isLoading.value) {
-        return SliverFillRemaining(
+        return const SliverFillRemaining(
           child: Center(child: CircularProgressIndicator()),
         );
       } else if (controller.workers.isEmpty) {
@@ -107,7 +107,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
 
   Widget _buildFloatingActionButton() {
     return OpenContainer(
-      transitionDuration: Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 500),
       openBuilder: (context, _) => AddWorkerScreen(),
       closedElevation: 6.0,
       closedShape: RoundedRectangleBorder(
@@ -117,7 +117,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
       closedBuilder: (context, openContainer) => FloatingActionButton(
         onPressed: openContainer,
         backgroundColor: AppTheme.accentColor,
-        child: Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -128,8 +128,8 @@ class AddWorkerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Implement your AddWorkerScreen here
     return Scaffold(
-      appBar: AppBar(title: Text('Add Worker')),
-      body: Center(child: Text('Add Worker Form')),
+      appBar: AppBar(title: const Text('Add Worker')),
+      body: const Center(child: Text('Add Worker Form')),
     );
   }
 }
