@@ -1,20 +1,25 @@
 import 'dart:io';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:tuncbt/models/user_model.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/config/constants.dart';
-import 'package:tuncbt/models/user_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:tuncbt/screens/auth/screens/register.dart';
+import 'package:tuncbt/screens/screens.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -26,12 +31,14 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final obscureText = true.obs;
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // GlobalKey<FormState> formKey get _formKey;
+  final isSocialSignIn = false.obs;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   late AnimationController _animationController;
   late Animation<double> _animation;
   final animationValue = 0.0.obs;
-
+  final socialMediaPhotoUrl = ''.obs;
   @override
   void onInit() {
     super.onInit();
@@ -72,7 +79,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         email: emailController.text.trim().toLowerCase(),
         password: passwordController.text.trim(),
       );
-      Get.back();
+      Get.offAllNamed(TasksScreen.routeName);
     } catch (error) {
       Get.snackbar('Error', error.toString());
     } finally {
@@ -95,24 +102,29 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  Future<void> signUp() async {
+  Future<void> signUp({bool isSocial = false}) async {
     isLoading.value = true;
     try {
-      if (imageFile.value == null) {
-        Get.snackbar('Error', 'Please pick an image');
-        return;
+      String uid = _auth.currentUser?.uid ?? '';
+      String imageUrl = '';
+
+      if (!isSocial) {
+        UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+          email: emailController.text.trim().toLowerCase(),
+          password: passwordController.text.trim(),
+        );
+        uid = authResult.user!.uid;
       }
 
-      UserCredential authResult = await _auth.createUserWithEmailAndPassword(
-        email: emailController.text.trim().toLowerCase(),
-        password: passwordController.text.trim(),
-      );
-
-      String uid = authResult.user!.uid;
-      String fileName = '$uid.jpg';
-      Reference storageRef = _storage.ref().child('userImages').child(fileName);
-      await storageRef.putFile(imageFile.value!);
-      String imageUrl = await storageRef.getDownloadURL();
+      if (imageFile.value != null) {
+        String fileName = '$uid.jpg';
+        Reference storageRef =
+            _storage.ref().child('userImages').child(fileName);
+        await storageRef.putFile(imageFile.value!);
+        imageUrl = await storageRef.getDownloadURL();
+      } else if (isSocial) {
+        imageUrl = _auth.currentUser?.photoURL ?? '';
+      }
 
       UserModel newUser = UserModel(
         id: uid,
@@ -126,19 +138,92 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
       await _firestore.collection('users').doc(uid).set(newUser.toFirestore());
 
-      await authResult.user!.updateDisplayName(newUser.name);
-      await authResult.user!.updatePhotoURL(newUser.userImage);
-      await authResult.user!.reload();
+      if (!isSocial) {
+        await _auth.currentUser!.updateDisplayName(newUser.name);
+        await _auth.currentUser!.updatePhotoURL(newUser.userImage);
+        await _auth.currentUser!.reload();
+      }
 
-      print(
-          "User signed up successfully. UID: $uid, Name: ${newUser.name}, PhotoURL: ${newUser.userImage}");
-
-      Get.back();
+      Get.offAllNamed(TasksScreen.routeName);
     } catch (error) {
-      print("Error during sign up: $error");
       Get.snackbar('Error', error.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      await _checkAndCreateUser(userCredential.user!);
+    } catch (error) {
+      Get.snackbar('Error', error.toString());
+    }
+  }
+
+  Future<void> signInWithApple() async {
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+      UserCredential userCredential =
+          await _auth.signInWithCredential(oauthCredential);
+      await _checkAndCreateUser(userCredential.user!);
+    } catch (error) {
+      Get.snackbar('Error', error.toString());
+    }
+  }
+
+  Future<void> _checkAndCreateUser(User user) async {
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(user.uid).get();
+
+    if (!userDoc.exists ||
+        !_isUserDataComplete(userDoc.data() as Map<String, dynamic>?)) {
+      isSocialSignIn.value = true;
+      fullNameController.text = user.displayName ?? '';
+      emailController.text = user.email ?? '';
+      if (user.photoURL != null) {
+        await _downloadAndSetProfileImage(user.photoURL!);
+      }
+      Get.offAll(() => SignUp()); // SignUp sayfasına yönlendir
+    } else {
+      Get.offAllNamed(TasksScreen.routeName);
+    }
+  }
+
+  bool _isUserDataComplete(Map<String, dynamic>? userData) {
+    return userData != null &&
+        userData['name'] != null &&
+        userData['email'] != null &&
+        userData['phoneNumber'] != null &&
+        userData['positionInCompany'] != null;
+  }
+
+  Future<void> _downloadAndSetProfileImage(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final file = File('${documentDirectory.path}/profile.jpg');
+      file.writeAsBytesSync(response.bodyBytes);
+      imageFile.value = file;
+    } catch (e) {
+      print("Error downloading profile image: $e");
     }
   }
 
@@ -202,7 +287,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     Get.dialog(
       AlertDialog(
         title: Text('Choose your Job',
-            style: TextStyle(fontSize: 20.sp, color: Colors.pink.shade800)),
+            style: TextStyle(fontSize: 20, color: Colors.pink.shade800)),
         content: SizedBox(
           width: Get.width * 0.9,
           child: ListView.builder(
@@ -218,18 +303,19 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
                   children: [
                     Container(
                       alignment: Alignment.center,
-                      height: 30.r,
-                      width: 30.r,
+                      height: 30,
+                      width: 30,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.r),
-                          color: Colors.red[900]),
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.red[900],
+                      ),
                       child: Text(
                         index.toString(),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18.sp),
+                            fontSize: 18),
                       ),
                     ),
                     Padding(
@@ -256,5 +342,18 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Widget defaultImage() {
+    return Image.network(
+      'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png',
+      fit: BoxFit.cover,
+    );
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
+    Get.offAllNamed('/login');
   }
 }

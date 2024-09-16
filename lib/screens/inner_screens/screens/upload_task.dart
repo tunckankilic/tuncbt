@@ -4,12 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
+import 'package:tuncbt/services/push_notifications.dart';
 
 class UploadTask extends GetView<InnerScreenController> {
   static const routeName = "/upload-task";
 
-  const UploadTask({Key? key}) : super(key: key);
+  UploadTask({Key? key}) : super(key: key);
 
+  final PushNotificationSystems _notificationSystems =
+      Get.find<PushNotificationSystems>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +177,7 @@ class UploadTask extends GetView<InnerScreenController> {
         () => controller.isLoading.value
             ? const CircularProgressIndicator()
             : ElevatedButton.icon(
-                onPressed: controller.uploadTask,
+                onPressed: _uploadTaskAndNotify,
                 icon: const Icon(Icons.upload_file),
                 label: const Text('Upload Task'),
                 style: ElevatedButton.styleFrom(
@@ -192,5 +195,43 @@ class UploadTask extends GetView<InnerScreenController> {
               ),
       ),
     );
+  }
+
+  void _uploadTaskAndNotify() async {
+    if (controller.formKey.currentState!.validate()) {
+      try {
+        await controller.uploadTask();
+        // Görev başarıyla yüklendi, bildirim oluştur
+        await _createTaskAddedNotification();
+        Get.snackbar(
+          'Success',
+          'Task uploaded and notification created',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } catch (e) {
+        print('Error uploading task: $e');
+        Get.snackbar(
+          'Error',
+          'Failed to upload task',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    }
+  }
+
+  Future<void> _createTaskAddedNotification() async {
+    String? taskID = await controller.getLastUploadedTaskID();
+    String uploadedBy = controller
+        .getCurrentUserId(); // Bu metodu InnerScreenController'a eklemelisiniz
+    if (taskID != null) {
+      await Get.find<PushNotificationSystems>()
+          .createTaskAddedNotification(taskID, uploadedBy);
+    } else {
+      print('Failed to get the last uploaded task ID');
+    }
   }
 }

@@ -12,7 +12,20 @@
           "package_name": "site.tunckankilic.tuncbt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "610259100358-l1aeemfe14p6tc0ai3f5jfkblknn4qba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "site.tunckankilic.tuncbt",
+            "certificate_hash": "e6f233ea60f0fb74484ced1929c3f3294f6f6111"
+          }
+        },
+        {
+          "client_id": "610259100358-cju4hgggmhrtidcvlgk20efk9gn12rpe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAkwiNCCAf5AKgwP2xnsOiIAVp42Iddjg4"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610259100358-cju4hgggmhrtidcvlgk20efk9gn12rpe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "610259100358-r28uvjd6bcavol7gb3h8t6p1v6263pdd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "site.tunckankilic.tuncbt"
+              }
+            }
+          ]
         }
       }
     }

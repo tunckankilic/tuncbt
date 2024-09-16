@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
+import 'package:tuncbt/screens/inner_screens/widgets/safe_profile_image.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/widgets/drawer_widget.dart';
 
@@ -18,7 +19,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
       drawer: DrawerWidget(),
       body: Obx(
         () => controller.isLoading.value
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : CustomScrollView(
                 slivers: [
                   _buildSliverAppBar(context),
@@ -44,9 +45,10 @@ class ProfileScreen extends GetView<InnerScreenController> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              controller.currentUser.value.userImage,
-              fit: BoxFit.cover,
+            SafeProfileImage(
+              imageUrl: controller.currentUser.value.userImage,
+              size:
+                  MediaQuery.of(context).size.width, // Ekran genişliğini kullan
             ),
             Container(
               decoration: BoxDecoration(
@@ -184,7 +186,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
         padding: EdgeInsets.all(16.w),
       ),
       child: Icon(icon, color: Colors.white, size: 24.sp),
@@ -198,7 +200,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
           controller.signOut();
           Get.offAll(() => const UserState());
         },
-        icon: Icon(Icons.logout, color: Colors.white),
+        icon: const Icon(Icons.logout, color: Colors.white),
         label: Text(
           'Logout',
           style: TextStyle(color: Colors.white, fontSize: 16.sp),

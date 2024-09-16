@@ -57,6 +57,10 @@ class InnerScreenController extends GetxController {
     }
   }
 
+  String getCurrentUserId() {
+    return FirebaseAuth.instance.currentUser?.uid ?? '';
+  }
+
   Future<void> getUserData(String userId) async {
     try {
       isLoading.value = true;
@@ -147,6 +151,9 @@ class InnerScreenController extends GetxController {
         task!.comments.add(newComment);
       });
 
+      // Yorum bildirimi oluştur
+      await _createCommentNotification(taskID, newComment);
+
       log("Comment successfully added to Firestore");
 
       await Fluttertoast.showToast(
@@ -166,24 +173,48 @@ class InnerScreenController extends GetxController {
     }
   }
 
+  Future<void> _createCommentNotification(
+      String taskID, CommentModel comment) async {
+    try {
+      await _firestore.collection('notifications').add({
+        'message': '${comment.name} commented on a task',
+        'taskId': taskID,
+        'commentId': comment.id,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+        'type': 'new_comment',
+      });
+      log("Comment notification created successfully");
+    } catch (e) {
+      log('Error creating comment notification: $e');
+    }
+  }
+
   void toggleCommenting() {
     isCommenting.value = !isCommenting.value;
   }
 
-  void updateTaskStatus(String taskId, bool newStatus) async {
+  Future<void> updateTaskStatus(String taskId, bool newStatus) async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
+
     if (uid == currentTask.value.uploadedBy) {
       try {
         await _firestore
             .collection('tasks')
             .doc(taskId)
             .update({'isDone': newStatus});
+
         currentTask.update((task) {
           task!.isDone = newStatus;
         });
+
+        // Create Notification
+        await _createStatusUpdateNotification(taskId, newStatus);
+
         Get.snackbar('Success', 'Task status updated');
       } catch (err) {
+        log('Error updating task status: $err');
         Get.snackbar('Error', 'Action can\'t be performed');
       }
     } else {
@@ -191,12 +222,50 @@ class InnerScreenController extends GetxController {
     }
   }
 
-  void uploadTask() async {
+  Future<void> _createStatusUpdateNotification(
+      String taskId, bool newStatus) async {
+    try {
+      await _firestore.collection('notifications').add({
+        'message':
+            'Task status updated to ${newStatus ? "completed" : "incomplete"}',
+        'taskId': taskId,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+        'type': 'status_update',
+      });
+    } catch (e) {
+      log('Error creating status update notification: $e');
+    }
+  }
+
+  Future<String?> getLastUploadedTaskID() async {
+    // Get The Task ID
+    try {
+      var querySnapshot = await _firestore
+          .collection('tasks')
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.id;
+      }
+    } catch (e) {
+      log('Error getting last uploaded task ID: $e');
+    }
+    return null;
+  }
+
+  Future<void> uploadTask() async {
     if (!_validateForm()) return;
 
     isLoading.value = true;
     try {
-      await _saveTaskToFirestore();
+      // Save To Firestore
+      String taskID = await _saveTaskToFirestore();
+
+      // Create Notification
+      await _createNotification(taskID);
+
       _resetForm();
       Fluttertoast.showToast(
           msg: "The task has been uploaded",
@@ -211,18 +280,7 @@ class InnerScreenController extends GetxController {
     }
   }
 
-  bool _validateForm() {
-    final isValid = formKey.currentState!.validate();
-    if (!isValid) return false;
-    if (deadlineDateController.text == 'Choose task Deadline date' ||
-        taskCategoryController.text == 'Choose task category') {
-      Get.snackbar('Error', 'Please pick everything');
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> _saveTaskToFirestore() async {
+  Future<String> _saveTaskToFirestore() async {
     final taskID = const Uuid().v4();
     final uid = _auth.currentUser!.uid;
     final newTask = TaskModel(
@@ -238,6 +296,27 @@ class InnerScreenController extends GetxController {
       createdAt: DateTime.now(),
     );
     await _firestore.collection('tasks').doc(taskID).set(newTask.toFirestore());
+    return taskID;
+  }
+
+  Future<void> _createNotification(String taskId) async {
+    await _firestore.collection('notifications').add({
+      'message': 'Yeni görev eklendi',
+      'taskId': taskId,
+      'createdAt': FieldValue.serverTimestamp(),
+      'read': false,
+    });
+  }
+
+  bool _validateForm() {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return false;
+    if (deadlineDateController.text == 'Choose task Deadline date' ||
+        taskCategoryController.text == 'Choose task category') {
+      Get.snackbar('Error', 'Please pick everything');
+      return false;
+    }
+    return true;
   }
 
   void _resetForm() {

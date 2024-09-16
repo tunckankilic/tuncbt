@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:tuncbt/screens/all_workers/all_workers_bindings.dart';
-import 'package:tuncbt/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/screens/auth/screens/auth.dart';
 import 'package:tuncbt/screens/bindings.dart';
 import 'package:tuncbt/screens/screens.dart';

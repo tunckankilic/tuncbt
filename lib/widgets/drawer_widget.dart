@@ -27,7 +27,7 @@ class DrawerController extends GetxController {
   }
 
   void navigateToAddTask() {
-    Get.to(() => const UploadTask(), binding: InnerScreenBindings());
+    Get.to(() => UploadTask(), binding: InnerScreenBindings());
   }
 
   void logout() {

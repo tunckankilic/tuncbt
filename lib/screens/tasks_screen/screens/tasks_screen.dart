@@ -47,12 +47,6 @@ class TasksScreen extends GetView<TasksScreenController> {
           ),
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () => controller.showTaskCategoriesDialog(context),
-          icon: const Icon(Icons.filter_list_outlined, color: Colors.white),
-        )
-      ],
     );
   }
 
