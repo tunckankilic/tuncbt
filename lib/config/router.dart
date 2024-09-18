@@ -33,7 +33,10 @@ class RouteManager {
       name: ProfileScreen.routeName,
       page: () {
         final args = Get.arguments as Map<String, dynamic>?;
-        return ProfileScreen();
+        return ProfileScreen(
+          userId: args?['userId'] as String? ?? '',
+          userType: args?['userType'] as UserType? ?? UserType.currentUser,
+        );
       },
       binding: InnerScreenBindings(),
     ),

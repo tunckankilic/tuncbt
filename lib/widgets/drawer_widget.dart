@@ -19,7 +19,7 @@ class DrawerController extends GetxController {
 
   void navigateToProfile() {
     final String uid = _auth.currentUser!.uid;
-    Get.off(() => ProfileScreen(), binding: InnerScreenBindings());
+    Get.off(() => ProfileScreen(userId: uid), binding: InnerScreenBindings());
   }
 
   void navigateToAllWorkers() {

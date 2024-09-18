@@ -121,6 +121,39 @@ class InnerScreenController extends GetxController {
     }
   }
 
+  Future<UserModel> getUserById(String userId) async {
+    try {
+      final DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        return UserModel.fromFirestore(userDoc);
+      } else {
+        log('User document does not exist for userId: $userId');
+        return UserModel.empty();
+      }
+    } catch (e) {
+      log('Error retrieving user data: $e');
+      throw Exception('Failed to retrieve user data');
+    }
+  }
+
+  Future<void> loadUserData(String userId) async {
+    try {
+      isLoading.value = true;
+      final userData = await getUserById(userId);
+      currentUser.value = userData;
+
+      final User? user = _auth.currentUser;
+      isSameUser.value = user?.uid == userId;
+    } catch (e) {
+      log('Error loading user data: $e');
+      Get.snackbar('Error', 'Failed to load user data');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> addComment(String taskID) async {
     if (commentController.text.length < 7) {
       Get.snackbar('Error', 'Comment can\'t be less than 7 characters');

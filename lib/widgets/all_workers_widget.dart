@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:tuncbt/screens/inner_screens/inner_screen_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tuncbt/config/constants.dart';
 import 'package:tuncbt/screens/inner_screens/screens/profile.dart';
@@ -31,7 +33,15 @@ class AllWorkersWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       child: OpenContainer(
         transitionDuration: Duration(milliseconds: 500),
-        openBuilder: (context, _) => ProfileScreen(),
+        openBuilder: (context, _) {
+          final controller = Get.put(InnerScreenController());
+          controller.loadUserData(userID);
+
+          return ProfileScreen(
+            userId: userID,
+            userType: UserType.worker,
+          );
+        },
         closedElevation: 5,
         closedShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),

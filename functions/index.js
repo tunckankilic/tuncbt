@@ -4,7 +4,7 @@ admin.initializeApp();
 
 exports.sendNotification = functions.firestore
     .document("notifications/{notificationId}")
-    .onCreate(async (snap, context) => {
+    .onCreate(async (snap, _context) => {
       const notification = snap.data();
 
       const message = {

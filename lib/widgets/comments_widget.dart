@@ -28,17 +28,14 @@ class CommentWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
       child: OpenContainer(
         transitionDuration: Duration(milliseconds: 500),
-        openBuilder: (context, _) => GetBuilder<InnerScreenController>(
-          init: InnerScreenController(),
-          builder: (controller) => ProfileScreen(),
+        openBuilder: (context, _) => ProfileScreen(
+          userId: commenterId,
+          userType: UserType.commenter,
         ),
         closedElevation: 0,
         closedColor: Colors.transparent,
         closedBuilder: (context, openContainer) => InkWell(
-          onTap: () {
-            Get.toNamed(ProfileScreen.routeName,
-                arguments: {'userId': commenterId});
-          },
+          onTap: openContainer,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
