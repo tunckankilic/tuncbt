@@ -27,8 +27,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final positionCPController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
   final obscureText = true.obs;
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);
@@ -40,6 +40,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   late Animation<double> _animation;
   final animationValue = 0.0.obs;
   final socialMediaPhotoUrl = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -68,43 +69,108 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     fullNameController.dispose();
     phoneNumberController.dispose();
     positionCPController.dispose();
+    confirmPasswordController.dispose();
     super.onClose();
   }
 
   void toggleObscureText() => obscureText.toggle();
 
+  String _getReadableAuthError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'user-not-found':
+        return 'No user found with this email address.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'invalid-email':
+        return 'Invalid email address.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'email-already-in-use':
+        return 'This email address is already in use.';
+      case 'operation-not-allowed':
+        return 'This operation is not allowed at the moment.';
+      case 'weak-password':
+        return 'The password is too weak. Please choose a stronger password.';
+      case 'network-request-failed':
+        return 'Network connection error. Please check your internet connection.';
+      case 'too-many-requests':
+        return 'Too many failed login attempts. Please try again later.';
+      case 'invalid-credential':
+        return 'Invalid credentials.';
+      case 'account-exists-with-different-credential':
+        return 'An account already exists with this email using a different sign-in method.';
+      case 'invalid-verification-code':
+        return 'Invalid verification code.';
+      case 'invalid-verification-id':
+        return 'Invalid verification ID.';
+      case 'quota-exceeded':
+        return 'Quota exceeded. Please try again later.';
+      case 'credential-already-in-use':
+        return 'These credentials are already associated with another account.';
+      case 'requires-recent-login':
+        return 'This operation requires a recent login. Please log out and log in again.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
+  }
+
+  void _showLoadingOverlay() {
+    Get.dialog(
+      Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+  }
+
+  void _hideLoadingOverlay() {
+    if (Get.isDialogOpen!) {
+      Get.back();
+    }
+  }
+
   Future<void> login() async {
+    if (isLoading.value) return;
     isLoading.value = true;
+    _showLoadingOverlay();
     try {
       await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim().toLowerCase(),
         password: passwordController.text.trim(),
       );
       Get.offAllNamed(TasksScreen.routeName);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Login Failed', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
     } finally {
       isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
   Future<void> resetPassword() async {
+    if (isLoading.value) return;
     isLoading.value = true;
+    _showLoadingOverlay();
     try {
       await _auth.sendPasswordResetEmail(
         email: forgetPassTextController.text.trim().toLowerCase(),
       );
       Get.snackbar('Success', 'Password reset email sent');
       Get.back();
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Password Reset Failed', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
     } finally {
       isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
   Future<void> signUp({bool isSocial = false}) async {
+    if (isLoading.value) return;
     isLoading.value = true;
+    _showLoadingOverlay();
     try {
       String uid = _auth.currentUser?.uid ?? '';
       String imageUrl = '';
@@ -146,14 +212,20 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       }
 
       Get.offAllNamed(TasksScreen.routeName);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Sign Up Failed', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
     } finally {
       isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
   Future<void> signInWithGoogle() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    _showLoadingOverlay();
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
@@ -165,12 +237,21 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       await _checkAndCreateUser(userCredential.user!);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Google Sign In Failed', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar('Error',
+          'An error occurred during Google sign in. Please try again.');
+    } finally {
+      isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
   Future<void> signInWithApple() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    _showLoadingOverlay();
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -185,8 +266,14 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       UserCredential userCredential =
           await _auth.signInWithCredential(oauthCredential);
       await _checkAndCreateUser(userCredential.user!);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar('Apple Sign In Failed', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', error.toString());
+      Get.snackbar(
+          'Error', 'An error occurred during Apple sign in. Please try again.');
+    } finally {
+      isLoading.value = false;
+      _hideLoadingOverlay();
     }
   }
 
@@ -202,7 +289,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       if (user.photoURL != null) {
         await _downloadAndSetProfileImage(user.photoURL!);
       }
-      Get.offAll(() => SignUp()); // SignUp sayfasına yönlendir
+      Get.offAll(() => SignUp());
     } else {
       Get.offAllNamed(TasksScreen.routeName);
     }
@@ -353,8 +440,13 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
-    await _googleSignIn.signOut();
-    Get.offAllNamed('/login');
+    try {
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+      Get.offAllNamed('/login');
+    } catch (error) {
+      Get.snackbar(
+          'Error', 'An error occurred while signing out. Please try again.');
+    }
   }
 }
