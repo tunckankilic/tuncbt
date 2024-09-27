@@ -27,7 +27,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final positionCPController = TextEditingController();
-
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final obscureText = true.obs;
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);

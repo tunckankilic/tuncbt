@@ -71,70 +71,15 @@ class Login extends GetView<AuthController> {
                   ),
                 ),
                 SizedBox(height: 40.h),
-                Form(
-                  key: controller.formKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        textInputAction: TextInputAction.next,
-                        onEditingComplete: () =>
-                            FocusScope.of(context).nextFocus(),
-                        keyboardType: TextInputType.emailAddress,
-                        controller: controller.emailController,
-                        validator: (value) {
-                          if (value!.isEmpty || !value.contains("@")) {
-                            return "Please enter a valid Email address";
-                          }
-                          return null;
-                        },
-                        style: const TextStyle(color: Colors.black),
-                        decoration: const InputDecoration(
-                          hintText: 'Email',
-                          hintStyle: TextStyle(color: Colors.black),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          errorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red)),
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      Obx(() => TextFormField(
-                            obscureText: controller.obscureText.value,
-                            keyboardType: TextInputType.visiblePassword,
-                            controller: controller.passwordController,
-                            validator: (value) {
-                              if (value!.isEmpty || value.length < 7) {
-                                return "Please enter a valid password";
-                              }
-                              return null;
-                            },
-                            style: const TextStyle(color: Colors.black),
-                            decoration: InputDecoration(
-                              suffixIcon: GestureDetector(
-                                onTap: controller.toggleObscureText,
-                                child: Icon(
-                                  controller.obscureText.value
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              hintText: 'Password',
-                              hintStyle: const TextStyle(color: Colors.black),
-                              enabledBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white)),
-                              focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white)),
-                              errorBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red)),
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
+                Form(key: controller.formKey, child: _buildEmailField()),
                 SizedBox(height: 15.h),
+                Text(
+                  "You can reset your Password\nby typing your email and pressing\nbelow button",
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -209,6 +154,48 @@ class Login extends GetView<AuthController> {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Email address',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        TextFormField(
+          controller: controller.forgetPassTextController,
+          style: TextStyle(color: Colors.black),
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your email';
+            }
+            if (!GetUtils.isEmail(value)) {
+              return 'Please enter a valid email';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Enter your email',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide.none,
+            ),
+            prefixIcon: Icon(Icons.email, color: Colors.grey),
+            errorStyle: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }
