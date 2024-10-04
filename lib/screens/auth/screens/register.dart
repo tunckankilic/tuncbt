@@ -114,22 +114,9 @@ class SignUp extends GetView<AuthController> {
       key: _signUpFormKey,
       child: Column(
         children: [
-          TextFormField(
-            controller: controller.fullNameController,
-            validator: (value) =>
-                value!.isEmpty ? "This Field is missing" : null,
-            style: const TextStyle(color: Colors.black),
-            decoration: const InputDecoration(
-              hintText: 'Full name',
-              hintStyle: TextStyle(color: Colors.black),
-              enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),
-              errorBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red)),
-            ),
-          ),
+          if (!controller.isSocialSignIn.value) ...[
+            _buildNameAndImageSection(size)
+          ],
           const SizedBox(height: 20),
           if (!controller.isSocialSignIn.value) ...[
             _buildPasswordField(),
@@ -146,8 +133,26 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildNameAndImageSection(Size size) {
-    return Stack(
+    return Column(
       children: [
+        TextFormField(
+          controller: controller.emailController,
+          validator: (value) => value!.isEmpty ? "This Field is missing" : null,
+          style: const TextStyle(color: Colors.black),
+          decoration: const InputDecoration(
+            hintText: 'Email Adress',
+            hintStyle: TextStyle(color: Colors.black),
+            enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white)),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white)),
+            errorBorder:
+                UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          ),
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
         TextFormField(
           controller: controller.fullNameController,
           validator: (value) => value!.isEmpty ? "This Field is missing" : null,

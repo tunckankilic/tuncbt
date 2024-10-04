@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tuncbt/screens/auth/screens/auth.dart';
+import 'package:tuncbt/screens/auth/screens/password_renew.dart';
 import 'package:tuncbt/screens/bindings.dart';
 import 'package:tuncbt/screens/screens.dart';
 
@@ -59,7 +60,12 @@ class RouteManager {
     GetPage(
         name: UploadTask.routeName,
         page: () => UploadTask(),
-        binding: TasksScreenBindings())
+        binding: TasksScreenBindings()),
+    GetPage(
+      name: PasswordRenew.routeName,
+      page: () => PasswordRenew(),
+      binding: AuthBindings(),
+    ),
   ];
 
   static String getInitialRoute() {

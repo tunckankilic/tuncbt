@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/config/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:tuncbt/screens/auth/screens/login.dart';
 import 'package:tuncbt/screens/auth/screens/register.dart';
 import 'package:tuncbt/screens/screens.dart';
 
@@ -33,9 +34,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);
   final isSocialSignIn = false.obs;
+  String? intialNameValue;
+  String? initialEmailValue;
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  final GlobalKey<FormState> emailKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> passKay = GlobalKey<FormState>();
+  final GlobalKey<FormState> passRKey = GlobalKey<FormState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
   final animationValue = 0.0.obs;
@@ -129,21 +133,30 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> login() async {
     if (isLoading.value) return;
-    isLoading.value = true;
-    _showLoadingOverlay();
-    try {
-      await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim().toLowerCase(),
-        password: passwordController.text.trim(),
-      );
-      Get.offAllNamed(TasksScreen.routeName);
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar('Login Failed', _getReadableAuthError(e));
-    } catch (error) {
-      Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
-    } finally {
-      isLoading.value = false;
-      _hideLoadingOverlay();
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      isLoading.value = true;
+      _showLoadingOverlay();
+      try {
+        await _auth.signInWithEmailAndPassword(
+          email: emailController.text.trim().toLowerCase(),
+          password: passwordController.text.trim(),
+        );
+        emailController.text = "";
+        passwordController.text = "";
+        Get.offAllNamed(TasksScreen.routeName);
+      } on FirebaseAuthException catch (e) {
+        Get.snackbar('Login Failed', _getReadableAuthError(e));
+      } catch (error) {
+        Get.snackbar(
+            'Error', 'An unexpected error occurred. Please try again.');
+      } finally {
+        isLoading.value = false;
+        _hideLoadingOverlay();
+      }
+    } else {
+      Get.snackbar("Error", "Please Fill all the fields",
+          colorText: Colors.white);
+      return;
     }
   }
 
@@ -156,7 +169,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         email: forgetPassTextController.text.trim().toLowerCase(),
       );
       Get.snackbar('Success', 'Password reset email sent');
-      Get.back();
+      Get.toNamed(Login.routeName);
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Password Reset Failed', _getReadableAuthError(e));
     } catch (error) {
@@ -234,6 +247,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      initialEmailValue = googleUser.email;
+      intialNameValue = googleUser.displayName;
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       await _checkAndCreateUser(userCredential.user!);

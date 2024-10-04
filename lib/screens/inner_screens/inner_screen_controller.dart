@@ -223,6 +223,26 @@ class InnerScreenController extends GetxController {
     }
   }
 
+  Future<void> updateUserName(String newName) async {
+    try {
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        await _firestore.collection('users').doc(user.uid).update({
+          'name': newName,
+        });
+        currentUser.update((val) {
+          val!.name = newName;
+        });
+        Get.snackbar('Success', 'Name updated successfully');
+      } else {
+        Get.snackbar('Error', 'User not found');
+      }
+    } catch (e) {
+      log('Error updating user name: $e');
+      Get.snackbar('Error', 'Failed to update name');
+    }
+  }
+
   void toggleCommenting() {
     isCommenting.value = !isCommenting.value;
   }

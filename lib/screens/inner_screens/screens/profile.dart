@@ -70,15 +70,29 @@ class ProfileScreen extends GetView<InnerScreenController> {
             ),
           ],
         ),
-        title: Text(
-          controller.currentUser.value.name,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24.sp,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                controller.currentUser.value.name.isEmpty
+                    ? 'No Name'
+                    : controller.currentUser.value.name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            if (userType == UserType.currentUser &&
+                controller.currentUser.value.name.isEmpty)
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white),
+                onPressed: () => _showEditNameDialog(context),
+              ),
+          ],
         ),
-        titlePadding: EdgeInsets.only(left: 16.w, bottom: 16.h),
+        titlePadding: EdgeInsets.only(left: 16.w, bottom: 16.h, right: 16.w),
       ),
     );
   }
@@ -367,18 +381,18 @@ class ProfileScreen extends GetView<InnerScreenController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Account'),
-          content: Text(
+          title: const Text('Delete Account'),
+          content: const Text(
               'Are you sure you want to delete your account? This action cannot be undone.'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _processAccountDeletion();
@@ -429,5 +443,38 @@ class ProfileScreen extends GetView<InnerScreenController> {
 
     // Default email
     return LoginType.email;
+  }
+
+  void _showEditNameDialog(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Name'),
+          content: TextField(
+            controller: nameController,
+            decoration: const InputDecoration(hintText: "Enter your name"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  controller.updateUserName(nameController.text);
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
