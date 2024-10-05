@@ -111,34 +111,34 @@ class Login extends GetView<AuthController> {
                     ),
                   ),
                 ),
-                SizedBox(height: 5.h),
-                Text(
-                  'Or ',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 5.h),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    if (Platform.isIOS)
-                      SizedBox(
-                        width: 200.w,
-                        child: SignInWithAppleButton(
-                          onPressed: () => controller.signInWithApple(),
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ),
-                    SizedBox(height: 5.h),
-                    if (Platform.isAndroid)
-                      GoogleSignInButton(
-                        onPressed: () => controller.signInWithGoogle(),
-                      ),
-                  ],
-                ),
+                // SizedBox(height: 5.h),
+                // Text(
+                //   'Or ',
+                //   style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 24.sp,
+                //       fontWeight: FontWeight.bold),
+                //   textAlign: TextAlign.center,
+                // ),
+                // SizedBox(height: 5.h),
+                // Column(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     if (Platform.isIOS)
+                //       SizedBox(
+                //         width: 200.w,
+                //         child: SignInWithAppleButton(
+                //           onPressed: () => controller.signInWithApple(),
+                //           borderRadius: BorderRadius.circular(30.r),
+                //         ),
+                //       ),
+                //     SizedBox(height: 5.h),
+                //     if (Platform.isAndroid)
+                //       GoogleSignInButton(
+                //         onPressed: () => controller.signInWithGoogle(),
+                //       ),
+                //   ],
+                // ),
               ],
             ),
           ),
