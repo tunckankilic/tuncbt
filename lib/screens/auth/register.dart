@@ -512,13 +512,13 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     // setState(() {
     //   imageFile = File(pickedFile!.path);
     // });
-    _cropImage(pickedFile!.path);
+    _cropImage(pickedFile.path);
     Navigator.pop(context);
   }
 
   void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper.cropImage(
-        sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    CroppedFile? croppedImage = await ImageCropper()
+        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
     if (croppedImage != null) {
       // setState(() {
       //   imageFile = croppedImage;
