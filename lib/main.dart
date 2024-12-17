@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/config/constants.dart';
-import 'package:tuncbt/config/router.dart';
+import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/core/config/router.dart';
 import 'package:tuncbt/firebase_options.dart';
-import 'package:tuncbt/screens/auth/auth_bindings.dart';
-import 'package:tuncbt/screens/screens.dart';
-import 'package:tuncbt/services/push_notifications.dart';
+import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
+import 'package:tuncbt/view/screens/screens.dart';
+import 'package:tuncbt/core/services/push_notifications.dart';
 import 'package:tuncbt/user_state.dart';
 
 void main() async {
