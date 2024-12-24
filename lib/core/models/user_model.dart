@@ -4,9 +4,9 @@ class UserModel {
   final String id;
   String name;
   final String email;
-  final String userImage;
+  final String imageUrl;
   final String phoneNumber;
-  final String positionInCompany;
+  final String position;
   final DateTime createdAt;
   final bool isOnline;
 
@@ -15,9 +15,9 @@ class UserModel {
     this.isOnline = false,
     this.name = "No Name",
     required this.email,
-    required this.userImage,
+    required this.imageUrl,
     required this.phoneNumber,
-    required this.positionInCompany,
+    required this.position,
     required this.createdAt,
   });
 
@@ -27,9 +27,9 @@ class UserModel {
       id: doc.id,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      userImage: data['userImage'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
       phoneNumber: data['phoneNumber'] ?? '',
-      positionInCompany: data['positionInCompany'] ?? '',
+      position: data['position'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isOnline: data["isOnline"],
     );
@@ -40,9 +40,9 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
-      'userImage': userImage,
+      'imageUrl': imageUrl,
       'phoneNumber': phoneNumber,
-      'positionInCompany': positionInCompany,
+      'position': position,
       'createdAt': Timestamp.fromDate(createdAt),
       "isOnline": isOnline,
     };
@@ -52,9 +52,9 @@ class UserModel {
     String? id,
     String? name,
     String? email,
-    String? userImage,
+    String? imageUrl,
     String? phoneNumber,
-    String? positionInCompany,
+    String? position,
     DateTime? createdAt,
     bool? isOnline,
   }) {
@@ -62,9 +62,9 @@ class UserModel {
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
-      userImage: userImage ?? this.userImage,
+      imageUrl: imageUrl ?? this.imageUrl,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      positionInCompany: positionInCompany ?? this.positionInCompany,
+      position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       isOnline: isOnline ?? this.isOnline,
     );
@@ -75,9 +75,9 @@ class UserModel {
       id: '',
       name: '',
       email: '',
-      userImage: '',
+      imageUrl: '',
       phoneNumber: '',
-      positionInCompany: '',
+      position: '',
       createdAt: DateTime.now(),
       isOnline: false,
     );

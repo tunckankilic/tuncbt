@@ -24,7 +24,7 @@ class UsersListView extends GetView<UserController> {
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(user.userImage),
+                  backgroundImage: NetworkImage(user.imageUrl),
                   radius: 25,
                 ),
                 title: Text(
@@ -37,7 +37,7 @@ class UsersListView extends GetView<UserController> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.positionInCompany),
+                    Text(user.position),
                     Text(
                       'Katılma: ${Jiffy.parse(user.createdAt.toString()).fromNow()}',
                       style: TextStyle(

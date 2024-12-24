@@ -56,7 +56,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
           fit: StackFit.expand,
           children: [
             SafeProfileImage(
-              imageUrl: controller.currentUser.value.userImage,
+              imageUrl: controller.currentUser.value.imageUrl,
               size: MediaQuery.of(context).size.width,
             ),
             Container(
@@ -180,8 +180,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
               ),
             ),
             SizedBox(height: 10.h),
-            _infoRow(
-                Icons.work, controller.currentUser.value.positionInCompany),
+            _infoRow(Icons.work, controller.currentUser.value.position),
             _infoRow(Icons.calendar_today,
                 'Joined ${controller.currentUser.value.createdAt.toString().split(' ')[0]}'),
           ],

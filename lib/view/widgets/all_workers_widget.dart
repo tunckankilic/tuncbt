@@ -4,6 +4,8 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/core/models/user_model.dart';
+import 'package:tuncbt/view/screens/chat/chat_screen.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tuncbt/core/config/constants.dart';
@@ -148,13 +150,45 @@ class AllWorkersWidget extends StatelessWidget {
   }
 
   Widget _buildTrailingButton(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        Icons.mail_outline,
-        size: 24.sp,
-        color: AppTheme.accentColor,
-      ),
-      onPressed: () => _mailTo(context),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(
+            Icons.mail_outline,
+            size: 24.sp,
+            color: AppTheme.accentColor,
+          ),
+          onPressed: () => _mailTo(context),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.chat_bubble_outline,
+            size: 24.sp,
+            color: AppTheme.accentColor,
+          ),
+          onPressed: () => _openChat(context),
+        ),
+      ],
+    );
+  }
+
+// Add this new method to handle chat navigation
+  void _openChat(BuildContext context) {
+    // Create a UserModel instance from the current worker's data
+    final user = UserModel(
+        id: userID,
+        name: userName,
+        email: userEmail,
+        imageUrl: userImageUrl,
+        phoneNumber: phoneNumber,
+        position: positionInCompany,
+        createdAt: DateTime.now());
+
+    // Navigate to chat screen using Get
+    Get.toNamed(
+      ChatScreen.routeName,
+      arguments: user,
     );
   }
 

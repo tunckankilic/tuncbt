@@ -4,30 +4,33 @@ import 'package:tuncbt/core/enums/message_enum.dart';
 import 'package:tuncbt/view/screens/chat/widgets/display_text_image_gif.dart';
 
 class SenderMessageCard extends StatelessWidget {
+  final String message;
+  final String date;
+  final MessageType type;
+  final String? mediaUrl;
+  final VoidCallback onRightSwipe;
+  final String? replyTo;
+  final String? repliedTo;
+  final MessageType? repliedMessageType;
+
   const SenderMessageCard({
     Key? key,
     required this.message,
     required this.date,
     required this.type,
+    this.mediaUrl,
     required this.onRightSwipe,
-    required this.repliedText,
-    required this.username,
-    required this.repliedMessageType,
+    this.replyTo,
+    this.repliedTo,
+    this.repliedMessageType,
   }) : super(key: key);
-  final String message;
-  final String date;
-  final MessageEnum type;
-  final VoidCallback onRightSwipe;
-  final String repliedText;
-  final String username;
-  final MessageEnum repliedMessageType;
 
   @override
   Widget build(BuildContext context) {
-    final isReplying = repliedText.isNotEmpty;
+    final isReplying = replyTo != null && replyTo!.isNotEmpty;
 
     return SwipeTo(
-      onRightSwipe: onRightSwipe,
+      onRightSwipe: (details) => onRightSwipe(),
       child: Align(
         alignment: Alignment.centerLeft,
         child: ConstrainedBox(
@@ -38,12 +41,12 @@ class SenderMessageCard extends StatelessWidget {
             elevation: 1,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            color: senderMessageColor,
+            color: Colors.grey[800],
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Stack(
               children: [
                 Padding(
-                  padding: type == MessageEnum.text
+                  padding: type == MessageType.text
                       ? const EdgeInsets.only(
                           left: 10,
                           right: 30,
@@ -57,28 +60,36 @@ class SenderMessageCard extends StatelessWidget {
                           bottom: 25,
                         ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isReplying) ...[
-                        Text(
-                          username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
                         Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: backgroundColor.withOpacity(0.5),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(
-                                5,
-                              ),
-                            ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                          child: DisplayTextImageGIF(
-                            message: repliedText,
-                            type: repliedMessageType,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                repliedTo ?? 'Reply',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              DisplayTextImageGIF(
+                                message: replyTo!,
+                                type: repliedMessageType ?? MessageType.text,
+                                mediaUrl: mediaUrl,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -86,18 +97,19 @@ class SenderMessageCard extends StatelessWidget {
                       DisplayTextImageGIF(
                         message: message,
                         type: type,
+                        mediaUrl: mediaUrl,
                       ),
                     ],
                   ),
                 ),
                 Positioned(
-                  bottom: 2,
+                  bottom: 4,
                   right: 10,
                   child: Text(
                     date,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
-                      color: Colors.grey[600],
+                      color: Colors.white60,
                     ),
                   ),
                 ),

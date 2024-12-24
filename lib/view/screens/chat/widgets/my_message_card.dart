@@ -6,11 +6,12 @@ import 'package:tuncbt/view/screens/chat/widgets/display_text_image_gif.dart';
 class MyMessageCard extends StatelessWidget {
   final String message;
   final String date;
-  final MessageEnum type;
+  final MessageType type;
+  final String? mediaUrl;
   final VoidCallback onLeftSwipe;
-  final String repliedText;
-  final String username;
-  final MessageEnum repliedMessageType;
+  final String? replyTo;
+  final String? repliedTo;
+  final MessageType? repliedMessageType;
   final bool isSeen;
 
   const MyMessageCard({
@@ -18,19 +19,20 @@ class MyMessageCard extends StatelessWidget {
     required this.message,
     required this.date,
     required this.type,
+    this.mediaUrl,
     required this.onLeftSwipe,
-    required this.repliedText,
-    required this.username,
-    required this.repliedMessageType,
+    this.replyTo,
+    this.repliedTo,
+    this.repliedMessageType,
     required this.isSeen,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isReplying = repliedText.isNotEmpty;
+    final isReplying = replyTo != null && replyTo!.isNotEmpty;
 
     return SwipeTo(
-      onLeftSwipe: onLeftSwipe,
+      onLeftSwipe: (details) => onLeftSwipe(),
       child: Align(
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
@@ -41,12 +43,12 @@ class MyMessageCard extends StatelessWidget {
             elevation: 1,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            color: messageColor,
+            color: const Color(0xFF128C7E),
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Stack(
               children: [
                 Padding(
-                  padding: type == MessageEnum.text
+                  padding: type == MessageType.text
                       ? const EdgeInsets.only(
                           left: 10,
                           right: 30,
@@ -60,28 +62,36 @@ class MyMessageCard extends StatelessWidget {
                           bottom: 25,
                         ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isReplying) ...[
-                        Text(
-                          username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
                         Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: backgroundColor.withOpacity(0.5),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(
-                                5,
-                              ),
-                            ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                          child: DisplayTextImageGIF(
-                            message: repliedText,
-                            type: repliedMessageType,
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                repliedTo ?? 'Reply',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              DisplayTextImageGIF(
+                                message: replyTo!,
+                                type: repliedMessageType ?? MessageType.text,
+                                mediaUrl: mediaUrl,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -89,6 +99,7 @@ class MyMessageCard extends StatelessWidget {
                       DisplayTextImageGIF(
                         message: message,
                         type: type,
+                        mediaUrl: mediaUrl,
                       ),
                     ],
                   ),
@@ -105,9 +116,7 @@ class MyMessageCard extends StatelessWidget {
                           color: Colors.white60,
                         ),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
+                      const SizedBox(width: 5),
                       Icon(
                         isSeen ? Icons.done_all : Icons.done,
                         size: 20,

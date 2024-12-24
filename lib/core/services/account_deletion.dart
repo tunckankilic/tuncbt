@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
@@ -9,7 +9,7 @@ import 'package:tuncbt/view/screens/auth/screens/login.dart';
 class AccountDeletionService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<void> deleteAccount(LoginType loginType) async {
     try {
@@ -55,27 +55,27 @@ class AccountDeletionService extends GetxController {
     try {
       switch (loginType) {
         case LoginType.apple:
-          final appleCredential = await SignInWithApple.getAppleIDCredential(
-            scopes: [
-              AppleIDAuthorizationScopes.email,
-              AppleIDAuthorizationScopes.fullName,
-            ],
-          );
-          final oauthCredential = OAuthProvider("apple.com").credential(
-            idToken: appleCredential.identityToken,
-            accessToken: appleCredential.authorizationCode,
-          );
-          await user.reauthenticateWithCredential(oauthCredential);
+          // final appleCredential = await SignInWithApple.getAppleIDCredential(
+          //   scopes: [
+          //     AppleIDAuthorizationScopes.email,
+          //     AppleIDAuthorizationScopes.fullName,
+          //   ],
+          // );
+          // final oauthCredential = OAuthProvider("apple.com").credential(
+          //   idToken: appleCredential.identityToken,
+          //   accessToken: appleCredential.authorizationCode,
+          // );
+          // await user.reauthenticateWithCredential(oauthCredential);
           break;
         case LoginType.google:
-          final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-          final GoogleSignInAuthentication? googleAuth =
-              await googleUser?.authentication;
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth?.accessToken,
-            idToken: googleAuth?.idToken,
-          );
-          await user.reauthenticateWithCredential(credential);
+          // final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+          // final GoogleSignInAuthentication? googleAuth =
+          //     await googleUser?.authentication;
+          // final credential = GoogleAuthProvider.credential(
+          //   accessToken: googleAuth?.accessToken,
+          //   idToken: googleAuth?.idToken,
+          // );
+          // await user.reauthenticateWithCredential(credential);
           break;
         case LoginType.email:
           String email = user.email ?? '';
@@ -132,7 +132,7 @@ class AccountDeletionService extends GetxController {
   Future<void> _deleteGoogleAccount(User user) async {
     try {
       // Google hesabını Firebase'den ayır
-      await _googleSignIn.disconnect();
+      // await _googleSignIn.disconnect();
       print('Deleting Google account for user: ${user.uid}');
     } catch (e) {
       print('Error disconnecting Google account: $e');

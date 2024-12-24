@@ -77,7 +77,7 @@ class RouteManager {
       binding: UsersBindings(),
     ),
     GetPage(
-      name: '/chat',
+      name: ChatScreen.routeName,
       page: () => ChatScreen(receiver: Get.arguments as UserModel),
     ),
   ];

@@ -171,7 +171,7 @@ class InnerScreenController extends GetxController {
         id: const Uuid().v4(),
         userId: user.uid,
         name: currentUser.value.name,
-        userImageUrl: currentUser.value.userImage,
+        userImageUrl: currentUser.value.imageUrl,
         body: commentController.text,
         time: DateTime.now(),
       );

@@ -1,72 +1,82 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tuncbt/core/enums/message_enum.dart';
 
 class Message {
-  final String senderId;
-  final String recieverid;
-  final String text;
-  final MessageEnum type;
-  final DateTime timeSent;
   final String messageId;
-  final bool isSeen;
-  final String repliedMessage;
-  final String repliedTo;
-  final MessageEnum repliedMessageType;
+  final String senderId;
+  final String receiverId;
+  final String content; // text içeriği
+  final DateTime timestamp; // timeSent yerine timestamp
+  final bool isRead; // isSeen yerine isRead
+  final MessageType type;
+  final String? replyTo; // repliedMessage yerine replyTo
+  final String? repliedTo; // kime yanıt verildiği
+  final MessageType? repliedMessageType;
+  final String? mediaUrl; // medya içeriği için
 
   Message({
-    required this.senderId,
-    required this.recieverid,
-    required this.text,
-    required this.type,
-    required this.timeSent,
     required this.messageId,
-    required this.isSeen,
-    required this.repliedMessage,
-    required this.repliedTo,
-    required this.repliedMessageType,
+    required this.senderId,
+    required this.receiverId,
+    required this.content,
+    required this.timestamp,
+    required this.isRead,
+    required this.type,
+    this.replyTo,
+    this.repliedTo,
+    this.repliedMessageType,
+    this.mediaUrl,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'senderId': senderId,
-      'recieverid': recieverid,
-      'text': text,
-      'type': type.type,
-      'timeSent': timeSent.millisecondsSinceEpoch,
-      'messageId': messageId,
-      'isSeen': isSeen,
-      'repliedMessage': repliedMessage,
-      'repliedTo': repliedTo,
-      'repliedMessageType': repliedMessageType.type,
-    };
-  }
-
-  factory Message.fromMap(Map<String, dynamic> map) {
-    return Message(
-      senderId: map['senderId'] ?? '',
-      recieverid: map['recieverid'] ?? '',
-      text: map['text'] ?? '',
-      type: (map['type'] as String).toEnum(),
-      timeSent: DateTime.fromMillisecondsSinceEpoch(map['timeSent']),
-      messageId: map['messageId'] ?? '',
-      isSeen: map['isSeen'] ?? false,
-      repliedMessage: map['repliedMessage'] ?? '',
-      repliedTo: map['repliedTo'] ?? '',
-      repliedMessageType: (map['repliedMessageType'] as String).toEnum(),
-    );
-  }
-
+  // JSON'dan Message oluşturma
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      senderId: json['senderId'] ?? '',
-      recieverid: json['recieverid'] ?? '',
-      text: json['text'] ?? '',
-      type: (json['type'] as String).toEnum(),
-      timeSent: DateTime.fromMillisecondsSinceEpoch(json['timeSent']),
       messageId: json['messageId'] ?? '',
-      isSeen: json['isSeen'] ?? false,
-      repliedMessage: json['repliedMessage'] ?? '',
-      repliedTo: json['repliedTo'] ?? '',
-      repliedMessageType: (json['repliedMessageType'] as String).toEnum(),
+      senderId: json['senderId'] ?? '',
+      receiverId: json['receiverId'] ?? '',
+      content: json['content'] ?? '',
+      timestamp: (json['timestamp'] as Timestamp).toDate(),
+      isRead: json['isRead'] ?? false,
+      type: MessageType.values.firstWhere(
+        (e) => e.toString() == 'MessageType.${json['type']}',
+        orElse: () => MessageType.text,
+      ),
+      replyTo: json['replyTo'],
+      repliedTo: json['repliedTo'],
+      repliedMessageType: json['repliedMessageType'] != null
+          ? MessageType.values.firstWhere(
+              (e) =>
+                  e.toString() == 'MessageType.${json['repliedMessageType']}',
+              orElse: () => MessageType.text,
+            )
+          : null,
+      mediaUrl: json['mediaUrl'],
     );
+  }
+
+  // Firebase'den Message oluşturma
+  factory Message.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Message.fromJson({
+      ...data,
+      'messageId': doc.id,
+    });
+  }
+
+  // Message'ı JSON'a çevirme
+  Map<String, dynamic> toJson() {
+    return {
+      'messageId': messageId,
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'content': content,
+      'timestamp': Timestamp.fromDate(timestamp),
+      'isRead': isRead,
+      'type': type.toString().split('.').last,
+      'replyTo': replyTo,
+      'repliedTo': repliedTo,
+      'repliedMessageType': repliedMessageType?.toString().split('.').last,
+      'mediaUrl': mediaUrl,
+    };
   }
 }

@@ -4,10 +4,8 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import 'package:tuncbt/core/models/user_model.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +18,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -210,9 +207,9 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         id: uid,
         name: fullNameController.text,
         email: emailController.text,
-        userImage: imageUrl,
+        imageUrl: imageUrl,
         phoneNumber: phoneNumberController.text,
-        positionInCompany: positionCPController.text,
+        position: positionCPController.text,
         createdAt: DateTime.now(),
       );
 
@@ -220,7 +217,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
       if (!isSocial) {
         await _auth.currentUser!.updateDisplayName(newUser.name);
-        await _auth.currentUser!.updatePhotoURL(newUser.userImage);
+        await _auth.currentUser!.updatePhotoURL(newUser.imageUrl);
         await _auth.currentUser!.reload();
       }
 
@@ -235,62 +232,62 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  Future<void> signInWithGoogle() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-    _showLoadingOverlay();
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      initialEmailValue = googleUser.email;
-      intialNameValue = googleUser.displayName;
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      await _checkAndCreateUser(userCredential.user!);
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar('Google Sign In Failed', _getReadableAuthError(e));
-    } catch (error) {
-      Get.snackbar('Error',
-          'An error occurred during Google sign in. Please try again.');
-    } finally {
-      isLoading.value = false;
-      _hideLoadingOverlay();
-    }
-  }
+  // Future<void> signInWithGoogle() async {
+  //   if (isLoading.value) return;
+  //   isLoading.value = true;
+  //   _showLoadingOverlay();
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser!.authentication;
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //     initialEmailValue = googleUser.email;
+  //     intialNameValue = googleUser.displayName;
+  //     UserCredential userCredential =
+  //         await _auth.signInWithCredential(credential);
+  //     await _checkAndCreateUser(userCredential.user!);
+  //   } on FirebaseAuthException catch (e) {
+  //     Get.snackbar('Google Sign In Failed', _getReadableAuthError(e));
+  //   } catch (error) {
+  //     Get.snackbar('Error',
+  //         'An error occurred during Google sign in. Please try again.');
+  //   } finally {
+  //     isLoading.value = false;
+  //     _hideLoadingOverlay();
+  //   }
+  // }
 
-  Future<void> signInWithApple() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-    _showLoadingOverlay();
-    try {
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-      UserCredential userCredential =
-          await _auth.signInWithCredential(oauthCredential);
-      await _checkAndCreateUser(userCredential.user!);
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar('Apple Sign In Failed', _getReadableAuthError(e));
-    } catch (error) {
-      Get.snackbar(
-          'Error', 'An error occurred during Apple sign in. Please try again.');
-    } finally {
-      isLoading.value = false;
-      _hideLoadingOverlay();
-    }
-  }
+  // Future<void> signInWithApple() async {
+  //   if (isLoading.value) return;
+  //   isLoading.value = true;
+  //   _showLoadingOverlay();
+  //   try {
+  //     final appleCredential = await SignInWithApple.getAppleIDCredential(
+  //       scopes: [
+  //         AppleIDAuthorizationScopes.email,
+  //         AppleIDAuthorizationScopes.fullName,
+  //       ],
+  //     );
+  //     final oauthCredential = OAuthProvider("apple.com").credential(
+  //       idToken: appleCredential.identityToken,
+  //       accessToken: appleCredential.authorizationCode,
+  //     );
+  //     UserCredential userCredential =
+  //         await _auth.signInWithCredential(oauthCredential);
+  //     await _checkAndCreateUser(userCredential.user!);
+  //   } on FirebaseAuthException catch (e) {
+  //     Get.snackbar('Apple Sign In Failed', _getReadableAuthError(e));
+  //   } catch (error) {
+  //     Get.snackbar(
+  //         'Error', 'An error occurred during Apple sign in. Please try again.');
+  //   } finally {
+  //     isLoading.value = false;
+  //     _hideLoadingOverlay();
+  //   }
+  // }
 
   Future<void> _checkAndCreateUser(User user) async {
     DocumentSnapshot userDoc =
@@ -373,17 +370,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       maxHeight: 1080,
       maxWidth: 1080,
     );
+
     if (pickedFile != null) {
-      CroppedFile? croppedFile = await ImageCropper().cropImage(
-        sourcePath: pickedFile.path,
-        maxHeight: 1080,
-        maxWidth: 1080,
-      );
-      if (croppedFile != null) {
-        imageFile.value = File(croppedFile.path);
-      }
+      // Direkt olarak File nesnesini kullan
+      imageFile.value = File(pickedFile.path);
+      Get.back();
     }
-    Get.back();
   }
 
   void showJobCategoriesDialog() {
@@ -457,7 +449,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-      await _googleSignIn.signOut();
+      // await _googleSignIn.signOut();
       Get.offAllNamed('/login');
     } catch (error) {
       Get.snackbar(

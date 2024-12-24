@@ -10,27 +10,34 @@ import 'package:tuncbt/view/screens/chat/widgets/chat_list.dart';
 class ChatScreen extends GetView<ChatController> {
   static String routeName = "/chatScreen";
   final UserModel receiver;
+
   const ChatScreen({
+    Key? key,
     required this.receiver,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller with receiver data
+    final chatController = Get.put(ChatController());
+    chatController.initializeReceiver(receiver);
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(receiver.name),
+            // Wrap only the online status in Obx
             Obx(() => Text(
-                  receiver.isOnline ? 'Online' : 'Offline',
-                  style: const TextStyle(fontSize: 12),
+                  chatController.isReceiverOnline.value ? 'Online' : 'Offline',
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
                 )),
           ],
         ),
         actions: [
           CircleAvatar(
-            backgroundImage: NetworkImage(receiver.userImage),
+            backgroundImage: NetworkImage(receiver.imageUrl),
           ),
         ],
       ),
