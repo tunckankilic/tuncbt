@@ -82,10 +82,10 @@ class RouteManager {
     ),
   ];
 
-  static String getInitialRoute() {
-    // Logic to determine the initial route
-    // For example, check if user is logged in
-    bool isLoggedIn = false; // This should be your actual login check
-    return isLoggedIn ? home : login;
-  }
+  // static String getInitialRoute() {
+  //   // Logic to determine the initial route
+  //   // For example, check if user is logged in
+  //   bool isLoggedIn = false; // This should be your actual login check
+  //   return isLoggedIn ? home : login;
+  // }
 }

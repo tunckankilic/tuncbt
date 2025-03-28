@@ -5,6 +5,7 @@
 import FlutterMacOS
 import Foundation
 
+import audio_session
 import audioplayers_darwin
 import cloud_firestore
 import emoji_picker_flutter
@@ -23,6 +24,7 @@ import video_player_avfoundation
 import wakelock_plus
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  AudioSessionPlugin.register(with: registry.registrar(forPlugin: "AudioSessionPlugin"))
   AudioplayersDarwinPlugin.register(with: registry.registrar(forPlugin: "AudioplayersDarwinPlugin"))
   FLTFirebaseFirestorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseFirestorePlugin"))
   EmojiPickerFlutterPlugin.register(with: registry.registrar(forPlugin: "EmojiPickerFlutterPlugin"))
