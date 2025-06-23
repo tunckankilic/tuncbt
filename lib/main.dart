@@ -9,12 +9,16 @@ import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/core/services/push_notifications.dart';
 import 'package:tuncbt/user_state.dart';
+import 'package:tuncbt/core/models/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Mevcut kullanıcıları yeni yapıya geçir
+  await UserModel.migrateExistingUsers();
 
   final pushNotificationSystems = PushNotificationSystems();
   await pushNotificationSystems.init();

@@ -211,6 +211,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         phoneNumber: phoneNumberController.text,
         position: positionCPController.text,
         createdAt: DateTime.now(),
+        hasTeam: false,
       );
 
       await _firestore.collection('users').doc(uid).set(newUser.toFirestore());
