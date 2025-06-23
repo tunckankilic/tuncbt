@@ -368,4 +368,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get retry => 'Wiederholen';
+
+  @override
+  String get maximumRetryExceeded =>
+      'Maximale Anzahl der Wiederholungsversuche überschritten';
 }

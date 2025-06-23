@@ -358,4 +358,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get maximumRetryExceeded => 'Maximum retry attempts exceeded';
 }

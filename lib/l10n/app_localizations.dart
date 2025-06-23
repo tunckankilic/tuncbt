@@ -47,12 +47,12 @@ import 'app_localizations_tr.dart';
 ///
 /// iOS applications define key application metadata, including supported
 /// locales, in an Info.plist file that is built into the application bundle.
-/// To configure the locales supported by your app, you'll need to edit this
+/// To configure the locales supported by your app, you’ll need to edit this
 /// file.
 ///
-/// First, open your project's ios/Runner.xcworkspace Xcode workspace file.
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
 /// Then, in the Project Navigator, open the Info.plist file under the Runner
-/// project's Runner folder.
+/// project’s Runner folder.
 ///
 /// Next, select the Information Property List item, select Add Item from the
 /// Editor menu, then select Localizations from the pop-up menu.
@@ -754,17 +754,23 @@ abstract class AppLocalizations {
   /// **'You don\'t have permission to perform this action'**
   String get noPermissionToDelete;
 
-  /// Error message text
+  /// No description provided for @error.
   ///
   /// In en, this message translates to:
   /// **'Error'**
   String get error;
 
-  /// Retry action text
+  /// No description provided for @retry.
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @maximumRetryExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum retry attempts exceeded'**
+  String get maximumRetryExceeded;
 }
 
 class _AppLocalizationsDelegate

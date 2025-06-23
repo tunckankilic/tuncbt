@@ -361,4 +361,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get retry => 'Tekrar Dene';
+
+  @override
+  String get maximumRetryExceeded => 'Maksimum yeniden deneme sayısı aşıldı';
 }

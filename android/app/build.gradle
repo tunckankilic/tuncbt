@@ -31,9 +31,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "site.tunckankilic.tuncbt"
+    namespace "site.tunckankilic.tuncbt"
     ndkVersion = flutter.ndkVersion
-    compileSdk = 34
+    compileSdk 35
     
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
