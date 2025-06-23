@@ -108,8 +108,8 @@ class DrawerWidget extends StatelessWidget {
                         onTap: controller.navigateToProfile,
                       ),
                       _buildAnimatedListTile(
-                        label: 'Registered Workers',
-                        icon: Icons.workspaces_outline,
+                        label: 'Takım Üyeleri',
+                        icon: Icons.groups_outlined,
                         onTap: controller.navigateToAllWorkers,
                       ),
                       _buildAnimatedListTile(

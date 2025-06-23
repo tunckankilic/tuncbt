@@ -4,13 +4,17 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tuncbt/core/models/comment_model.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/models/task_model.dart';
+import 'package:tuncbt/core/models/team.dart';
+import 'package:tuncbt/core/models/team_member.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:flutter/rendering.dart';
 
 class InnerScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,6 +28,12 @@ class InnerScreenController extends GetxController {
   // User related variables
   final Rx<UserModel> currentUser = UserModel.empty().obs;
   final RxBool isSameUser = false.obs;
+
+  // Team related variables
+  final Rx<Team?> currentTeam = Rx<Team?>(null);
+  final Rx<TeamMember?> currentTeamMember = Rx<TeamMember?>(null);
+  final RxInt teamMemberCount = 0.obs;
+  final RxBool isTeamAdmin = false.obs;
 
   // Task related variables
   final Rx<TaskModel> currentTask = TaskModel.empty().obs;
@@ -74,6 +84,11 @@ class InnerScreenController extends GetxController {
         currentUser.value = UserModel.fromFirestore(userDoc);
         final User? user = _auth.currentUser;
         isSameUser.value = user?.uid == userId;
+
+        // Fetch team data if user is in a team
+        if (currentUser.value.teamId != null) {
+          await _fetchTeamData(currentUser.value.teamId!);
+        }
       } else {
         log('User document does not exist for userId: $userId');
         currentUser.value = UserModel.empty();
@@ -83,6 +98,101 @@ class InnerScreenController extends GetxController {
       Get.snackbar('Hata', 'Kullanıcı bilgileri alınamadı');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _fetchTeamData(String teamId) async {
+    try {
+      // Fetch team data
+      final teamDoc = await _firestore.collection('teams').doc(teamId).get();
+      if (teamDoc.exists) {
+        currentTeam.value = Team.fromJson(teamDoc.data()!);
+        teamMemberCount.value = currentTeam.value!.memberCount;
+      }
+
+      // Fetch team member data
+      final teamMemberDoc = await _firestore
+          .collection('team_members')
+          .where('teamId', isEqualTo: teamId)
+          .where('userId', isEqualTo: currentUserId.value)
+          .get();
+
+      if (teamMemberDoc.docs.isNotEmpty) {
+        currentTeamMember.value =
+            TeamMember.fromJson(teamMemberDoc.docs.first.data());
+        isTeamAdmin.value =
+            currentTeamMember.value!.role.name.toLowerCase() == 'admin';
+      }
+    } catch (e) {
+      log('Error fetching team data: $e');
+    }
+  }
+
+  Future<void> leaveTeam() async {
+    try {
+      if (currentUser.value.teamId == null || currentTeamMember.value == null) {
+        throw Exception('Takım bilgisi bulunamadı');
+      }
+
+      isLoading.value = true;
+
+      // Update team member status
+      await _firestore
+          .collection('team_members')
+          .doc('${currentUser.value.teamId}_${currentUserId.value}')
+          .update({'isActive': false});
+
+      // Update user's team ID
+      await _firestore
+          .collection('users')
+          .doc(currentUserId.value)
+          .update({'teamId': null, 'teamRole': null});
+
+      // Update team member count
+      await _firestore
+          .collection('teams')
+          .doc(currentUser.value.teamId)
+          .update({
+        'memberCount': FieldValue.increment(-1),
+      });
+
+      // Clear local team data
+      currentTeam.value = null;
+      currentTeamMember.value = null;
+      teamMemberCount.value = 0;
+      isTeamAdmin.value = false;
+
+      Get.snackbar(
+        'Başarılı',
+        'Takımdan ayrıldınız',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      log('Error leaving team: $e');
+      Get.snackbar(
+        'Hata',
+        'Takımdan ayrılırken bir hata oluştu',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void copyReferralCode() {
+    if (currentTeam.value != null) {
+      Clipboard.setData(ClipboardData(text: currentTeam.value!.referralCode));
+      Get.snackbar(
+        'Başarılı',
+        'Referans kodu kopyalandı',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     }
   }
 

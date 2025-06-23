@@ -18,6 +18,7 @@ class AllWorkersWidget extends StatelessWidget {
   final String positionInCompany;
   final String phoneNumber;
   final String userImageUrl;
+  final String teamRole;
 
   const AllWorkersWidget({
     Key? key,
@@ -27,6 +28,7 @@ class AllWorkersWidget extends StatelessWidget {
     required this.positionInCompany,
     required this.phoneNumber,
     required this.userImageUrl,
+    required this.teamRole,
   }) : super(key: key);
 
   @override
@@ -76,51 +78,122 @@ class AllWorkersWidget extends StatelessWidget {
   }
 
   Widget _buildLeadingAvatar() {
-    return Hero(
-      tag: 'avatar_$userID',
-      child: Container(
-        width: 50.w,
-        height: 50.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.white,
-            width: 2.w,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: Offset(0, 3),
+    return Stack(
+      children: [
+        Hero(
+          tag: 'avatar_$userID',
+          child: Container(
+            width: 50.w,
+            height: 50.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: _getRoleColor(),
+                width: 2.w,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(25.r),
-          child: Image.network(
-            userImageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Icon(
-              Icons.person,
-              size: 30.sp,
-              color: Theme.of(context).primaryColor,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25.r),
+              child: Image.network(
+                userImageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.person,
+                  size: 30.sp,
+                  color: Theme.of(Get.context!).primaryColor,
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Container(
+            padding: EdgeInsets.all(4.r),
+            decoration: BoxDecoration(
+              color: _getRoleColor(),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: 1.5.w,
+              ),
+            ),
+            child: Icon(
+              _getRoleIcon(),
+              size: 10.sp,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
+  Color _getRoleColor() {
+    switch (teamRole.toLowerCase()) {
+      case 'admin':
+        return Colors.red;
+      case 'manager':
+        return Colors.orange;
+      case 'member':
+        return Colors.blue;
+      default:
+        return Theme.of(Get.context!).colorScheme.secondary;
+    }
+  }
+
+  IconData _getRoleIcon() {
+    switch (teamRole.toLowerCase()) {
+      case 'admin':
+        return Icons.admin_panel_settings;
+      case 'manager':
+        return Icons.manage_accounts;
+      case 'member':
+        return Icons.person;
+      default:
+        return Icons.person_outline;
+    }
+  }
+
   Widget _buildTitle() {
-    return Text(
-      userName,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16.sp,
-        color: AppTheme.primaryColor,
-      ),
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            userName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            color: _getRoleColor().withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Text(
+            teamRole.capitalize!,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: _getRoleColor(),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -173,9 +246,7 @@ class AllWorkersWidget extends StatelessWidget {
     );
   }
 
-// Add this new method to handle chat navigation
   void _openChat(BuildContext context) {
-    // Create a UserModel instance from the current worker's data
     final user = UserModel(
         id: userID,
         name: userName,
@@ -185,7 +256,6 @@ class AllWorkersWidget extends StatelessWidget {
         position: positionInCompany,
         createdAt: DateTime.now());
 
-    // Navigate to chat screen using Get
     Get.toNamed(
       ChatScreen.routeName,
       arguments: user,

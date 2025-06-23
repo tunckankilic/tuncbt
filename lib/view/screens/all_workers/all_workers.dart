@@ -9,7 +9,7 @@ import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:animations/animations.dart';
 
 class AllWorkersScreen extends GetView<AllWorkersController> {
-  static const routeName = "/all-workers";
+  static const routeName = "/team-members";
   AllWorkersScreen({Key? key}) : super(key: key);
 
   @override
@@ -22,7 +22,6 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
           _buildWorkersList(),
         ],
       ),
-      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
@@ -32,13 +31,26 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
       floating: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          'All Workers',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Takım Üyeleri',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Obx(() => Text(
+                  '${controller.memberCount} Üye',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14.sp,
+                  ),
+                )),
+          ],
         ),
         background: Container(
           decoration: const BoxDecoration(
@@ -50,7 +62,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
           ),
           child: Center(
             child: Icon(
-              Icons.group,
+              Icons.groups,
               size: 80.sp,
               color: Colors.white.withOpacity(0.7),
             ),
@@ -69,9 +81,33 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
       } else if (controller.workers.isEmpty) {
         return SliverFillRemaining(
           child: Center(
-            child: Text(
-              'There are no users',
-              style: TextStyle(fontSize: 18.sp, color: AppTheme.textColor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.group_off,
+                  size: 64.sp,
+                  color: AppTheme.lightTextColor,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  'Henüz takım üyesi bulunmuyor',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: AppTheme.textColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Takımınıza yeni üyeler eklemek için\nreferans kodunuzu paylaşın',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppTheme.lightTextColor,
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -87,12 +123,13 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
                     child: AllWorkersWidget(
-                      userID: worker['id'],
-                      userName: worker['name'],
-                      userEmail: worker['email'],
-                      phoneNumber: worker['phoneNumber'],
-                      positionInCompany: worker['position'],
-                      userImageUrl: worker['imageUrl'],
+                      userID: worker.id,
+                      userName: worker.name,
+                      userEmail: worker.email,
+                      phoneNumber: worker.phoneNumber,
+                      positionInCompany: worker.position,
+                      userImageUrl: worker.imageUrl,
+                      teamRole: worker.teamRole?.name ?? 'Member',
                     ),
                   ),
                 ),
@@ -103,23 +140,6 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
         );
       }
     });
-  }
-
-  Widget _buildFloatingActionButton() {
-    return OpenContainer(
-      transitionDuration: const Duration(milliseconds: 500),
-      openBuilder: (context, _) => AddWorkerScreen(),
-      closedElevation: 6.0,
-      closedShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(32),
-      ),
-      closedColor: AppTheme.accentColor,
-      closedBuilder: (context, openContainer) => FloatingActionButton(
-        onPressed: openContainer,
-        backgroundColor: AppTheme.accentColor,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-    );
   }
 }
 

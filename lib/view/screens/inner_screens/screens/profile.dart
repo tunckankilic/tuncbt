@@ -109,14 +109,14 @@ class ProfileScreen extends GetView<InnerScreenController> {
           SizedBox(height: 20.h),
           _buildContactInfo(),
           SizedBox(height: 20.h),
+          _buildTeamInfo(context),
+          SizedBox(height: 20.h),
           if (userType == UserType.currentUser)
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildLogoutButton(),
-                SizedBox(
-                  height: 5.h,
-                ),
+                SizedBox(height: 5.h),
                 _buildDeleteAccountButton(context),
               ],
             ),
@@ -469,6 +469,180 @@ class ProfileScreen extends GetView<InnerScreenController> {
                   controller.updateUserName(nameController.text);
                   Navigator.of(context).pop();
                 }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTeamInfo(BuildContext context) {
+    return Obx(() {
+      final hasTeam = controller.currentTeam.value != null;
+      final isAdmin = controller.isTeamAdmin.value;
+
+      return Card(
+        elevation: 2,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Takım Bilgileri',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  if (hasTeam && isAdmin)
+                    IconButton(
+                      icon: Icon(Icons.settings, size: 24.sp),
+                      onPressed: () {
+                        // TODO: Navigate to team settings
+                      },
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+              if (!hasTeam)
+                Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.group_off,
+                        size: 48.sp,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Henüz bir takıma üye değilsiniz',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else ...[
+                _infoRow(Icons.groups, controller.currentTeam.value!.teamName),
+                _infoRow(
+                    Icons.badge, controller.currentTeamMember.value!.role.name),
+                _infoRow(
+                  Icons.people,
+                  '${controller.teamMemberCount} Üye',
+                ),
+                _infoRow(
+                  Icons.calendar_today,
+                  'Katılım: ${controller.currentTeamMember.value!.joinedAt.toString().split(' ')[0]}',
+                ),
+                if (isAdmin) ...[
+                  Divider(height: 20.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Referans Kodu',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Row(
+                              children: [
+                                Text(
+                                  controller.currentTeam.value!.referralCode,
+                                  style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy, size: 20.sp),
+                                  onPressed: controller.copyReferralCode,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          // TODO: Navigate to invite members screen
+                        },
+                        icon: Icon(Icons.person_add, size: 20.sp),
+                        label: Text('Üye Ekle'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (userType == UserType.currentUser && !isAdmin) ...[
+                  Divider(height: 20.h),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showLeaveTeamDialog(context),
+                      icon: Icon(Icons.exit_to_app, size: 20.sp),
+                      label: Text('Takımdan Ayrıl'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  void _showLeaveTeamDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Takımdan Ayrıl'),
+          content: Text(
+            'Takımdan ayrılmak istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+          ),
+          actions: [
+            TextButton(
+              child: Text('İptal'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Ayrıl', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                controller.leaveTeam();
               },
             ),
           ],
