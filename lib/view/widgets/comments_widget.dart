@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/config/constants.dart';
-import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

@@ -1,13 +1,8 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
-import 'package:tuncbt/view/screens/auth/screens/register.dart';
 
 class PasswordRenew extends GetView<AuthController> {
   static const routeName = "/password";

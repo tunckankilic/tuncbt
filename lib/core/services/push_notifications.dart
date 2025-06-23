@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -71,7 +70,32 @@ class PushNotificationSystems extends GetxController {
 
   void _handleMessage(RemoteMessage message) {
     print("Handling a message: ${message.messageId}");
-    // TODO: Implement your logic for handling the message when the app is opened from a notification
+
+    final data = message.data;
+    final type = data['type'];
+    final taskId = data['taskId'];
+
+    switch (type) {
+      case 'new_task':
+        Get.toNamed('/tasks/details', arguments: {
+          'taskId': taskId,
+          'uploadedBy': data['uploadedBy'],
+        });
+        break;
+      case 'status_update':
+        Get.toNamed('/tasks/details', arguments: {
+          'taskId': taskId,
+          'uploadedBy': data['uploadedBy'],
+        });
+        break;
+      case 'new_comment':
+        Get.toNamed('/tasks/details', arguments: {
+          'taskId': taskId,
+          'uploadedBy': data['uploadedBy'],
+          'scrollToComment': data['commentId'],
+        });
+        break;
+    }
   }
 
   Future<void> _showLocalNotification(RemoteMessage message) async {

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/view/widgets/comments_widget.dart';
-import 'package:tuncbt/core/models/task_model.dart';
-import 'package:tuncbt/core/models/comment_model.dart';
 
 class TaskDetailsScreen extends GetView<InnerScreenController> {
   static const routeName = "/task-details";
@@ -22,7 +19,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
     required this.teamId,
   }) : super(key: key) {
     Get.put(InnerScreenController());
-    controller.getTaskData(taskID, teamId);
+    controller.getTaskData(taskID);
   }
 
   @override

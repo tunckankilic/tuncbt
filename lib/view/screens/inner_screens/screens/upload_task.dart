@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:tuncbt/core/services/push_notifications.dart';
@@ -13,12 +15,45 @@ class UploadTask extends GetView<InnerScreenController> {
 
   final PushNotificationSystems _notificationSystems =
       Get.find<PushNotificationSystems>();
+
   @override
   Widget build(BuildContext context) {
+    final teamProvider = Provider.of<TeamProvider>(context);
+    if (!teamProvider.isInitialized) {
+      teamProvider.initializeTeamData();
+    }
+
+    if (teamProvider.teamId == null) {
+      Get.back();
+      Get.snackbar(
+        'Hata',
+        'Takım bilgisi bulunamadı',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return const SizedBox.shrink();
+    }
+
+    if (!teamProvider.isAdmin && !teamProvider.isManager) {
+      Get.back();
+      Get.snackbar(
+        'Hata',
+        'Görev ekleme yetkiniz bulunmuyor',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return const SizedBox.shrink();
+    }
+
+    Get.put(InnerScreenController());
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload Task',
-            style: TextStyle(color: AppTheme.textColor)),
+        title: Text(
+          '${teamProvider.currentTeam?.teamName ?? 'Takım'} - Yeni Görev',
+          style: const TextStyle(color: AppTheme.textColor),
+        ),
         backgroundColor: AppTheme.backgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppTheme.primaryColor),
@@ -61,7 +96,7 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Widget _buildHeader() {
     return Text(
-      'All Fields are required',
+      'Tüm alanlar zorunludur',
       style: TextStyle(
         color: AppTheme.primaryColor,
         fontSize: 20.sp,
@@ -72,7 +107,7 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Widget _buildTaskCategory() {
     return _buildFormField(
-      label: 'Task Category*',
+      label: 'Görev Kategorisi*',
       controller: controller.taskCategoryController,
       onTap: () => controller.showTaskCategoriesDialog(Get.context!),
       enabled: false,
@@ -82,7 +117,7 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Widget _buildTaskTitle() {
     return _buildFormField(
-      label: 'Task Title*',
+      label: 'Görev Başlığı*',
       controller: controller.taskTitleController,
       maxLength: 100,
       icon: Icons.title,
@@ -91,7 +126,7 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Widget _buildTaskDescription() {
     return _buildFormField(
-      label: 'Task Description*',
+      label: 'Görev Açıklaması*',
       controller: controller.taskDescriptionController,
       maxLength: 1000,
       maxLines: 3,
@@ -101,7 +136,7 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Widget _buildTaskDeadline() {
     return _buildFormField(
-      label: 'Task Deadline Date*',
+      label: 'Son Tarih*',
       controller: controller.deadlineDateController,
       onTap: () => controller.pickDateDialog(Get.context!),
       enabled: false,
@@ -160,7 +195,7 @@ class UploadTask extends GetView<InnerScreenController> {
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return "This field is required";
+                  return "Bu alan zorunludur";
                 }
                 return null;
               },
@@ -179,7 +214,7 @@ class UploadTask extends GetView<InnerScreenController> {
             : ElevatedButton.icon(
                 onPressed: _uploadTaskAndNotify,
                 icon: const Icon(Icons.upload_file),
-                label: const Text('Upload Task'),
+                label: const Text('Görevi Yükle'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentColor,
                   padding:
@@ -204,8 +239,8 @@ class UploadTask extends GetView<InnerScreenController> {
         // Görev başarıyla yüklendi, bildirim oluştur
         await _createTaskAddedNotification();
         Get.snackbar(
-          'Success',
-          'Task uploaded and notification created',
+          'Başarılı',
+          'Görev yüklendi ve bildirim oluşturuldu',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -213,8 +248,8 @@ class UploadTask extends GetView<InnerScreenController> {
       } catch (e) {
         print('Error uploading task: $e');
         Get.snackbar(
-          'Error',
-          'Failed to upload task',
+          'Hata',
+          'Görev yüklenirken hata oluştu',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -225,11 +260,10 @@ class UploadTask extends GetView<InnerScreenController> {
 
   Future<void> _createTaskAddedNotification() async {
     String? taskID = await controller.getLastUploadedTaskID();
-    String uploadedBy = controller
-        .getCurrentUserId(); // Bu metodu InnerScreenController'a eklemelisiniz
+    String uploadedBy = controller.getCurrentUserId();
     if (taskID != null) {
-      await Get.find<PushNotificationSystems>()
-          .createTaskAddedNotification(taskID, uploadedBy);
+      await _notificationSystems.createTaskAddedNotification(
+          taskID, uploadedBy);
     } else {
       print('Failed to get the last uploaded task ID');
     }

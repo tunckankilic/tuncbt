@@ -15,10 +15,18 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:tuncbt/providers/team_provider.dart';
 
 class InnerScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late final TeamProvider _teamProvider;
+
+  InnerScreenController() {
+    _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
+  }
 
   // Common variables
   final RxBool isLoading = false.obs;
@@ -85,10 +93,8 @@ class InnerScreenController extends GetxController {
         final User? user = _auth.currentUser;
         isSameUser.value = user?.uid == userId;
 
-        // Fetch team data if user is in a team
-        if (currentUser.value.teamId != null) {
-          await _fetchTeamData(currentUser.value.teamId!);
-        }
+        // Fetch team data
+        await _fetchTeamData(userId);
       } else {
         log('User document does not exist for userId: $userId');
         currentUser.value = UserModel.empty();
@@ -213,7 +219,7 @@ class InnerScreenController extends GetxController {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> getTaskData(String taskId, String teamId) async {
+  Future<void> getTaskData(String taskId) async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
@@ -232,7 +238,7 @@ class InnerScreenController extends GetxController {
       }
 
       final userData = UserModel.fromFirestore(userDoc);
-      if (userData.teamId != teamId) {
+      if (userData.teamId != _teamProvider.teamId) {
         errorMessage.value = 'Bu görevi görüntüleme yetkiniz yok';
         return;
       }

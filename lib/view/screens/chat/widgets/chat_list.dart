@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tuncbt/core/enums/message_enum.dart';
 import 'package:tuncbt/core/models/message.dart';
 import 'package:tuncbt/view/screens/chat/chat_controller.dart';
 import 'package:tuncbt/view/screens/chat/widgets/my_message_card.dart';

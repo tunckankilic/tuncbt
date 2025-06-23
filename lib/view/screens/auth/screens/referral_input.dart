@@ -130,12 +130,33 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _isValid
-                    ? () {
+                    ? () async {
                         if (_formKey.currentState!.validate()) {
-                          // TODO: Handle referral code submission
-                          Get.toNamed('/auth/register', arguments: {
-                            'referralCode': _referralController.text
-                          });
+                          setState(() => _isLoading = true);
+                          try {
+                            final referralService = ReferralService();
+                            final result = await referralService
+                                .validateCode(_referralController.text);
+
+                            if (result.isValid) {
+                              Get.toNamed('/auth/register', arguments: {
+                                'referralCode': _referralController.text
+                              });
+                            } else {
+                              setState(() {
+                                _errorMessage = result.error?.message ??
+                                    'Geçersiz referans kodu';
+                                _isValid = false;
+                              });
+                            }
+                          } catch (e) {
+                            setState(() {
+                              _errorMessage = 'Bir hata oluştu: $e';
+                              _isValid = false;
+                            });
+                          } finally {
+                            setState(() => _isLoading = false);
+                          }
                         }
                       }
                     : null,

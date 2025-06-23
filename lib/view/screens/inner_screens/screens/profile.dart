@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
@@ -11,6 +10,8 @@ import 'package:tuncbt/view/screens/inner_screens/widgets/safe_profile_image.dar
 import 'package:tuncbt/core/services/account_deletion.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
 
 enum UserType { commenter, worker, currentUser }
 
@@ -19,9 +20,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
   final String userId;
   final UserType userType;
 
-  ProfileScreen(
-      {Key? key, required this.userId, this.userType = UserType.currentUser})
-      : super(key: key);
+  const ProfileScreen(
+      {super.key, required this.userId, this.userType = UserType.currentUser});
 
   @override
   Widget build(BuildContext context) {
@@ -506,7 +506,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                     IconButton(
                       icon: Icon(Icons.settings, size: 24.sp),
                       onPressed: () {
-                        // TODO: Navigate to team settings
+                        Get.to(() => const TeamSettingsScreen());
                       },
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -585,7 +585,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                       ),
                       ElevatedButton.icon(
                         onPressed: () {
-                          // TODO: Navigate to invite members screen
+                          Get.to(() => const InviteMembersScreen());
                         },
                         icon: Icon(Icons.person_add, size: 20.sp),
                         label: Text('Üye Ekle'),

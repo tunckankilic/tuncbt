@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_controller.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
@@ -14,27 +16,44 @@ class TasksScreen extends GetView<TasksScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final teamProvider = Provider.of<TeamProvider>(context);
+    if (!teamProvider.isInitialized) {
+      teamProvider.initializeTeamData();
+    }
+
+    if (teamProvider.teamId == null) {
+      Get.back();
+      Get.snackbar(
+        'Hata',
+        'Takım bilgisi bulunamadı',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return const SizedBox.shrink();
+    }
+
     Get.put(TasksScreenController());
     return Scaffold(
       drawer: DrawerWidget(),
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(context),
+          _buildSliverAppBar(context, teamProvider),
           _buildTasksList(),
         ],
       ),
-      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButton: _buildFloatingActionButton(teamProvider),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(BuildContext context, TeamProvider teamProvider) {
     return SliverAppBar(
       expandedHeight: 120.h,
       floating: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          'Takım Görevleri',
+          teamProvider.currentTeam?.teamName ?? 'Takım Görevleri',
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Container(
@@ -99,18 +118,23 @@ class TasksScreen extends GetView<TasksScreenController> {
                     color: AppTheme.textColor,
                   ),
                 ),
-                if (controller.currentUser.value?.teamRole?.name == 'admin' ||
-                    controller.currentUser.value?.teamRole?.name == 'manager')
-                  Padding(
-                    padding: EdgeInsets.only(top: 8.h),
-                    child: Text(
-                      'Yeni görev eklemek için + butonuna tıklayın',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppTheme.textColor.withOpacity(0.7),
-                      ),
-                    ),
-                  ),
+                Consumer<TeamProvider>(
+                  builder: (context, teamProvider, child) {
+                    if (teamProvider.isAdmin || teamProvider.isManager) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Text(
+                          'Yeni görev eklemek için + butonuna tıklayın',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: AppTheme.textColor.withOpacity(0.7),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               ],
             ),
           ),
@@ -139,21 +163,19 @@ class TasksScreen extends GetView<TasksScreenController> {
     });
   }
 
-  Widget _buildFloatingActionButton() {
-    return Obx(() {
-      final userRole = controller.currentUser.value?.teamRole?.name;
-      final bool canAddTask = userRole == 'admin' || userRole == 'manager';
+  Widget _buildFloatingActionButton(TeamProvider teamProvider) {
+    if (!teamProvider.isAdmin && !teamProvider.isManager) {
+      return const SizedBox.shrink();
+    }
 
-      if (!canAddTask || controller.currentUser.value?.teamId == null) {
-        return const SizedBox.shrink();
-      }
-
-      return FloatingActionButton(
-        onPressed: () => Get.toNamed(UploadTask.routeName),
-        backgroundColor: AppTheme.accentColor,
-        child: const Icon(Icons.add),
-      );
-    });
+    return FloatingActionButton(
+      onPressed: () => Get.toNamed(
+        UploadTask.routeName,
+        arguments: {'teamId': teamProvider.teamId},
+      ),
+      backgroundColor: AppTheme.accentColor,
+      child: const Icon(Icons.add),
+    );
   }
 }
 

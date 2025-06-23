@@ -8,7 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:tuncbt/core/enums/message_enum.dart';
 import 'package:tuncbt/core/models/group.dart';
 import 'package:tuncbt/core/models/message.dart';
-import 'package:tuncbt/core/models/message_model.dart';
 import 'package:tuncbt/core/models/message_reply.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -689,24 +688,6 @@ class ChatController extends GetxController {
         .set(message.toJson()); // toFirestore yerine toJson kullan
 
     await _updateLastMessage(chatRoomId, message);
-  }
-
-  MessageType _convertMessageEnum(MessageType messageEnum) {
-    switch (messageEnum) {
-      case MessageType.image:
-        return MessageType.image;
-      case MessageType.audio:
-        return MessageType.audio;
-      case MessageType.file:
-        return MessageType.file;
-      case MessageType.gif:
-        return MessageType.gif;
-
-      case MessageType.video:
-        return MessageType.video;
-      default:
-        return MessageType.text;
-    }
   }
 
   void onMessageSwipe(

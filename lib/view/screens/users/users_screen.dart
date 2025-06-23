@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/users/users_controller.dart';
-import 'package:tuncbt/view/screens/users/users_repository.dart';
 
 class UsersListView extends GetView<UserController> {
   const UsersListView({Key? key}) : super(key: key);

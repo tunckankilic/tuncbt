@@ -5,12 +5,11 @@ import 'package:tuncbt/view/screens/auth/screens/auth.dart';
 import 'package:tuncbt/view/screens/auth/screens/password_renew.dart';
 import 'package:tuncbt/view/screens/bindings.dart';
 import 'package:tuncbt/view/screens/chat/chat_screen.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/users/users_bindings.dart';
-import 'package:tuncbt/view/screens/users/users_repository.dart';
 import 'package:tuncbt/view/screens/users/users_screen.dart';
 import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
-import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
@@ -25,6 +24,11 @@ class RouteManager {
       name: AllWorkersScreen.routeName,
       page: () => AllWorkersScreen(),
       binding: AllWorkersBindings(),
+    ),
+    GetPage(
+      name: TeamSettingsScreen.routeName,
+      page: () => const TeamSettingsScreen(),
+      binding: InnerScreenBindings(),
     ),
     GetPage(
       name: ForgetPasswordScreen.routeName,

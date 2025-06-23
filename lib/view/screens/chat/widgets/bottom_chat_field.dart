@@ -4,11 +4,8 @@ import 'package:get/get.dart';
 import 'package:tuncbt/view/screens/chat/chat_controller.dart';
 import 'package:tuncbt/view/screens/chat/widgets/message_reply_preview.dart';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:tuncbt/core/enums/message_enum.dart';
 
 class BottomChatField extends GetView<ChatController> {

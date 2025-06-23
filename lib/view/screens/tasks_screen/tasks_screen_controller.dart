@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
+import 'package:tuncbt/providers/team_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TasksScreenController extends GetxController {
@@ -16,6 +18,12 @@ class TasksScreenController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  late final TeamProvider _teamProvider;
+
+  TasksScreenController() {
+    _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
+  }
 
   @override
   void onInit() {
@@ -50,7 +58,7 @@ class TasksScreenController extends GetxController {
 
   void fetchTasks() {
     try {
-      if (currentUser.value?.teamId == null) {
+      if (_teamProvider.teamId == null) {
         errorMessage.value = 'Henüz bir takıma ait değilsiniz';
         return;
       }
@@ -58,7 +66,7 @@ class TasksScreenController extends GetxController {
       isLoading.value = true;
       _firestore
           .collection('tasks')
-          .where('teamId', isEqualTo: currentUser.value!.teamId)
+          .where('teamId', isEqualTo: _teamProvider.teamId)
           .snapshots()
           .listen(
         (snapshot) {
