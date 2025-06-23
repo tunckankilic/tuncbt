@@ -13,11 +13,16 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
 
   final String uploadedBy;
   final String taskID;
+  final String teamId;
 
-  TaskDetailsScreen({Key? key, required this.uploadedBy, required this.taskID})
-      : super(key: key) {
+  TaskDetailsScreen({
+    Key? key,
+    required this.uploadedBy,
+    required this.taskID,
+    required this.teamId,
+  }) : super(key: key) {
     Get.put(InnerScreenController());
-    controller.getTaskData(taskID);
+    controller.getTaskData(taskID, teamId);
   }
 
   @override
@@ -26,28 +31,50 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
       body: Obx(
         () => controller.isLoading.value
             ? const Center(child: CircularProgressIndicator())
-            : CustomScrollView(
-                slivers: [
-                  _buildSliverAppBar(),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildTaskInfo(),
-                          SizedBox(height: 20.h),
-                          _buildDescriptionSection(),
-                          SizedBox(height: 20.h),
-                          _buildCommentSection(),
-                          SizedBox(height: 20.h),
-                          _buildCommentsList(),
-                        ],
-                      ),
+            : controller.errorMessage.value.isNotEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 48.sp,
+                          color: Colors.red,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          controller.errorMessage.value,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: AppTheme.textColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
+                  )
+                : CustomScrollView(
+                    slivers: [
+                      _buildSliverAppBar(),
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildTaskInfo(),
+                              SizedBox(height: 20.h),
+                              _buildDescriptionSection(),
+                              SizedBox(height: 20.h),
+                              _buildCommentSection(),
+                              SizedBox(height: 20.h),
+                              _buildCommentsList(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }
@@ -155,20 +182,47 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   }
 
   Widget _buildDoneStateSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Done state:', style: _titleStyle()),
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildStatusButton('Done', true),
-            _buildStatusButton('Not Done', false),
-          ],
-        ),
-      ],
-    );
+    return Obx(() {
+      final canUpdateStatus = controller.canUpdateTaskStatus.value;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Durum:', style: _titleStyle()),
+          SizedBox(height: 10.h),
+          if (canUpdateStatus)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatusButton('Tamamlandı', true),
+                _buildStatusButton('Devam Ediyor', false),
+              ],
+            )
+          else
+            Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: controller.currentTask.value.isDone
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Text(
+                controller.currentTask.value.isDone
+                    ? 'Tamamlandı'
+                    : 'Devam Ediyor',
+                style: TextStyle(
+                  color: controller.currentTask.value.isDone
+                      ? Colors.green
+                      : Colors.red,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+        ],
+      );
+    });
   }
 
   Widget _buildStatusButton(String label, bool isDoneStatus) {
@@ -208,23 +262,29 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   }
 
   Widget _buildCommentSection() {
-    return Obx(() => AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
-          child: controller.isCommenting.value
-              ? _buildCommentInput()
-              : Center(
-                  child: ElevatedButton.icon(
-                    onPressed: () => controller.isCommenting.value = true,
-                    icon: const Icon(Icons.add_comment),
-                    label: const Text('Add a Comment'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accentColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r)),
-                    ),
+    return Obx(() {
+      if (!controller.canAddComment.value) {
+        return const SizedBox.shrink();
+      }
+
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: controller.isCommenting.value
+            ? _buildCommentInput()
+            : Center(
+                child: ElevatedButton.icon(
+                  onPressed: () => controller.isCommenting.value = true,
+                  icon: const Icon(Icons.add_comment),
+                  label: const Text('Yorum Ekle'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accentColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r)),
                   ),
                 ),
-        ));
+              ),
+      );
+    });
   }
 
   Widget _buildCommentInput() {
@@ -238,7 +298,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
           decoration: InputDecoration(
             fillColor: Colors.grey[200],
             filled: true,
-            hintText: 'Write your comment...',
+            hintText: 'Yorumunuzu yazın...',
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
           ),
@@ -249,14 +309,14 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
           children: [
             TextButton(
               onPressed: () => controller.isCommenting.value = false,
-              child: const Text('Cancel'),
+              child: const Text('İptal'),
             ),
             SizedBox(width: 10.w),
             ElevatedButton(
               onPressed: () => controller.addComment(taskID),
               style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentColor),
-              child: const Text('Post'),
+              child: const Text('Gönder'),
             ),
           ],
         ),
@@ -277,6 +337,8 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
               commentBody: comment.body,
               commenterImageUrl: comment.userImageUrl,
               commenterName: comment.name,
+              commenterTeamRole: comment.teamRole,
+              commentTime: comment.time,
             );
           },
           separatorBuilder: (context, index) => const Divider(),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/view/screens/screens.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentWidget extends StatelessWidget {
   final String commentId;
@@ -12,6 +13,8 @@ class CommentWidget extends StatelessWidget {
   final String commenterName;
   final String commentBody;
   final String commenterImageUrl;
+  final String commenterTeamRole;
+  final DateTime commentTime;
 
   const CommentWidget({
     Key? key,
@@ -20,6 +23,8 @@ class CommentWidget extends StatelessWidget {
     required this.commenterName,
     required this.commentBody,
     required this.commenterImageUrl,
+    required this.commenterTeamRole,
+    required this.commentTime,
   }) : super(key: key);
 
   @override
@@ -27,7 +32,7 @@ class CommentWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
       child: OpenContainer(
-        transitionDuration: Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 500),
         openBuilder: (context, _) => ProfileScreen(
           userId: commenterId,
           userType: UserType.commenter,
@@ -50,38 +55,89 @@ class CommentWidget extends StatelessWidget {
   }
 
   Widget _buildCommenterAvatar(BuildContext context) {
-    return Hero(
-      tag: 'avatar_$commenterId',
-      child: Container(
-        height: 40.w,
-        width: 40.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            width: 2.w,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: Offset(0, 3),
+    return Stack(
+      children: [
+        Hero(
+          tag: 'avatar_$commenterId',
+          child: Container(
+            height: 40.w,
+            width: 40.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 2.w,
+                color: _getRoleColor(),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-          ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.r),
+              child: commenterImageUrl.isNotEmpty
+                  ? Image.network(
+                      commenterImageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _defaultAvatar(context),
+                    )
+                  : _defaultAvatar(context),
+            ),
+          ),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.r),
-          child: commenterImageUrl.isNotEmpty
-              ? Image.network(
-                  commenterImageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _defaultAvatar(context),
-                )
-              : _defaultAvatar(context),
-        ),
-      ),
+        if (commenterTeamRole.isNotEmpty)
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(4.r),
+              decoration: BoxDecoration(
+                color: _getRoleColor(),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 1.5.w,
+                ),
+              ),
+              child: Icon(
+                _getRoleIcon(),
+                size: 10.sp,
+                color: Colors.white,
+              ),
+            ),
+          ),
+      ],
     );
+  }
+
+  Color _getRoleColor() {
+    switch (commenterTeamRole.toLowerCase()) {
+      case 'admin':
+        return Colors.red;
+      case 'manager':
+        return Colors.orange;
+      case 'member':
+        return Colors.blue;
+      default:
+        return Theme.of(Get.context!).colorScheme.secondary;
+    }
+  }
+
+  IconData _getRoleIcon() {
+    switch (commenterTeamRole.toLowerCase()) {
+      case 'admin':
+        return Icons.admin_panel_settings;
+      case 'manager':
+        return Icons.manage_accounts;
+      case 'member':
+        return Icons.person;
+      default:
+        return Icons.person_outline;
+    }
   }
 
   Widget _defaultAvatar(BuildContext context) {
@@ -96,13 +152,35 @@ class CommentWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          commenterName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
-            color: Theme.of(context).primaryColor,
-          ),
+        Row(
+          children: [
+            Text(
+              commenterName,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+            if (commenterTeamRole.isNotEmpty) ...[
+              SizedBox(width: 8.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: _getRoleColor().withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  commenterTeamRole.capitalize!,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: _getRoleColor(),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         SizedBox(height: 4.h),
         Container(
@@ -126,7 +204,7 @@ class CommentWidget extends StatelessWidget {
                 size: 12.sp, color: AppTheme.lightTextColor),
             SizedBox(width: 4.w),
             Text(
-              '2 saat önce', // Bu kısmı gerçek zamana göre güncelleyebilirsiniz
+              timeago.format(commentTime, locale: 'tr'),
               style: TextStyle(
                 fontSize: 12.sp,
                 color: AppTheme.lightTextColor,

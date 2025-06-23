@@ -34,7 +34,7 @@ class TasksScreen extends GetView<TasksScreenController> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          'Tasks',
+          'Takım Görevleri',
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Container(
@@ -56,12 +56,62 @@ class TasksScreen extends GetView<TasksScreenController> {
         return const SliverFillRemaining(
           child: Center(child: CircularProgressIndicator()),
         );
+      } else if (controller.errorMessage.value.isNotEmpty) {
+        return SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 48.sp,
+                  color: Colors.red,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  controller.errorMessage.value,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: AppTheme.textColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
       } else if (controller.tasks.isEmpty) {
         return SliverFillRemaining(
           child: Center(
-            child: Text(
-              'There are no tasks',
-              style: TextStyle(fontSize: 18.sp, color: AppTheme.textColor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.task_outlined,
+                  size: 48.sp,
+                  color: AppTheme.accentColor,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  'Henüz takım görevi bulunmuyor',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: AppTheme.textColor,
+                  ),
+                ),
+                if (controller.currentUser.value?.teamRole?.name == 'admin' ||
+                    controller.currentUser.value?.teamRole?.name == 'manager')
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Text(
+                      'Yeni görev eklemek için + butonuna tıklayın',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppTheme.textColor.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         );
@@ -78,6 +128,7 @@ class TasksScreen extends GetView<TasksScreenController> {
                   taskId: task['taskId'],
                   uploadedBy: task['uploadedBy'],
                   isDone: task['isDone'],
+                  teamId: task['teamId'],
                 ),
               );
             },
@@ -89,11 +140,20 @@ class TasksScreen extends GetView<TasksScreenController> {
   }
 
   Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () => Get.toNamed(UploadTask.routeName),
-      backgroundColor: AppTheme.accentColor,
-      child: const Icon(Icons.add),
-    );
+    return Obx(() {
+      final userRole = controller.currentUser.value?.teamRole?.name;
+      final bool canAddTask = userRole == 'admin' || userRole == 'manager';
+
+      if (!canAddTask || controller.currentUser.value?.teamId == null) {
+        return const SizedBox.shrink();
+      }
+
+      return FloatingActionButton(
+        onPressed: () => Get.toNamed(UploadTask.routeName),
+        backgroundColor: AppTheme.accentColor,
+        child: const Icon(Icons.add),
+      );
+    });
   }
 }
 

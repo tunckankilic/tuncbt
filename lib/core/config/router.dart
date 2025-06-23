@@ -57,6 +57,7 @@ class RouteManager {
       page: () {
         final args = Get.arguments as Map<String, dynamic>;
         return TaskDetailsScreen(
+          teamId: args['teamId'],
           uploadedBy: args['uploadedBy'] as String,
           taskID: args['taskID'] as String,
         );
@@ -103,7 +104,7 @@ class RouteManager {
     ),
     GetPage(
       name: '/auth/password-reset',
-      page: () => const PasswordRenew(),
+      page: () => PasswordRenew(),
       binding: AuthBindings(),
     ),
     GetPage(

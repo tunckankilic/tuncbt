@@ -10,6 +10,7 @@ import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/core/services/push_notifications.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/core/models/user_model.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,10 @@ void main() async {
 
   // Mevcut kullanıcıları yeni yapıya geçir
   await UserModel.migrateExistingUsers();
+
+  // timeago Türkçe desteği
+  timeago.setLocaleMessages('tr', timeago.TrMessages());
+  timeago.setDefaultLocale('tr');
 
   final pushNotificationSystems = PushNotificationSystems();
   await pushNotificationSystems.init();

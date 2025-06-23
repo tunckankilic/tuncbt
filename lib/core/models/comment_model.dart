@@ -7,6 +7,7 @@ class CommentModel {
   final String userImageUrl;
   final String body;
   final DateTime time;
+  final String teamRole;
 
   CommentModel({
     required this.id,
@@ -15,6 +16,7 @@ class CommentModel {
     required this.userImageUrl,
     required this.body,
     required this.time,
+    required this.teamRole,
   });
 
   factory CommentModel.fromMap(Map<String, dynamic> map) {
@@ -25,6 +27,7 @@ class CommentModel {
       userImageUrl: map['userImageUrl'] ?? '',
       body: map['commentBody'] ?? '',
       time: (map['time'] as Timestamp).toDate(),
+      teamRole: map['teamRole'] ?? '',
     );
   }
 
@@ -36,6 +39,7 @@ class CommentModel {
       'userImageUrl': userImageUrl,
       'commentBody': body,
       'time': Timestamp.fromDate(time),
+      'teamRole': teamRole,
     };
   }
 
@@ -46,6 +50,7 @@ class CommentModel {
     String? userImageUrl,
     String? body,
     DateTime? time,
+    String? teamRole,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -54,6 +59,7 @@ class CommentModel {
       userImageUrl: userImageUrl ?? this.userImageUrl,
       body: body ?? this.body,
       time: time ?? this.time,
+      teamRole: teamRole ?? this.teamRole,
     );
   }
 
@@ -65,6 +71,7 @@ class CommentModel {
       userImageUrl: '',
       body: '',
       time: DateTime.now(),
+      teamRole: '',
     );
   }
 }

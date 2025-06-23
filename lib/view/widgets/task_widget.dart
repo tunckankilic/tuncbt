@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/task_details.dart';
 import 'package:tuncbt/core/services/global_methods.dart';
+import 'package:tuncbt/core/models/user_model.dart';
 
 class TaskWidget extends StatelessWidget {
   final String taskTitle;
@@ -13,6 +14,7 @@ class TaskWidget extends StatelessWidget {
   final String taskId;
   final String uploadedBy;
   final bool isDone;
+  final String teamId;
 
   const TaskWidget({
     Key? key,
@@ -21,6 +23,7 @@ class TaskWidget extends StatelessWidget {
     required this.taskId,
     required this.uploadedBy,
     required this.isDone,
+    required this.teamId,
   }) : super(key: key);
 
   @override
@@ -48,7 +51,7 @@ class TaskWidget extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -139,6 +142,7 @@ class TaskWidget extends StatelessWidget {
         builder: (context) => TaskDetailsScreen(
           taskID: taskId,
           uploadedBy: uploadedBy,
+          teamId: teamId,
         ),
       ),
     );
@@ -148,13 +152,13 @@ class TaskWidget extends StatelessWidget {
     return await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Delete Task',
+            title: Text('Görevi Sil',
                 style: TextStyle(color: AppTheme.primaryColor)),
-            content: Text('Are you sure you want to delete this task?'),
+            content: Text('Bu görevi silmek istediğinizden emin misiniz?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Cancel',
+                child: Text('İptal',
                     style: TextStyle(color: AppTheme.secondaryColor)),
               ),
               TextButton(
@@ -164,7 +168,7 @@ class TaskWidget extends StatelessWidget {
                   children: [
                     Icon(Icons.delete, color: Colors.red),
                     SizedBox(width: 8.w),
-                    Text('Delete', style: TextStyle(color: Colors.red)),
+                    Text('Sil', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -175,28 +179,62 @@ class TaskWidget extends StatelessWidget {
   }
 
   Future<void> _deleteTask(BuildContext context) async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    if (uploadedBy != user.uid) {
-      GlobalMethod.showErrorDialog(
-        error: 'You cannot perform this action',
-        context: context,
-      );
-      return;
-    }
-
     try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        GlobalMethod.showErrorDialog(
+          error: 'Oturum açmanız gerekiyor',
+          context: context,
+        );
+        return;
+      }
+
+      // Kullanıcının takım bilgilerini al
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        GlobalMethod.showErrorDialog(
+          error: 'Kullanıcı bilgileri bulunamadı',
+          context: context,
+        );
+        return;
+      }
+
+      final userData = UserModel.fromFirestore(userDoc);
+
+      // Takım kontrolü
+      if (userData.teamId != teamId) {
+        GlobalMethod.showErrorDialog(
+          error: 'Bu görevi silme yetkiniz yok',
+          context: context,
+        );
+        return;
+      }
+
+      // Yetki kontrolü
+      if (uploadedBy != user.uid &&
+          userData.teamRole?.name != 'admin' &&
+          userData.teamRole?.name != 'manager') {
+        GlobalMethod.showErrorDialog(
+          error: 'Bu işlemi gerçekleştirme yetkiniz yok',
+          context: context,
+        );
+        return;
+      }
+
       await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
       await Fluttertoast.showToast(
-        msg: "Task has been deleted",
+        msg: "Görev başarıyla silindi",
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.grey,
         fontSize: 18.0,
       );
     } catch (error) {
       GlobalMethod.showErrorDialog(
-        error: 'This task cannot be deleted',
+        error: 'Görev silinirken bir hata oluştu',
         context: context,
       );
     }

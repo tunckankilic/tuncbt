@@ -19,6 +19,7 @@ class InnerScreenController extends GetxController {
   // Common variables
   final RxBool isLoading = false.obs;
   final RxString currentUserId = ''.obs;
+  final RxString errorMessage = ''.obs;
 
   // User related variables
   final Rx<UserModel> currentUser = UserModel.empty().obs;
@@ -27,16 +28,18 @@ class InnerScreenController extends GetxController {
   // Task related variables
   final Rx<TaskModel> currentTask = TaskModel.empty().obs;
   final RxBool isCommenting = false.obs;
+  final RxBool canUpdateTaskStatus = false.obs;
+  final RxBool canAddComment = false.obs;
   final commentController = TextEditingController();
 
   // Upload Task variables
   final TextEditingController taskCategoryController =
-      TextEditingController(text: 'Choose task category');
+      TextEditingController(text: 'Görev kategorisi seçin');
   final TextEditingController taskTitleController = TextEditingController();
   final TextEditingController taskDescriptionController =
       TextEditingController();
   final TextEditingController deadlineDateController =
-      TextEditingController(text: 'Choose task Deadline date');
+      TextEditingController(text: 'Görev son tarihini seçin');
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Rx<DateTime?> picked = Rx<DateTime?>(null);
   final Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
@@ -77,7 +80,7 @@ class InnerScreenController extends GetxController {
       }
     } catch (e) {
       log('Error retrieving user data: $e');
-      Get.snackbar('Error', 'Failed to retrieve user data');
+      Get.snackbar('Hata', 'Kullanıcı bilgileri alınamadı');
     } finally {
       isLoading.value = false;
     }
@@ -87,7 +90,7 @@ class InnerScreenController extends GetxController {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
-      Get.snackbar('Error', 'Could not launch $url');
+      Get.snackbar('Hata', '$url açılamadı');
     }
   }
 
@@ -100,22 +103,51 @@ class InnerScreenController extends GetxController {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> getTaskData(String taskId) async {
+  Future<void> getTaskData(String taskId, String teamId) async {
     try {
       isLoading.value = true;
+      errorMessage.value = '';
+
+      // Önce kullanıcının takım üyeliğini kontrol et
+      final User? user = _auth.currentUser;
+      if (user == null) {
+        errorMessage.value = 'Oturum açmanız gerekiyor';
+        return;
+      }
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        errorMessage.value = 'Kullanıcı bilgileri bulunamadı';
+        return;
+      }
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId != teamId) {
+        errorMessage.value = 'Bu görevi görüntüleme yetkiniz yok';
+        return;
+      }
+
       final DocumentSnapshot taskDoc =
           await _firestore.collection('tasks').doc(taskId).get();
 
       if (taskDoc.exists) {
         currentTask.value = TaskModel.fromFirestore(taskDoc);
         await getUserData(currentTask.value.uploadedBy);
+
+        // Yetkilendirmeleri ayarla
+        final bool isAdmin = userData.teamRole?.name == 'admin';
+        final bool isManager = userData.teamRole?.name == 'manager';
+        final bool isTaskCreator = currentTask.value.uploadedBy == user.uid;
+
+        canUpdateTaskStatus.value = isTaskCreator || isAdmin || isManager;
+        canAddComment.value = true; // Tüm takım üyeleri yorum yapabilir
       } else {
         log('Task document does not exist for ID: $taskId');
-        Get.back(); // Navigate back or show an error message
+        errorMessage.value = 'Görev bulunamadı';
       }
     } catch (e) {
       log('Error fetching task data: $e');
-      Get.snackbar('Error', 'Failed to fetch task data');
+      errorMessage.value = 'Görev bilgileri alınırken hata oluştu';
     } finally {
       isLoading.value = false;
     }
@@ -134,7 +166,7 @@ class InnerScreenController extends GetxController {
       }
     } catch (e) {
       log('Error retrieving user data: $e');
-      throw Exception('Failed to retrieve user data');
+      throw Exception('Kullanıcı bilgileri alınamadı');
     }
   }
 
@@ -148,7 +180,7 @@ class InnerScreenController extends GetxController {
       isSameUser.value = user?.uid == userId;
     } catch (e) {
       log('Error loading user data: $e');
-      Get.snackbar('Error', 'Failed to load user data');
+      Get.snackbar('Hata', 'Kullanıcı bilgileri yüklenemedi');
     } finally {
       isLoading.value = false;
     }
@@ -156,16 +188,31 @@ class InnerScreenController extends GetxController {
 
   Future<void> addComment(String taskID) async {
     if (commentController.text.length < 7) {
-      Get.snackbar('Error', 'Comment can\'t be less than 7 characters');
+      Get.snackbar('Hata', 'Yorum en az 7 karakter olmalıdır');
       return;
     }
 
     try {
       final User? user = _auth.currentUser;
       if (user == null) {
-        Get.snackbar('Error', 'User not logged in');
+        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
         return;
       }
+
+      // Kullanıcının takım rolünü al
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
+        return;
+      }
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId != currentTask.value.teamId) {
+        Get.snackbar('Hata', 'Bu göreve yorum yapma yetkiniz yok');
+        return;
+      }
+
+      final teamRole = userData.teamRole?.name ?? 'member';
 
       CommentModel newComment = CommentModel(
         id: const Uuid().v4(),
@@ -174,6 +221,7 @@ class InnerScreenController extends GetxController {
         userImageUrl: currentUser.value.imageUrl,
         body: commentController.text,
         time: DateTime.now(),
+        teamRole: teamRole,
       );
 
       await _firestore.collection('tasks').doc(taskID).update({
@@ -190,7 +238,7 @@ class InnerScreenController extends GetxController {
       log("Comment successfully added to Firestore");
 
       await Fluttertoast.showToast(
-        msg: "Your comment has been added",
+        msg: "Yorumunuz eklendi",
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.grey,
         fontSize: 18.0,
@@ -202,7 +250,7 @@ class InnerScreenController extends GetxController {
       log("Comment process completed successfully");
     } catch (error) {
       log("Error adding comment: $error");
-      Get.snackbar('Error', 'Failed to add comment: $error');
+      Get.snackbar('Hata', 'Yorum eklenirken hata oluştu: $error');
     }
   }
 
@@ -210,7 +258,7 @@ class InnerScreenController extends GetxController {
       String taskID, CommentModel comment) async {
     try {
       await _firestore.collection('notifications').add({
-        'message': '${comment.name} commented on a task',
+        'message': '${comment.name} bir göreve yorum yaptı',
         'taskId': taskID,
         'commentId': comment.id,
         'createdAt': FieldValue.serverTimestamp(),
@@ -233,13 +281,13 @@ class InnerScreenController extends GetxController {
         currentUser.update((val) {
           val!.name = newName;
         });
-        Get.snackbar('Success', 'Name updated successfully');
+        Get.snackbar('Başarılı', 'İsim güncellendi');
       } else {
-        Get.snackbar('Error', 'User not found');
+        Get.snackbar('Hata', 'Kullanıcı bulunamadı');
       }
     } catch (e) {
       log('Error updating user name: $e');
-      Get.snackbar('Error', 'Failed to update name');
+      Get.snackbar('Hata', 'İsim güncellenirken hata oluştu');
     }
   }
 
@@ -248,30 +296,28 @@ class InnerScreenController extends GetxController {
   }
 
   Future<void> updateTaskStatus(String taskId, bool newStatus) async {
-    User? user = _auth.currentUser;
-    final uid = user!.uid;
+    if (!canUpdateTaskStatus.value) {
+      Get.snackbar('Hata', 'Bu işlemi gerçekleştirme yetkiniz yok');
+      return;
+    }
 
-    if (uid == currentTask.value.uploadedBy) {
-      try {
-        await _firestore
-            .collection('tasks')
-            .doc(taskId)
-            .update({'isDone': newStatus});
+    try {
+      await _firestore
+          .collection('tasks')
+          .doc(taskId)
+          .update({'isDone': newStatus});
 
-        currentTask.update((task) {
-          task!.isDone = newStatus;
-        });
+      currentTask.update((task) {
+        task!.isDone = newStatus;
+      });
 
-        // Create Notification
-        await _createStatusUpdateNotification(taskId, newStatus);
+      // Create Notification
+      await _createStatusUpdateNotification(taskId, newStatus);
 
-        Get.snackbar('Success', 'Task status updated');
-      } catch (err) {
-        log('Error updating task status: $err');
-        Get.snackbar('Error', 'Action can\'t be performed');
-      }
-    } else {
-      Get.snackbar('Error', 'You can\'t perform this action');
+      Get.snackbar('Başarılı', 'Görev durumu güncellendi');
+    } catch (err) {
+      log('Error updating task status: $err');
+      Get.snackbar('Hata', 'İşlem gerçekleştirilemedi');
     }
   }
 
@@ -280,7 +326,7 @@ class InnerScreenController extends GetxController {
     try {
       await _firestore.collection('notifications').add({
         'message':
-            'Task status updated to ${newStatus ? "completed" : "incomplete"}',
+            'Görev durumu ${newStatus ? "tamamlandı" : "devam ediyor"} olarak güncellendi',
         'taskId': taskId,
         'createdAt': FieldValue.serverTimestamp(),
         'read': false,
@@ -292,7 +338,6 @@ class InnerScreenController extends GetxController {
   }
 
   Future<String?> getLastUploadedTaskID() async {
-    // Get The Task ID
     try {
       var querySnapshot = await _firestore
           .collection('tasks')
@@ -311,29 +356,58 @@ class InnerScreenController extends GetxController {
   Future<void> uploadTask() async {
     if (!_validateForm()) return;
 
-    isLoading.value = true;
     try {
+      isLoading.value = true;
+
+      // Kullanıcı ve takım kontrolü
+      final User? user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
+        return;
+      }
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
+        return;
+      }
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId == null) {
+        Get.snackbar(
+            'Hata', 'Görev eklemek için bir takıma ait olmanız gerekiyor');
+        return;
+      }
+
+      if (userData.teamRole?.name != 'admin' &&
+          userData.teamRole?.name != 'manager') {
+        Get.snackbar('Hata', 'Görev ekleme yetkiniz yok');
+        return;
+      }
+
       // Save To Firestore
-      String taskID = await _saveTaskToFirestore();
+      String taskID = await _saveTaskToFirestore(userData.teamId!);
 
       // Create Notification
       await _createNotification(taskID);
 
       _resetForm();
       Fluttertoast.showToast(
-          msg: "The task has been uploaded",
+          msg: "Görev başarıyla eklendi",
           toastLength: Toast.LENGTH_LONG,
           backgroundColor: Colors.grey,
           fontSize: 18.0);
+
+      Get.back(); // Görev listesi ekranına dön
     } catch (e) {
       log('Error uploading task: $e');
-      Get.snackbar('Error', 'Failed to upload task');
+      Get.snackbar('Hata', 'Görev eklenirken hata oluştu');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<String> _saveTaskToFirestore() async {
+  Future<String> _saveTaskToFirestore(String teamId) async {
     final taskID = const Uuid().v4();
     final uid = _auth.currentUser!.uid;
     final newTask = TaskModel(
@@ -347,6 +421,7 @@ class InnerScreenController extends GetxController {
       comments: [],
       isDone: false,
       createdAt: DateTime.now(),
+      teamId: teamId,
     );
     await _firestore.collection('tasks').doc(taskID).set(newTask.toFirestore());
     return taskID;
@@ -364,9 +439,9 @@ class InnerScreenController extends GetxController {
   bool _validateForm() {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return false;
-    if (deadlineDateController.text == 'Choose task Deadline date' ||
-        taskCategoryController.text == 'Choose task category') {
-      Get.snackbar('Error', 'Please pick everything');
+    if (deadlineDateController.text == 'Görev son tarihini seçin' ||
+        taskCategoryController.text == 'Görev kategorisi seçin') {
+      Get.snackbar('Hata', 'Lütfen tüm alanları doldurun');
       return false;
     }
     return true;
@@ -375,8 +450,8 @@ class InnerScreenController extends GetxController {
   void _resetForm() {
     taskTitleController.clear();
     taskDescriptionController.clear();
-    taskCategoryController.text = 'Choose task category';
-    deadlineDateController.text = 'Choose task Deadline date';
+    taskCategoryController.text = 'Görev kategorisi seçin';
+    deadlineDateController.text = 'Görev son tarihini seçin';
   }
 
   void showTaskCategoriesDialog(BuildContext context) {
@@ -384,7 +459,7 @@ class InnerScreenController extends GetxController {
     Get.dialog(
       AlertDialog(
         title: Text(
-          'Task Category',
+          'Görev Kategorisi',
           style: TextStyle(fontSize: 20, color: Colors.pink.shade800),
         ),
         content: SizedBox(
@@ -425,7 +500,7 @@ class InnerScreenController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('Cancel'),
+            child: const Text('İptal'),
           ),
         ],
       ),

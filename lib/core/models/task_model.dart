@@ -12,6 +12,7 @@ class TaskModel {
   final List<CommentModel> comments;
   bool isDone;
   final DateTime createdAt;
+  final String teamId;
 
   TaskModel({
     required this.id,
@@ -24,6 +25,7 @@ class TaskModel {
     this.comments = const [],
     this.isDone = false,
     required this.createdAt,
+    required this.teamId,
   });
 
   factory TaskModel.fromFirestore(DocumentSnapshot doc) {
@@ -42,6 +44,7 @@ class TaskModel {
           [],
       isDone: data['isDone'] ?? false,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
+      teamId: data['teamId'] ?? '',
     );
   }
 
@@ -57,6 +60,7 @@ class TaskModel {
       'taskComments': comments.map((comment) => comment.toMap()).toList(),
       'isDone': isDone,
       'createdAt': Timestamp.fromDate(createdAt),
+      'teamId': teamId,
     };
   }
 
@@ -71,6 +75,7 @@ class TaskModel {
     List<CommentModel>? comments,
     bool? isDone,
     DateTime? createdAt,
+    String? teamId,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -83,6 +88,7 @@ class TaskModel {
       comments: comments ?? this.comments,
       isDone: isDone ?? this.isDone,
       createdAt: createdAt ?? this.createdAt,
+      teamId: teamId ?? this.teamId,
     );
   }
 
@@ -98,6 +104,7 @@ class TaskModel {
       comments: [],
       isDone: false,
       createdAt: DateTime.now(),
+      teamId: '',
     );
   }
 }
