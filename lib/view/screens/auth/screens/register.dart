@@ -15,6 +15,11 @@ class SignUp extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final referralCode = Get.arguments?['referralCode'] as String?;
+    if (referralCode != null) {
+      controller.setReferralCode(referralCode);
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -28,6 +33,10 @@ class SignUp extends GetView<AuthController> {
                   SizedBox(height: size.height * 0.1),
                   _buildHeader(size),
                   SizedBox(height: 20.h),
+                  if (controller.teamName.value.isNotEmpty) ...[
+                    _buildTeamInfo(),
+                    SizedBox(height: 20.h),
+                  ],
                   _buildForm(size),
                   SizedBox(height: 40.h),
                   _buildSignUpButton(),
@@ -35,6 +44,13 @@ class SignUp extends GetView<AuthController> {
               ),
             ),
           ),
+          if (controller.isTeamLoading.value)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );
@@ -106,6 +122,47 @@ class SignUp extends GetView<AuthController> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildTeamInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.green),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Katılacağınız Takım:',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.group, color: Colors.green, size: 24.sp),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  controller.teamName.value,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/view/screens/auth/screens/auth.dart';
@@ -8,13 +9,18 @@ import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/users/users_bindings.dart';
 import 'package:tuncbt/view/screens/users/users_repository.dart';
 import 'package:tuncbt/view/screens/users/users_screen.dart';
+import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
+import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
+import 'package:tuncbt/view/screens/auth/screens/login.dart';
+import 'package:tuncbt/view/screens/auth/screens/register.dart';
+import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
 class RouteManager {
   static const String home = '/home';
   static const String login = '/login';
   static const String settings = '/settings';
 
-  static List<GetPage> routes = [
+  static final routes = [
     GetPage(
       name: AllWorkersScreen.routeName,
       page: () => AllWorkersScreen(),
@@ -80,6 +86,34 @@ class RouteManager {
       name: ChatScreen.routeName,
       page: () => ChatScreen(receiver: Get.arguments as UserModel),
     ),
+    GetPage(
+      name: '/login',
+      page: () => Login(),
+      binding: AuthBindings(),
+    ),
+    GetPage(
+      name: '/auth/register',
+      page: () => SignUp(),
+      binding: AuthBindings(),
+    ),
+    GetPage(
+      name: '/auth/referral',
+      page: () => ReferralInputScreen(),
+      binding: AuthBindings(),
+    ),
+    GetPage(
+      name: '/auth/password-reset',
+      page: () => const PasswordRenew(),
+      binding: AuthBindings(),
+    ),
+    GetPage(
+      name: '/tasks',
+      page: () => TasksScreen(),
+      binding: TasksScreenBindings(),
+      middlewares: [
+        RouteGuard(),
+      ],
+    ),
   ];
 
   // static String getInitialRoute() {
@@ -88,4 +122,15 @@ class RouteManager {
   //   bool isLoggedIn = false; // This should be your actual login check
   //   return isLoggedIn ? home : login;
   // }
+}
+
+class RouteGuard extends GetMiddleware {
+  @override
+  RouteSettings? redirect(String? route) {
+    if (Get.find<AuthController>().hasTeam.value == false &&
+        route != '/auth/referral') {
+      return RouteSettings(name: '/auth/referral');
+    }
+    return null;
+  }
 }

@@ -121,6 +121,18 @@ class ReferralService {
       );
     }
   }
+
+  Future<bool> validateReferralCode(String code) async {
+    try {
+      final referralDoc =
+          await _firestore.collection('referral_codes').doc(code).get();
+
+      return referralDoc.exists && !referralDoc.data()?['isUsed'];
+    } catch (e) {
+      print('Referral code validation error: $e');
+      return false;
+    }
+  }
 }
 
 /// Referral kodu doğrulama sonucu

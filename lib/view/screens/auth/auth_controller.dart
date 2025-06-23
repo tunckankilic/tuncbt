@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:tuncbt/core/models/user_model.dart';
+import 'package:tuncbt/core/enums/team_role.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:http/http.dart' as http;
@@ -41,6 +42,13 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   late Animation<double> _animation;
   final animationValue = 0.0.obs;
   final socialMediaPhotoUrl = ''.obs;
+
+  final teamName = ''.obs;
+  final isTeamLoading = false.obs;
+  final hasTeam = false.obs;
+  String? _referralCode;
+  String? _teamId;
+  String? _invitedBy;
 
   @override
   void onInit() {
@@ -128,30 +136,65 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
+  Future<void> _checkTeamStatus(String userId) async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      if (!userDoc.exists) return;
+
+      final userData = UserModel.fromFirestore(userDoc);
+      hasTeam.value = userData.hasTeam;
+
+      if (userData.hasTeam && userData.teamId != null) {
+        final teamDoc =
+            await _firestore.collection('teams').doc(userData.teamId).get();
+        if (!teamDoc.exists) {
+          // Takım silinmiş, kullanıcı bilgilerini güncelle
+          await _firestore.collection('users').doc(userId).update({
+            'hasTeam': false,
+            'teamId': null,
+            'teamRole': null,
+          });
+          hasTeam.value = false;
+        }
+      }
+    } catch (e) {
+      print('Error checking team status: $e');
+      hasTeam.value = false;
+    }
+  }
+
   Future<void> login() async {
     if (isLoading.value) return;
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       isLoading.value = true;
       _showLoadingOverlay();
       try {
-        await _auth.signInWithEmailAndPassword(
+        final userCredential = await _auth.signInWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
           password: passwordController.text.trim(),
         );
+
+        await _checkTeamStatus(userCredential.user!.uid);
+
         emailController.text = "";
         passwordController.text = "";
-        Get.offAllNamed(TasksScreen.routeName);
+
+        if (hasTeam.value) {
+          Get.offAllNamed(TasksScreen.routeName);
+        } else {
+          Get.offAllNamed('/auth/referral');
+        }
       } on FirebaseAuthException catch (e) {
-        Get.snackbar('Login Failed', _getReadableAuthError(e));
+        Get.snackbar('Giriş Başarısız', _getReadableAuthError(e));
       } catch (error) {
         Get.snackbar(
-            'Error', 'An unexpected error occurred. Please try again.');
+            'Hata', 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
       } finally {
         isLoading.value = false;
         _hideLoadingOverlay();
       }
     } else {
-      Get.snackbar("Error", "Please Fill all the fields",
+      Get.snackbar("Hata", "Lütfen tüm alanları doldurun",
           colorText: Colors.white);
       return;
     }
@@ -174,6 +217,47 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     } finally {
       isLoading.value = false;
       _hideLoadingOverlay();
+    }
+  }
+
+  void setReferralCode(String code) async {
+    _referralCode = code;
+    await _validateAndLoadTeamInfo();
+  }
+
+  Future<void> _validateAndLoadTeamInfo() async {
+    if (_referralCode == null) return;
+
+    isTeamLoading.value = true;
+    try {
+      final referralDoc = await _firestore
+          .collection('referral_codes')
+          .doc(_referralCode)
+          .get();
+
+      if (referralDoc.exists && !referralDoc.data()?['isUsed']) {
+        _teamId = referralDoc.data()?['teamId'];
+        _invitedBy = referralDoc.data()?['createdBy'];
+
+        if (_teamId != null) {
+          final teamDoc =
+              await _firestore.collection('teams').doc(_teamId).get();
+
+          if (teamDoc.exists) {
+            teamName.value = teamDoc.data()?['name'] ?? '';
+          }
+        }
+      }
+    } catch (e) {
+      print('Error validating referral code: $e');
+      Get.snackbar(
+        'Hata',
+        'Referans kodu doğrulanırken bir hata oluştu.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isTeamLoading.value = false;
     }
   }
 
@@ -211,10 +295,24 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         phoneNumber: phoneNumberController.text,
         position: positionCPController.text,
         createdAt: DateTime.now(),
-        hasTeam: false,
+        hasTeam: _teamId != null,
+        teamId: _teamId,
+        invitedBy: _invitedBy,
+        teamRole: _teamId != null ? TeamRole.member : null,
       );
 
       await _firestore.collection('users').doc(uid).set(newUser.toFirestore());
+
+      if (_referralCode != null) {
+        await _firestore
+            .collection('referral_codes')
+            .doc(_referralCode)
+            .update({
+          'isUsed': true,
+          'usedBy': uid,
+          'usedAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       if (!isSocial) {
         await _auth.currentUser!.updateDisplayName(newUser.name);
@@ -224,9 +322,10 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
       Get.offAllNamed(TasksScreen.routeName);
     } on FirebaseAuthException catch (e) {
-      Get.snackbar('Sign Up Failed', _getReadableAuthError(e));
+      Get.snackbar('Kayıt Başarısız', _getReadableAuthError(e));
     } catch (error) {
-      Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
+      Get.snackbar(
+          'Hata', 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       isLoading.value = false;
       _hideLoadingOverlay();
@@ -450,11 +549,11 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-      // await _googleSignIn.signOut();
+      hasTeam.value = false;
       Get.offAllNamed('/login');
     } catch (error) {
       Get.snackbar(
-          'Error', 'An error occurred while signing out. Please try again.');
+          'Hata', 'Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
     }
   }
 }
