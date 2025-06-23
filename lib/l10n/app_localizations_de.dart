@@ -362,4 +362,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get noPermissionToDelete =>
       'Sie haben keine Berechtigung für diese Aktion';
+
+  @override
+  String get error => 'Fehler';
+
+  @override
+  String get retry => 'Wiederholen';
 }

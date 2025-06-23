@@ -259,5 +259,11 @@
   },
 
   "signUp": "Registrieren",
-  "noPermissionToDelete": "Sie haben keine Berechtigung für diese Aktion"
+  "noPermissionToDelete": "Sie haben keine Berechtigung für diese Aktion",
+
+  "error": "Fehler",
+  "retry": "Wiederholen",
+  "maximumRetryExceeded": "Maximale Anzahl der Wiederholungsversuche überschritten",
+  "success": "Erfolg",
+  "operationSuccess": "Vorgang erfolgreich abgeschlossen"
 } 

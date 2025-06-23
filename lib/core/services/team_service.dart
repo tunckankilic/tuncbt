@@ -1,4 +1,9 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/team.dart';
 import '../models/team_member.dart';
 import '../models/user_model.dart';
@@ -6,10 +11,77 @@ import '../enums/team_role.dart';
 import '../constants/constants.dart';
 import '../constants/firebase_constants.dart';
 import 'referral_service.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
+import 'package:tuncbt/utils/team_errors.dart';
+import 'package:tuncbt/utils/team_cache.dart';
+import 'package:tuncbt/utils/team_security.dart';
+import 'package:tuncbt/utils/team_sync.dart';
 
-class TeamService {
+class TeamService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final ReferralService _referralService = ReferralService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _connectivity = Connectivity();
+  final maxTeamSize = 50;
+  final _cache = Get.put(TeamCache());
+  final _sync = Get.put(TeamSync());
+
+  final isLoading = false.obs;
+  final hasError = false.obs;
+  final errorMessage = ''.obs;
+
+  StreamSubscription? _connectivitySubscription;
+  bool _hasNetworkConnection = true;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _setupConnectivityListener();
+  }
+
+  @override
+  void onClose() {
+    _connectivitySubscription?.cancel();
+    super.onClose();
+  }
+
+  void _setupConnectivityListener() {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((result) {
+      _hasNetworkConnection = result != ConnectivityResult.none;
+    });
+  }
+
+  Future<void> _checkNetworkConnection() async {
+    if (!_hasNetworkConnection) {
+      throw TeamNetworkException();
+    }
+  }
+
+  Future<void> _handleOperation(
+      Future<void> Function() operation, BuildContext context) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      await _checkNetworkConnection();
+      await operation();
+
+      Get.snackbar(
+        'Success',
+        'Operation completed successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      TeamErrorHandler.handleError(context, e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   /// Yeni bir takım oluşturur
   Future<TeamOperationResult<Team>> createTeam({
@@ -17,85 +89,58 @@ class TeamService {
     required String userId,
   }) async {
     try {
-      // Takım adını doğrula
-      final nameValidation = Team.validateTeamName(name);
-      if (nameValidation != null) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            nameValidation,
-            errorType: TeamErrorType.invalidName,
-          ),
-        );
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      // Girdi doğrulama
+      final sanitizedName = TeamSecurity.sanitizeTeamInput(name);
+
+      // Kullanıcı kontrolü
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw TeamPermissionException();
       }
 
-      // Kullanıcının zaten bir takımı var mı kontrol et
-      final userDoc = await _firestore
-          .collection(FirebaseCollections.users)
-          .doc(userId)
-          .get();
+      // Takım oluştur
+      final teamDoc =
+          await _firestore.collection(FirebaseCollections.teams).add({
+        FirebaseFields.name: sanitizedName,
+        FirebaseFields.createdAt: FieldValue.serverTimestamp(),
+        FirebaseFields.createdBy: user.uid,
+        FirebaseFields.memberCount: 1,
+      });
 
-      if (!userDoc.exists) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.userNotFound,
-            errorType: TeamErrorType.userNotFound,
-          ),
-        );
-      }
-
-      final userData = UserModel.fromFirestore(userDoc);
-      if (userData.hasTeam) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.userAlreadyInTeam,
-            errorType: TeamErrorType.userAlreadyInTeam,
-          ),
-        );
-      }
-
-      // Benzersiz referral kodu oluştur
-      final referralCode = await _referralService.generateUniqueCode();
-
-      // Yeni takım oluştur
-      final teamRef = _firestore.collection(FirebaseCollections.teams).doc();
-      final now = DateTime.now();
-
-      final team = Team(
-        teamId: teamRef.id,
-        teamName: name,
-        referralCode: referralCode,
-        createdBy: userId,
-        createdAt: now,
-        memberCount: 1,
-        isActive: true,
-      );
-
-      // Takım ve takım üyesi kayıtlarını batch işlemle oluştur
-      final batch = _firestore.batch();
-
-      batch.set(teamRef, team.toJson());
-
-      // İlk üyeyi ekle (kurucu)
-      final memberRef =
-          _firestore.collection(FirebaseCollections.teamMembers).doc();
-      final member = TeamMember(
-        teamId: teamRef.id,
-        userId: userId,
-        invitedBy: userId,
-        joinedAt: now,
-        role: TeamRole.admin,
-      );
-
-      batch.set(memberRef, member.toJson());
+      // Üye ekle
+      await _firestore
+          .collection(FirebaseCollections.teamMembers)
+          .doc(user.uid)
+          .set({
+        FirebaseFields.role: TeamRole.admin.toString().split('.').last,
+        FirebaseFields.joinedAt: FieldValue.serverTimestamp(),
+      });
 
       // Kullanıcı bilgilerini güncelle
-      batch.update(userDoc.reference, {
-        FirebaseFields.teamId: teamRef.id,
-        FirebaseFields.hasTeam: true,
+      await _firestore
+          .collection(FirebaseCollections.users)
+          .doc(user.uid)
+          .update({
+        FirebaseFields.teamId: teamDoc.id,
         FirebaseFields.teamRole: TeamRole.admin.toString().split('.').last,
       });
 
-      await batch.commit();
+      final team = Team(
+        teamId: teamDoc.id,
+        teamName: sanitizedName,
+        createdBy: user.uid,
+        memberCount: 1,
+        referralCode: '',
+        createdAt: DateTime.now(),
+      );
+
+      // Önbelleğe ekle
+      _cache.cacheTeam(teamDoc.id, team);
+
       return TeamOperationResult.success(data: team);
     } on FirebaseException catch (e) {
       return TeamOperationResult.failure(
@@ -120,105 +165,80 @@ class TeamService {
     required String referralCode,
   }) async {
     try {
-      // Referral kodu doğrula
-      final validation = await _referralService.validateCode(referralCode);
-      if (!validation.isValid) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            validation.error!.message,
-            errorType: TeamErrorType.invalidReferralCode,
-          ),
-        );
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      // Girdi doğrulama
+      final sanitizedCode = TeamSecurity.sanitizeTeamInput(referralCode);
+
+      // Kullanıcı kontrolü
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw TeamPermissionException();
       }
 
-      // Kullanıcıyı kontrol et
-      final userDoc = await _firestore
-          .collection(FirebaseCollections.users)
+      // Takım kontrolü
+      final teamDoc = await _firestore
+          .collection(FirebaseCollections.teams)
           .doc(userId)
           .get();
-
-      if (!userDoc.exists) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.userNotFound,
-            errorType: TeamErrorType.userNotFound,
-          ),
-        );
+      if (!teamDoc.exists) {
+        throw TeamValidationException('Team not found');
       }
 
-      final userData = UserModel.fromFirestore(userDoc);
-      if (userData.hasTeam) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.userAlreadyInTeam,
-            errorType: TeamErrorType.userAlreadyInTeam,
-          ),
-        );
+      // Kapasite kontrolü
+      final memberCount = teamDoc.data()?[FirebaseFields.memberCount] ?? 0;
+      if (memberCount >= maxTeamSize) {
+        throw TeamCapacityException();
       }
 
-      // Takımı bul
-      final teamSnapshot = await _firestore
-          .collection(FirebaseCollections.teams)
-          .where(FirebaseFields.referralCode, isEqualTo: referralCode)
-          .limit(1)
+      // Referans kodu kontrolü
+      final referralDoc = await _firestore
+          .collection(FirebaseCollections.referrals)
+          .where(FirebaseFields.code, isEqualTo: sanitizedCode)
+          .where(FirebaseFields.teamId, isEqualTo: userId)
           .get();
 
-      if (teamSnapshot.docs.isEmpty) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.teamNotFound,
-            errorType: TeamErrorType.teamNotFound,
-          ),
-        );
+      if (referralDoc.docs.isEmpty) {
+        throw TeamValidationException('Invalid referral code');
       }
 
-      final teamDoc = teamSnapshot.docs.first;
-      final team = Team.fromJson(teamDoc.data());
-
-      // Takım kapasitesini kontrol et
-      if (team.memberCount >= Constants.maxTeamSize) {
-        return TeamOperationResult.failure(
-          error: TeamException(
-            Constants.teamFull,
-            errorType: TeamErrorType.teamFull,
-          ),
-        );
-      }
-
-      // Batch işlemle üyelik oluştur
-      final batch = _firestore.batch();
-      final now = DateTime.now();
-
-      // Yeni üye kaydı
-      final memberRef =
-          _firestore.collection(FirebaseCollections.teamMembers).doc();
-      final member = TeamMember(
-        teamId: team.teamId,
-        userId: userId,
-        invitedBy: team.createdBy,
-        joinedAt: now,
-        role: TeamRole.member,
-      );
-
-      batch.set(memberRef, member.toJson());
-
-      // Takım üye sayısını güncelle
-      batch.update(teamDoc.reference, {
+      // İşlemi çevrimdışı kuyruğa ekle
+      await _sync.queueOperation(userId, 'update', {
         FirebaseFields.memberCount: FieldValue.increment(1),
       });
 
-      // Kullanıcı bilgilerini güncelle
-      batch.update(userDoc.reference, {
-        FirebaseFields.teamId: team.teamId,
-        FirebaseFields.hasTeam: true,
-        FirebaseFields.teamRole: TeamRole.member.toString().split('.').last,
-        FirebaseFields.invitedBy: team.createdBy,
+      // Üye ekle
+      await _firestore
+          .collection(FirebaseCollections.teamMembers)
+          .doc(user.uid)
+          .set({
+        FirebaseFields.role: TeamRole.member.toString().split('.').last,
+        FirebaseFields.joinedAt: FieldValue.serverTimestamp(),
       });
 
-      await batch.commit();
+      // Kullanıcı bilgilerini güncelle
+      await _firestore
+          .collection(FirebaseCollections.users)
+          .doc(user.uid)
+          .update({
+        FirebaseFields.teamId: userId,
+        FirebaseFields.teamRole: TeamRole.member.toString().split('.').last,
+      });
+
+      // Önbelleği temizle
+      _cache.invalidateCache(userId);
 
       return TeamOperationResult.success(
-        data: team.copyWith(memberCount: team.memberCount + 1),
+        data: Team(
+          teamId: userId,
+          teamName: teamDoc.data()?[FirebaseFields.name] ?? '',
+          createdBy: user.uid,
+          memberCount: memberCount + 1,
+          referralCode: '',
+          createdAt: DateTime.now(),
+        ),
       );
     } on FirebaseException catch (e) {
       return TeamOperationResult.failure(
@@ -279,14 +299,46 @@ class TeamService {
     String teamId,
   ) async {
     try {
-      final snapshot = await _firestore
+      // Güvenlik kontrolü
+      await TeamSecurity.validateTeamDataAccess(teamId);
+
+      // Önbellekten kontrol et
+      final cachedMembers = await _cache.getTeamMembers(teamId);
+      if (cachedMembers != null) {
+        return TeamOperationResult.success(data: cachedMembers);
+      }
+
+      // Veritabanından yükle
+      final query = _firestore
           .collection(FirebaseCollections.teamMembers)
           .where(FirebaseFields.teamId, isEqualTo: teamId)
           .where(FirebaseFields.isActive, isEqualTo: true)
-          .get();
+          .orderBy(FirebaseFields.joinedAt)
+          .limit(maxTeamSize);
 
-      final members =
-          snapshot.docs.map((doc) => TeamMember.fromJson(doc.data())).toList();
+      final membersSnapshot = await query.get();
+
+      final members = await Future.wait(
+        membersSnapshot.docs.map((doc) async {
+          final userData = await _firestore
+              .collection(FirebaseCollections.users)
+              .doc(doc.id)
+              .get();
+
+          return TeamMember(
+            userId: doc.id,
+            teamId: teamId,
+            role: doc.data()[FirebaseFields.role] ??
+                TeamRole.member.toString().split('.').last,
+            joinedAt:
+                (doc.data()[FirebaseFields.joinedAt] as Timestamp).toDate(),
+            invitedBy: userData.data()?[FirebaseFields.invitedBy] ?? '',
+          );
+        }),
+      );
+
+      // Önbelleğe ekle
+      _cache.cacheTeamMembers(teamId, members);
 
       return TeamOperationResult.success(data: members);
     } on FirebaseException catch (e) {
@@ -303,6 +355,91 @@ class TeamService {
           errorType: TeamErrorType.unknown,
         ),
       );
+    }
+  }
+
+  Future<void> updateTeamSettings(String teamId, Map<String, dynamic> settings,
+      BuildContext context) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      // Güvenlik kontrolü
+      await TeamSecurity.validateTeamDataAccess(teamId,
+          requiredRoles: ['admin']);
+
+      // Ayarları doğrula
+      if (settings.containsKey(FirebaseFields.name)) {
+        settings[FirebaseFields.name] =
+            TeamSecurity.sanitizeTeamInput(settings[FirebaseFields.name]);
+      }
+
+      // İşlemi çevrimdışı kuyruğa ekle
+      await _sync.queueOperation(teamId, 'update', settings);
+
+      // Önbelleği temizle
+      _cache.invalidateCache(teamId);
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      TeamErrorHandler.handleError(context, e);
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> leaveTeam(String teamId, BuildContext context) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      // Güvenlik kontrolü
+      await TeamSecurity.validateTeamDataAccess(teamId);
+
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw TeamPermissionException();
+      }
+
+      // Admin kontrolü
+      final isAdmin =
+          await TeamSecurity.validateTeamPermission(teamId, ['admin']);
+      if (isAdmin) {
+        throw TeamValidationException('Admin cannot leave the team');
+      }
+
+      // İşlemi çevrimdışı kuyruğa ekle
+      await _sync.queueOperation(teamId, 'update', {
+        FirebaseFields.memberCount: FieldValue.increment(-1),
+      });
+
+      // Üyeliği sil
+      await _firestore
+          .collection(FirebaseCollections.teamMembers)
+          .doc(user.uid)
+          .delete();
+
+      // Kullanıcı bilgilerini güncelle
+      await _firestore
+          .collection(FirebaseCollections.users)
+          .doc(user.uid)
+          .update({
+        FirebaseFields.teamId: FieldValue.delete(),
+        FirebaseFields.teamRole: FieldValue.delete(),
+      });
+
+      // Önbelleği temizle
+      _cache.invalidateCache(teamId);
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      TeamErrorHandler.handleError(context, e);
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 }

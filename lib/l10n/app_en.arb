@@ -259,5 +259,11 @@
   },
 
   "signUp": "Sign Up",
-  "noPermissionToDelete": "You don't have permission to perform this action"
+  "noPermissionToDelete": "You don't have permission to perform this action",
+
+  "noPermissionToDelete": "You don't have permission to perform this action",
+
+  "error": "Error",
+  "retry": "Retry",
+  "maximumRetryExceeded": "Maximum retry attempts exceeded"
 } 

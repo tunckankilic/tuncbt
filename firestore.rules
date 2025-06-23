@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Yardımcı fonksiyonlar
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUserInTeam(teamId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teamId == teamId;
+    }
+
+    function hasTeamRole(teamId, roles) {
+      return isUserInTeam(teamId) &&
+             exists(/databases/$(database)/documents/team_members/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/team_members/$(request.auth.uid)).data.role in roles;
+    }
+
+    function isTeamAdmin(teamId) {
+      return hasTeamRole(teamId, ['admin']);
+    }
+
+    function isTeamManager(teamId) {
+      return hasTeamRole(teamId, ['admin', 'manager']);
+    }
+
+    function isValidTeamData() {
+      let data = request.resource.data;
+      return data.teamName is string &&
+             data.teamName.size() >= 3 &&
+             data.teamName.size() <= 50 &&
+             data.memberCount is number &&
+             data.memberCount >= 0 &&
+             data.memberCount <= 50;
+    }
+
+    // Kullanıcı koleksiyonu kuralları
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+                    (request.auth.uid == userId || 
+                     isUserInTeam(resource.data.teamId));
+      allow create: if isAuthenticated() && 
+                     request.auth.uid == userId;
+      allow update: if isAuthenticated() && 
+                     request.auth.uid == userId;
+      allow delete: if false; // Kullanıcı silme işlemi özel bir servis üzerinden yapılmalı
+    }
+
+    // Takım koleksiyonu kuralları
+    match /teams/{teamId} {
+      allow read: if isUserInTeam(teamId);
+      allow create: if isAuthenticated() && 
+                     isValidTeamData() &&
+                     !exists(/databases/$(database)/documents/users/$(request.auth.uid)/teamId);
+      allow update: if isTeamAdmin(teamId) && 
+                     isValidTeamData();
+      allow delete: if false; // Takım silme işlemi özel bir servis üzerinden yapılmalı
+
+      // Takım üyeleri alt koleksiyonu
+      match /members/{memberId} {
+        allow read: if isUserInTeam(teamId);
+        allow create: if isTeamAdmin(teamId) && 
+                       request.resource.data.role in ['member', 'manager'];
+        allow update: if isTeamAdmin(teamId) &&
+                       request.resource.data.role in ['member', 'manager'];
+        allow delete: if isTeamAdmin(teamId) ||
+                       (isAuthenticated() && memberId == request.auth.uid);
+      }
+
+      // Görevler alt koleksiyonu
+      match /tasks/{taskId} {
+        allow read: if isUserInTeam(teamId);
+        allow create: if isTeamManager(teamId);
+        allow update: if isTeamManager(teamId) ||
+                       (isUserInTeam(teamId) && 
+                        resource.data.assignedTo == request.auth.uid);
+        allow delete: if isTeamManager(teamId);
+
+        // Yorumlar alt koleksiyonu
+        match /comments/{commentId} {
+          allow read: if isUserInTeam(teamId);
+          allow create: if isUserInTeam(teamId);
+          allow update: if isUserInTeam(teamId) && 
+                         resource.data.userId == request.auth.uid;
+          allow delete: if isTeamManager(teamId) ||
+                         (isUserInTeam(teamId) && 
+                          resource.data.userId == request.auth.uid);
+        }
+      }
+    }
+
+    // Referans kodları koleksiyonu kuralları
+    match /referrals/{code} {
+      allow read: if isAuthenticated();
+      allow create: if isTeamAdmin(request.resource.data.teamId);
+      allow update: if isAuthenticated() &&
+                     !resource.data.usedBy &&
+                     !('usedBy' in request.resource.data);
+      allow delete: if false;
+    }
+
+    // Bildirimler koleksiyonu kuralları
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+                    resource.data.userId == request.auth.uid;
+      allow create: if isTeamManager(request.resource.data.teamId);
+      allow update: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+    }
+  }
+} 

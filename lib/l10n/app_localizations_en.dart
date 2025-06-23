@@ -352,4 +352,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noPermissionToDelete =>
       'You don\'t have permission to perform this action';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get retry => 'Retry';
 }

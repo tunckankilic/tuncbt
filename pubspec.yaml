@@ -70,12 +70,16 @@ dependencies:
   video_player_platform_interface: ^6.2.3
   shared_preferences: ^2.2.2
   provider: ^6.1.1
-  share_plus: ^7.2.2
+  share_plus: ^11.0.0
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  test: ^1.24.9
+  fake_cloud_firestore: ^3.1.0
+  firebase_auth_mocks: ^0.14.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

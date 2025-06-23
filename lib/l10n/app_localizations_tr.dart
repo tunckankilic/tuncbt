@@ -355,4 +355,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get noPermissionToDelete => 'Bu işlemi yapmak için yetkiniz yok';
+
+  @override
+  String get error => 'Hata';
+
+  @override
+  String get retry => 'Tekrar Dene';
 }

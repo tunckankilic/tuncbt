@@ -184,5 +184,11 @@
   },
 
   "signUp": "Kayıt Ol",
-  "noPermissionToDelete": "Bu işlemi yapmak için yetkiniz yok"
+  "noPermissionToDelete": "Bu işlemi yapmak için yetkiniz yok",
+
+  "error": "Hata",
+  "retry": "Tekrar Dene",
+  "maximumRetryExceeded": "Maksimum yeniden deneme sayısı aşıldı",
+  "success": "Başarılı",
+  "operationSuccess": "İşlem başarıyla tamamlandı"
 } 
