@@ -1,0 +1,133 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../enums/team_role.dart';
+
+class UserModel {
+  final String id;
+  String name;
+  final String email;
+  final String imageUrl;
+  final String phoneNumber;
+  final String position;
+  final DateTime createdAt;
+  final bool isOnline;
+  final String? teamId;
+  final String? invitedBy;
+  final TeamRole? teamRole;
+  final bool hasTeam;
+
+  UserModel({
+    required this.id,
+    this.isOnline = false,
+    this.name = "No Name",
+    required this.email,
+    required this.imageUrl,
+    required this.phoneNumber,
+    required this.position,
+    required this.createdAt,
+    this.teamId,
+    this.invitedBy,
+    this.teamRole,
+    this.hasTeam = false,
+  });
+
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return UserModel(
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+      phoneNumber: data['phoneNumber'] ?? '',
+      position: data['position'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      isOnline: data["isOnline"] ?? false,
+      teamId: data['teamId'],
+      invitedBy: data['invitedBy'],
+      teamRole: data['teamRole'] != null
+          ? TeamRole.fromString(data['teamRole'])
+          : null,
+      hasTeam: data['hasTeam'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'imageUrl': imageUrl,
+      'phoneNumber': phoneNumber,
+      'position': position,
+      'createdAt': Timestamp.fromDate(createdAt),
+      "isOnline": isOnline,
+      'teamId': teamId,
+      'invitedBy': invitedBy,
+      'teamRole': teamRole?.toString().split('.').last,
+      'hasTeam': hasTeam,
+    };
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? imageUrl,
+    String? phoneNumber,
+    String? position,
+    DateTime? createdAt,
+    bool? isOnline,
+    String? teamId,
+    String? invitedBy,
+    TeamRole? teamRole,
+    bool? hasTeam,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      imageUrl: imageUrl ?? this.imageUrl,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      isOnline: isOnline ?? this.isOnline,
+      teamId: teamId ?? this.teamId,
+      invitedBy: invitedBy ?? this.invitedBy,
+      teamRole: teamRole ?? this.teamRole,
+      hasTeam: hasTeam ?? this.hasTeam,
+    );
+  }
+
+  static UserModel empty() {
+    return UserModel(
+      id: '',
+      name: '',
+      email: '',
+      imageUrl: '',
+      phoneNumber: '',
+      position: '',
+      createdAt: DateTime.now(),
+      isOnline: false,
+      hasTeam: false,
+    );
+  }
+
+  /// Mevcut kullanıcıları yeni yapıya geçirmek için yardımcı metod
+  static Future<void> migrateExistingUsers() async {
+    final usersRef = FirebaseFirestore.instance.collection('users');
+    final QuerySnapshot snapshot = await usersRef.get();
+
+    final batch = FirebaseFirestore.instance.batch();
+    for (var doc in snapshot.docs) {
+      final userData = doc.data() as Map<String, dynamic>;
+      if (!userData.containsKey('hasTeam')) {
+        batch.update(doc.reference, {
+          'hasTeam': false,
+          'teamRole': null,
+          'teamId': null,
+          'invitedBy': null,
+        });
+      }
+    }
+    await batch.commit();
+  }
+}

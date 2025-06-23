@@ -1,0 +1,194 @@
+{
+  "@@locale": "tr",
+  
+  "appTitle": "TuncBT",
+  "@appTitle": {
+    "description": "Uygulama adı"
+  },
+
+  "language": "Dil",
+  "@language": {
+    "description": "Dil seçimi için etiket"
+  },
+
+  "login": "Giriş Yap",
+  "@login": {
+    "description": "Giriş butonu ve ekran başlığı için metin"
+  },
+
+  "register": "Kayıt Ol",
+  "@register": {
+    "description": "Kayıt butonu ve ekran başlığı için metin"
+  },
+
+  "cancel": "İptal",
+  "@cancel": {
+    "description": "Genel iptal butonu metni"
+  },
+
+  "ok": "Tamam",
+  "@ok": {
+    "description": "Genel onay butonu metni"
+  },
+  
+  "tasks": "Görevler",
+  "@tasks": {
+    "description": "Görevler bölümü için navigasyon etiketi"
+  },
+
+  "profile": "Profil",
+  "@profile": {
+    "description": "Kullanıcı profili için navigasyon etiketi"
+  },
+
+  "settings": "Ayarlar",
+  "@settings": {
+    "description": "Ayarlar için navigasyon etiketi"
+  },
+  
+  "save": "Kaydet",
+  "@save": {
+    "description": "Genel kaydetme işlemi butonu"
+  },
+
+  "delete": "Sil",
+  "@delete": {
+    "description": "Genel silme işlemi butonu"
+  },
+
+  "edit": "Düzenle",
+  "@edit": {
+    "description": "Genel düzenleme işlemi butonu"
+  },
+
+  "create": "Oluştur",
+  "@create": {
+    "description": "Genel oluşturma işlemi butonu"
+  },
+
+  "taskTitle": "Görev Başlığı",
+  "taskDescription": "Görev Açıklaması",
+  "taskDeadline": "Son Tarih",
+  "taskCategory": "Görev Kategorisi",
+  "uploadTask": "Görev Yükle",
+  "addComment": "Yorum Ekle",
+  "taskDone": "Görev Tamamlandı",
+  "taskNotDone": "Görev Devam Ediyor",
+  "deleteTask": "Görevi Sil",
+  "deleteTaskConfirm": "Bu görevi silmek istediğinizden emin misiniz?",
+  "taskDeleted": "Görev başarıyla silindi",
+  "taskDeleteError": "Görev silinirken bir hata oluştu",
+  "taskUploadSuccess": "Görev yüklendi ve bildirim oluşturuldu",
+  "taskUploadError": "Görev yüklenirken bir hata oluştu",
+  "noTasks": "Henüz ekip görevi yok",
+  "addTaskHint": "Yeni görev eklemek için + butonuna tıklayın",
+  "allFieldsRequired": "Tüm alanlar zorunludur",
+  "fieldRequired": "Bu alan zorunludur",
+  "teamTasks": "Ekip Görevleri",
+  "newTask": "Yeni Görev",
+
+  "teamMembers": "Ekip Üyeleri",
+  "teamMembersCount": "{count} Üye",
+  "@teamMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noTeamMembers": "Henüz ekip üyesi yok",
+  "inviteMembersHint": "Ekibinize yeni üyeler eklemek için referans kodunuzu paylaşın",
+  "myAccount": "Hesabım",
+  "logout": "Çıkış Yap",
+  "logoutConfirm": "Çıkış yapmak istediğinizden emin misiniz?",
+  "teamName": "Ekip Adı",
+  "referralCode": "Referans Kodu",
+  "inviteMembers": "Üye Davet Et",
+  "shareReferralCode": "Referans Kodunu Paylaş",
+  "teamSettings": "Ekip Ayarları",
+  "leaveTeam": "Ekipten Ayrıl",
+  "leaveTeamConfirm": "Ekipten ayrılmak istediğinizden emin misiniz?",
+  "deleteAccount": "Hesabı Sil",
+  "deleteAccountConfirm": "Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+  "jobInformation": "İş Bilgileri",
+  "contactInformation": "İletişim Bilgileri",
+  "teamInformation": "Ekip Bilgileri",
+  "position": "Pozisyon",
+  "joinedDate": "Katılım: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noName": "İsim Yok",
+  "editName": "İsmi Düzenle",
+  "enterName": "İsminizi girin",
+  "quickActions": "Hızlı İşlemler",
+  "messages": "Mesajlar",
+  "notifications": "Bildirimler",
+  "contact": "İletişim",
+  "commentActions": "Yorum İşlemleri",
+  "replyToComment": "Yorumu Yanıtla",
+
+  "close": "Kapat",
+  "leave": "Ayrıl",
+  "loginRequired": "Giriş yapmanız gerekiyor",
+  "userNotFound": "Kullanıcı bulunamadı",
+  "referralCodeTitle": "Referans Kodu Nedir?",
+  "referralCodeDescription": "Referans kodu, mevcut bir kullanıcıdan aldığınız 8 karakterlik özel bir koddur. Bu kod ile sisteme kayıt olarak ekstra avantajlardan yararlanabilirsiniz.",
+  
+  "loginEmail": "E-posta",
+  "loginPassword": "Şifre",
+  "loginNoAccount": "Hesabınız yok mu?",
+  "loginResetPassword": "Şifremi Unuttum",
+  "registerEmail": "E-posta Adresi",
+  "registerName": "Ad Soyad",
+  "registerPhone": "Telefon Numarası",
+  "registerPosition": "Şirketteki Pozisyon",
+
+  "forgotPasswordTitle": "Şifremi Unuttum",
+  "forgotPasswordSubtitle": "Şifrenizi sıfırlamak için e-posta adresinizi girin",
+  "forgotPasswordEmail": "E-posta Adresi",
+  "forgotPasswordReset": "Şifremi Sıfırla",
+  "forgotPasswordBackToLogin": "Giriş Ekranına Dön",
+
+  "authErrorUserNotFound": "Bu e-posta adresiyle kayıtlı kullanıcı bulunamadı",
+  "authErrorWrongPassword": "Hatalı şifre. Lütfen tekrar deneyin",
+  "authErrorInvalidEmail": "Geçersiz e-posta adresi",
+  "authErrorUserDisabled": "Bu hesap devre dışı bırakıldı",
+  "authErrorEmailInUse": "Bu e-posta adresi zaten kullanımda",
+  "authErrorOperationNotAllowed": "Bu işleme şu anda izin verilmiyor",
+  "authErrorWeakPassword": "Şifre çok zayıf. Lütfen daha güçlü bir şifre seçin",
+  "authErrorNetworkFailed": "Ağ bağlantı hatası. Lütfen internet bağlantınızı kontrol edin",
+  "authErrorTooManyRequests": "Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin",
+  "authErrorInvalidCredential": "Geçersiz kimlik bilgileri",
+  "authErrorAccountExists": "Bu e-posta adresiyle farklı bir giriş yöntemi kullanan bir hesap zaten var",
+  "authErrorInvalidVerificationCode": "Geçersiz doğrulama kodu",
+  "authErrorInvalidVerificationId": "Geçersiz doğrulama ID'si",
+  "authErrorQuotaExceeded": "Kota aşıldı. Lütfen daha sonra tekrar deneyin",
+  "authErrorCredentialInUse": "Bu kimlik bilgileri başka bir hesapla ilişkilendirilmiş",
+  "authErrorRequiresRecentLogin": "Bu işlem için yakın zamanda giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın",
+  "authErrorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin",
+
+  "notInTeam": "Henüz bir ekibe üye değilsiniz",
+  "addMember": "Üye Ekle",
+  "teamJoinDate": "Katılım: {date}",
+  "@teamJoinDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+
+  "signUp": "Kayıt Ol",
+  "noPermissionToDelete": "Bu işlemi yapmak için yetkiniz yok",
+
+  "error": "Hata",
+  "retry": "Tekrar Dene",
+  "maximumRetryExceeded": "Maksimum yeniden deneme sayısı aşıldı",
+  "success": "Başarılı",
+  "operationSuccess": "İşlem başarıyla tamamlandı"
+} 

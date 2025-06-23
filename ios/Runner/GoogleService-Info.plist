@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>610259100358-r28uvjd6bcavol7gb3h8t6p1v6263pdd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.610259100358-r28uvjd6bcavol7gb3h8t6p1v6263pdd</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>610259100358-l1aeemfe14p6tc0ai3f5jfkblknn4qba.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDZhhLePXHvhOQhdyjnoki5UEIcettiYOA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>610259100358</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>site.tunckankilic.tuncbt</string>
+	<key>PROJECT_ID</key>
+	<string>tuncbt-e4824</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tuncbt-e4824.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:610259100358:ios:82d996baeb3488c0346dc7</string>
+</dict>
+</plist>

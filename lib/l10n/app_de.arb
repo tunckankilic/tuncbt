@@ -1,0 +1,269 @@
+{
+  "@@locale": "de",
+  
+  "appTitle": "TuncBT",
+  "@appTitle": {
+    "description": "Anwendungsname"
+  },
+
+  "language": "Sprache",
+  "@language": {
+    "description": "Bezeichnung für Sprachauswahl"
+  },
+
+  "login": "Anmelden",
+  "@login": {
+    "description": "Text für Anmelde-Button und Bildschirmtitel"
+  },
+
+  "register": "Registrieren",
+  "@register": {
+    "description": "Text für Registrierungs-Button und Bildschirmtitel"
+  },
+
+  "cancel": "Abbrechen",
+  "@cancel": {
+    "description": "Allgemeiner Abbrechen-Button Text"
+  },
+
+  "ok": "OK",
+  "@ok": {
+    "description": "Allgemeiner Bestätigungs-Button Text"
+  },
+
+  "tasks": "Aufgaben",
+  "@tasks": {
+    "description": "Navigationsbezeichnung für Aufgabenbereich"
+  },
+
+  "profile": "Profil",
+  "@profile": {
+    "description": "Navigationsbezeichnung für Benutzerprofil"
+  },
+
+  "settings": "Einstellungen",
+  "@settings": {
+    "description": "Navigationsbezeichnung für Einstellungen"
+  },
+
+  "save": "Speichern",
+  "@save": {
+    "description": "Allgemeiner Speichern-Button"
+  },
+
+  "delete": "Löschen",
+  "@delete": {
+    "description": "Allgemeiner Löschen-Button"
+  },
+
+  "edit": "Bearbeiten",
+  "@edit": {
+    "description": "Allgemeiner Bearbeiten-Button"
+  },
+
+  "create": "Erstellen",
+  "@create": {
+    "description": "Allgemeiner Erstellen-Button"
+  },
+
+  "loginTitle": "Anmelden",
+  "@loginTitle": {
+    "description": "Titel auf dem Anmeldebildschirm"
+  },
+
+  "loginEmail": "E-Mail",
+  "@loginEmail": {
+    "description": "Bezeichnung für E-Mail-Feld im Anmeldeformular"
+  },
+
+  "loginPassword": "Passwort",
+  "@loginPassword": {
+    "description": "Bezeichnung für Passwort-Feld im Anmeldeformular"
+  },
+
+  "loginNoAccount": "Noch kein Konto?",
+  "@loginNoAccount": {
+    "description": "Text wenn Benutzer kein Konto hat"
+  },
+
+  "loginResetPassword": "Passwort vergessen",
+  "@loginResetPassword": {
+    "description": "Text für Passwort-zurücksetzen-Button"
+  },
+
+  "registerTitle": "Registrieren",
+  "@registerTitle": {
+    "description": "Titel auf dem Registrierungsbildschirm"
+  },
+
+  "registerName": "Vollständiger Name",
+  "@registerName": {
+    "description": "Bezeichnung für Namensfeld im Registrierungsformular"
+  },
+
+  "registerEmail": "E-Mail-Adresse",
+  "@registerEmail": {
+    "description": "Bezeichnung für E-Mail-Feld im Registrierungsformular"
+  },
+
+  "registerPassword": "Passwort",
+  "@registerPassword": {
+    "description": "Bezeichnung für Passwort-Feld im Registrierungsformular"
+  },
+
+  "registerConfirmPassword": "Passwort bestätigen",
+  "@registerConfirmPassword": {
+    "description": "Bezeichnung für Passwort-Bestätigungsfeld"
+  },
+
+  "registerPhone": "Telefonnummer",
+  "@registerPhone": {
+    "description": "Bezeichnung für Telefonnummer-Feld"
+  },
+
+  "registerPosition": "Position im Unternehmen",
+  "@registerPosition": {
+    "description": "Bezeichnung für Positions-Feld"
+  },
+
+  "registerHasAccount": "Haben Sie bereits ein Konto?",
+  "@registerHasAccount": {
+    "description": "Text wenn Benutzer bereits ein Konto hat"
+  },
+
+  "forgotPasswordTitle": "Passwort vergessen",
+  "@forgotPasswordTitle": {
+    "description": "Titel auf dem Passwort-vergessen-Bildschirm"
+  },
+
+  "forgotPasswordSubtitle": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen",
+  "@forgotPasswordSubtitle": {
+    "description": "Untertitel auf dem Passwort-vergessen-Bildschirm"
+  },
+
+  "forgotPasswordEmail": "E-Mail-Adresse",
+  "@forgotPasswordEmail": {
+    "description": "Bezeichnung für E-Mail-Feld im Passwort-vergessen-Formular"
+  },
+
+  "forgotPasswordReset": "Passwort zurücksetzen",
+  "@forgotPasswordReset": {
+    "description": "Text für Passwort-zurücksetzen-Button"
+  },
+
+  "forgotPasswordBackToLogin": "Zurück zur Anmeldung",
+  "@forgotPasswordBackToLogin": {
+    "description": "Text für Zurück-zur-Anmeldung-Button"
+  },
+
+  "taskTitle": "Aufgabentitel",
+  "taskDescription": "Aufgabenbeschreibung",
+  "taskDeadline": "Fälligkeitsdatum",
+  "taskCategory": "Aufgabenkategorie",
+  "uploadTask": "Aufgabe hochladen",
+  "addComment": "Kommentar hinzufügen",
+  "taskDone": "Aufgabe abgeschlossen",
+  "taskNotDone": "Aufgabe in Bearbeitung",
+  "deleteTask": "Aufgabe löschen",
+  "deleteTaskConfirm": "Möchten Sie diese Aufgabe wirklich löschen?",
+  "taskDeleted": "Aufgabe erfolgreich gelöscht",
+  "taskDeleteError": "Beim Löschen der Aufgabe ist ein Fehler aufgetreten",
+  "taskUploadSuccess": "Aufgabe hochgeladen und Benachrichtigung erstellt",
+  "taskUploadError": "Beim Hochladen der Aufgabe ist ein Fehler aufgetreten",
+  "noTasks": "Noch keine Teamaufgaben",
+  "addTaskHint": "Klicken Sie auf den +-Button, um eine neue Aufgabe hinzuzufügen",
+  "allFieldsRequired": "Alle Felder sind erforderlich",
+  "fieldRequired": "Dieses Feld ist erforderlich",
+  "teamTasks": "Teamaufgaben",
+  "newTask": "Neue Aufgabe",
+
+  "teamMembers": "Teammitglieder",
+  "teamMembersCount": "{count} Mitglieder",
+  "@teamMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noTeamMembers": "Noch keine Teammitglieder",
+  "inviteMembersHint": "Teilen Sie Ihren Empfehlungscode, um neue Mitglieder zu Ihrem Team hinzuzufügen",
+  "myAccount": "Mein Konto",
+  "logout": "Abmelden",
+  "logoutConfirm": "Möchten Sie sich wirklich abmelden?",
+  "teamName": "Teamname",
+  "referralCode": "Empfehlungscode",
+  "inviteMembers": "Mitglieder einladen",
+  "shareReferralCode": "Empfehlungscode teilen",
+  "teamSettings": "Teameinstellungen",
+  "leaveTeam": "Team verlassen",
+  "leaveTeamConfirm": "Möchten Sie das Team wirklich verlassen?",
+  "deleteAccount": "Konto löschen",
+  "deleteAccountConfirm": "Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "jobInformation": "Berufsinformationen",
+  "contactInformation": "Kontaktinformationen",
+  "teamInformation": "Teaminformationen",
+  "position": "Position",
+  "joinedDate": "Beigetreten: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noName": "Kein Name",
+  "editName": "Name bearbeiten",
+  "enterName": "Geben Sie Ihren Namen ein",
+  "quickActions": "Schnellaktionen",
+  "messages": "Nachrichten",
+  "notifications": "Benachrichtigungen",
+  "contact": "Kontakt",
+  "commentActions": "Kommentaraktionen",
+  "replyToComment": "Auf Kommentar antworten",
+
+  "close": "Schließen",
+  "leave": "Verlassen",
+  "loginRequired": "Anmeldung erforderlich",
+  "userNotFound": "Benutzer nicht gefunden",
+  "referralCodeTitle": "Was ist ein Empfehlungscode?",
+  "referralCodeDescription": "Ein Empfehlungscode ist ein 8-stelliger Spezialcode, den Sie von einem bestehenden Benutzer erhalten. Durch die Registrierung mit diesem Code können Sie von zusätzlichen Vorteilen profitieren.",
+  
+  "authErrorUserNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden",
+  "authErrorWrongPassword": "Falsches Passwort. Bitte versuchen Sie es erneut",
+  "authErrorInvalidEmail": "Ungültige E-Mail-Adresse",
+  "authErrorUserDisabled": "Dieses Konto wurde deaktiviert",
+  "authErrorEmailInUse": "Diese E-Mail-Adresse wird bereits verwendet",
+  "authErrorOperationNotAllowed": "Diese Operation ist derzeit nicht erlaubt",
+  "authErrorWeakPassword": "Das Passwort ist zu schwach. Bitte wählen Sie ein stärkeres Passwort",
+  "authErrorNetworkFailed": "Netzwerkverbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung",
+  "authErrorTooManyRequests": "Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuchen Sie es später erneut",
+  "authErrorInvalidCredential": "Ungültige Anmeldedaten",
+  "authErrorAccountExists": "Ein Konto mit dieser E-Mail-Adresse existiert bereits mit einer anderen Anmeldemethode",
+  "authErrorInvalidVerificationCode": "Ungültiger Verifizierungscode",
+  "authErrorInvalidVerificationId": "Ungültige Verifizierungs-ID",
+  "authErrorQuotaExceeded": "Kontingent überschritten. Bitte versuchen Sie es später erneut",
+  "authErrorCredentialInUse": "Diese Anmeldedaten sind bereits mit einem anderen Konto verknüpft",
+  "authErrorRequiresRecentLogin": "Diese Operation erfordert eine aktuelle Anmeldung. Bitte melden Sie sich ab und wieder an",
+  "authErrorGeneric": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut",
+
+  "notInTeam": "Sie sind noch kein Mitglied eines Teams",
+  "addMember": "Mitglied hinzufügen",
+  "teamJoinDate": "Beigetreten: {date}",
+  "@teamJoinDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+
+  "signUp": "Registrieren",
+  "noPermissionToDelete": "Sie haben keine Berechtigung für diese Aktion",
+
+  "error": "Fehler",
+  "retry": "Wiederholen",
+  "maximumRetryExceeded": "Maximale Anzahl der Wiederholungsversuche überschritten",
+  "success": "Erfolg",
+  "operationSuccess": "Vorgang erfolgreich abgeschlossen"
+} 
