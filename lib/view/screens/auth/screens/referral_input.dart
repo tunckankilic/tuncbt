@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 
 class ReferralInputScreen extends StatefulWidget {
   const ReferralInputScreen({super.key});
@@ -58,15 +59,12 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Referans Kodu Nedir?'),
-        content: const Text(
-          'Referans kodu, mevcut bir kullanıcıdan aldığınız 8 karakterlik özel bir koddur. '
-          'Bu kod ile sisteme kayıt olarak ekstra avantajlardan yararlanabilirsiniz.',
-        ),
+        title: Text(AppLocalizations.of(context)!.referralCodeTitle),
+        content: Text(AppLocalizations.of(context)!.referralCodeDescription),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Anladım'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -77,7 +75,7 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Referans Kodu'),
+        title: Text(AppLocalizations.of(context)!.referralCode),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
@@ -96,7 +94,7 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
                     child: TextFormField(
                       controller: _referralController,
                       decoration: InputDecoration(
-                        labelText: 'Referans Kodu',
+                        labelText: AppLocalizations.of(context)!.referralCode,
                         hintText: 'XXXXXXXX',
                         errorText: _errorMessage,
                         suffixIcon: _isLoading

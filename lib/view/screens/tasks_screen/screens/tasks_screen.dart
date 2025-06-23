@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_controller.dart';
@@ -39,7 +40,7 @@ class TasksScreen extends GetView<TasksScreenController> {
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context, teamProvider),
-          _buildTasksList(),
+          _buildTasksList(context),
         ],
       ),
       floatingActionButton: _buildFloatingActionButton(teamProvider),
@@ -53,7 +54,8 @@ class TasksScreen extends GetView<TasksScreenController> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          teamProvider.currentTeam?.teamName ?? 'Takım Görevleri',
+          teamProvider.currentTeam?.teamName ??
+              AppLocalizations.of(context)!.teamTasks,
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Container(
@@ -69,7 +71,7 @@ class TasksScreen extends GetView<TasksScreenController> {
     );
   }
 
-  Widget _buildTasksList() {
+  Widget _buildTasksList(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const SliverFillRemaining(
@@ -112,7 +114,7 @@ class TasksScreen extends GetView<TasksScreenController> {
                 ),
                 SizedBox(height: 16.h),
                 Text(
-                  'Henüz takım görevi bulunmuyor',
+                  AppLocalizations.of(context)!.noTasks,
                   style: TextStyle(
                     fontSize: 18.sp,
                     color: AppTheme.textColor,
@@ -124,7 +126,7 @@ class TasksScreen extends GetView<TasksScreenController> {
                       return Padding(
                         padding: EdgeInsets.only(top: 8.h),
                         child: Text(
-                          'Yeni görev eklemek için + butonuna tıklayın',
+                          AppLocalizations.of(context)!.addTaskHint,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: AppTheme.textColor.withOpacity(0.7),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
 class ForgetPasswordScreen extends GetView<AuthController> {
@@ -16,7 +17,7 @@ class ForgetPasswordScreen extends GetView<AuthController> {
         children: [
           _buildBackgroundImage(),
           _buildGradientOverlay(),
-          _buildContent(),
+          _buildContent(context),
         ],
       ),
     );
@@ -53,7 +54,7 @@ class ForgetPasswordScreen extends GetView<AuthController> {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
@@ -62,13 +63,13 @@ class ForgetPasswordScreen extends GetView<AuthController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 60.h),
-              _buildTitle(),
+              _buildTitle(context),
               SizedBox(height: 40.h),
-              _buildEmailField(),
+              _buildEmailField(context),
               SizedBox(height: 40.h),
-              _buildResetButton(),
+              _buildResetButton(context),
               SizedBox(height: 20.h),
-              _buildBackButton(),
+              _buildBackButton(context),
             ],
           ),
         ),
@@ -76,12 +77,12 @@ class ForgetPasswordScreen extends GetView<AuthController> {
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Forgot Password',
+          AppLocalizations.of(context)!.forgotPasswordTitle,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -90,7 +91,7 @@ class ForgetPasswordScreen extends GetView<AuthController> {
         ),
         SizedBox(height: 8.h),
         Text(
-          'Enter your email to reset your password',
+          AppLocalizations.of(context)!.forgotPasswordSubtitle,
           style: TextStyle(
             color: Colors.white70,
             fontSize: 16.sp,
@@ -100,12 +101,12 @@ class ForgetPasswordScreen extends GetView<AuthController> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email address',
+          AppLocalizations.of(context)!.forgotPasswordEmail,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -115,23 +116,23 @@ class ForgetPasswordScreen extends GetView<AuthController> {
         SizedBox(height: 8.h),
         TextFormField(
           controller: controller.forgetPassTextController,
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: 'Enter your email',
+            hintText: AppLocalizations.of(context)!.forgotPasswordEmail,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide.none,
             ),
-            prefixIcon: Icon(Icons.email, color: Colors.grey),
+            prefixIcon: const Icon(Icons.email, color: Colors.grey),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildResetButton() {
+  Widget _buildResetButton(BuildContext context) {
     return Obx(() => ElevatedButton(
           onPressed:
               controller.isLoading.value ? null : controller.resetPassword,
@@ -145,9 +146,9 @@ class ForgetPasswordScreen extends GetView<AuthController> {
             width: double.infinity,
             alignment: Alignment.center,
             child: controller.isLoading.value
-                ? CircularProgressIndicator(color: Colors.white)
+                ? const CircularProgressIndicator(color: Colors.white)
                 : Text(
-                    'Reset Password',
+                    AppLocalizations.of(context)!.forgotPasswordReset,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -158,11 +159,11 @@ class ForgetPasswordScreen extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildBackButton() {
+  Widget _buildBackButton(BuildContext context) {
     return TextButton(
       onPressed: () => Get.back(),
       child: Text(
-        'Back to Login',
+        AppLocalizations.of(context)!.forgotPasswordBackToLogin,
         style: TextStyle(
           color: Colors.white70,
           fontSize: 16.sp,

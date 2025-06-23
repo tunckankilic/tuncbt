@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
@@ -12,6 +13,7 @@ import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
+import 'package:tuncbt/view/widgets/language_switcher.dart';
 
 enum UserType { commenter, worker, currentUser }
 
@@ -103,11 +105,11 @@ class ProfileScreen extends GetView<InnerScreenController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildQuickActions(),
+          _buildQuickActions(context),
           SizedBox(height: 20.h),
-          _buildJobInfo(),
+          _buildJobInfo(context),
           SizedBox(height: 20.h),
-          _buildContactInfo(),
+          _buildContactInfo(context),
           SizedBox(height: 20.h),
           _buildTeamInfo(context),
           SizedBox(height: 20.h),
@@ -115,46 +117,65 @@ class ProfileScreen extends GetView<InnerScreenController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildLogoutButton(),
+                const LanguageSwitcher(),
+                SizedBox(height: 20.h),
+                _buildLogoutButton(context),
                 SizedBox(height: 5.h),
                 _buildDeleteAccountButton(context),
               ],
             ),
           if (userType == UserType.worker)
-            _buildWorkerActions()
+            _buildWorkerActions(context)
           else if (userType == UserType.commenter)
-            _buildCommenterActions(),
+            _buildCommenterActions(context),
         ],
       ),
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _quickActionButton(Icons.task, 'Tasks', () {}),
-            _quickActionButton(Icons.message, 'Messages', () {}),
-            _quickActionButton(Icons.notifications, 'Notifications', () {}),
+            Text(
+              AppLocalizations.of(context)!.quickActions,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _quickActionButton(context, Icons.task,
+                    AppLocalizations.of(context)!.tasks, () {}),
+                _quickActionButton(context, Icons.message,
+                    AppLocalizations.of(context)!.messages, () {}),
+                _quickActionButton(context, Icons.notifications,
+                    AppLocalizations.of(context)!.notifications, () {}),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _quickActionButton(
-      IconData icon, String label, VoidCallback onPressed) {
+  Widget _quickActionButton(BuildContext context, IconData icon, String label,
+      VoidCallback onPressed) {
     return Column(
       children: [
         IconButton(
           icon: Icon(icon, size: 30.sp),
           onPressed: onPressed,
-          color: Theme.of(Get.context!).colorScheme.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
         SizedBox(height: 4.h),
         Text(label, style: TextStyle(fontSize: 12.sp)),
@@ -162,7 +183,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildJobInfo() {
+  Widget _buildJobInfo(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
@@ -172,24 +193,30 @@ class ProfileScreen extends GetView<InnerScreenController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Job Information',
+              AppLocalizations.of(context)!.jobInformation,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(Get.context!).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(height: 10.h),
-            _infoRow(Icons.work, controller.currentUser.value.position),
-            _infoRow(Icons.calendar_today,
-                'Joined ${controller.currentUser.value.createdAt.toString().split(' ')[0]}'),
+            _infoRow(
+                context, Icons.work, controller.currentUser.value.position),
+            _infoRow(
+              context,
+              Icons.calendar_today,
+              AppLocalizations.of(context)!.joinedDate(
+                controller.currentUser.value.createdAt.toString().split(' ')[0],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContactInfo() {
+  Widget _buildContactInfo(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
@@ -199,36 +226,37 @@ class ProfileScreen extends GetView<InnerScreenController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Contact Information',
+              AppLocalizations.of(context)!.contactInformation,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(Get.context!).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(height: 10.h),
-            _infoRow(Icons.email, controller.currentUser.value.email),
-            _infoRow(Icons.phone, controller.currentUser.value.phoneNumber),
+            _infoRow(context, Icons.email, controller.currentUser.value.email),
+            _infoRow(
+                context, Icons.phone, controller.currentUser.value.phoneNumber),
           ],
         ),
       ),
     );
   }
 
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(BuildContext context, IconData icon, String text) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         children: [
           Icon(icon,
-              color: Theme.of(Get.context!).colorScheme.secondary, size: 24.sp),
+              color: Theme.of(context).colorScheme.secondary, size: 24.sp),
           SizedBox(width: 10.w),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
                   fontSize: 16.sp,
-                  color: Theme.of(Get.context!).colorScheme.onSurface),
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ],
@@ -236,7 +264,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildWorkerActions() {
+  Widget _buildWorkerActions(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
@@ -246,11 +274,11 @@ class ProfileScreen extends GetView<InnerScreenController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Contact',
+              AppLocalizations.of(context)!.contact,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(Get.context!).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -297,7 +325,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildCommenterActions() {
+  Widget _buildCommenterActions(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
@@ -307,11 +335,11 @@ class ProfileScreen extends GetView<InnerScreenController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Comment Actions',
+              AppLocalizations.of(context)!.commentActions,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(Get.context!).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -322,7 +350,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
               icon: const Icon(Icons.reply, color: Colors.white),
               label: const Text('Reply to Comment'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(Get.context!).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.r)),
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
@@ -334,7 +362,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return Center(
       child: ElevatedButton.icon(
         onPressed: () {
@@ -343,7 +371,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
         },
         icon: const Icon(Icons.logout, color: Colors.white),
         label: Text(
-          'Logout',
+          AppLocalizations.of(context)!.logout,
           style: TextStyle(color: Colors.white, fontSize: 16.sp),
         ),
         style: ElevatedButton.styleFrom(
@@ -362,7 +390,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
         onPressed: () => _showDeleteAccountDialog(context),
         icon: const Icon(Icons.delete_forever, color: Colors.white),
         label: Text(
-          'Delete Account',
+          AppLocalizations.of(context)!.deleteAccount,
           style: TextStyle(color: Colors.white, fontSize: 16.sp),
         ),
         style: ElevatedButton.styleFrom(
@@ -380,18 +408,18 @@ class ProfileScreen extends GetView<InnerScreenController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Account'),
-          content: const Text(
-              'Are you sure you want to delete your account? This action cannot be undone.'),
+          title: Text(AppLocalizations.of(context)!.deleteAccount),
+          content: Text(AppLocalizations.of(context)!.deleteAccountConfirm),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _processAccountDeletion();
@@ -495,7 +523,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Takım Bilgileri',
+                    AppLocalizations.of(context)!.teamInformation,
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -524,7 +552,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        'Henüz bir takıma üye değilsiniz',
+                        AppLocalizations.of(context)!.notInTeam,
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: Theme.of(context).colorScheme.secondary,
@@ -534,17 +562,19 @@ class ProfileScreen extends GetView<InnerScreenController> {
                   ),
                 )
               else ...[
-                _infoRow(Icons.groups, controller.currentTeam.value!.teamName),
+                _infoRow(context, Icons.group,
+                    controller.currentTeam.value!.teamName),
+                _infoRow(context, Icons.person_outline,
+                    controller.currentTeamMember.value!.role.name),
+                _infoRow(context, Icons.people,
+                    AppLocalizations.of(context)!.teamMembers),
                 _infoRow(
-                    Icons.badge, controller.currentTeamMember.value!.role.name),
-                _infoRow(
-                  Icons.people,
-                  '${controller.teamMemberCount} Üye',
-                ),
-                _infoRow(
-                  Icons.calendar_today,
-                  'Katılım: ${controller.currentTeamMember.value!.joinedAt.toString().split(' ')[0]}',
-                ),
+                    context,
+                    Icons.calendar_today,
+                    AppLocalizations.of(context)!.teamJoinDate(controller
+                        .currentTeamMember.value!.joinedAt
+                        .toString()
+                        .split(' ')[0])),
                 if (isAdmin) ...[
                   Divider(height: 20.h),
                   Row(
@@ -554,7 +584,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Referans Kodu',
+                              AppLocalizations.of(context)!.referralCode,
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -588,7 +618,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                           Get.to(() => const InviteMembersScreen());
                         },
                         icon: Icon(Icons.person_add, size: 20.sp),
-                        label: Text('Üye Ekle'),
+                        label: Text(AppLocalizations.of(context)!.addMember),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -606,7 +636,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
                     child: ElevatedButton.icon(
                       onPressed: () => _showLeaveTeamDialog(context),
                       icon: Icon(Icons.exit_to_app, size: 20.sp),
-                      label: Text('Takımdan Ayrıl'),
+                      label: Text(AppLocalizations.of(context)!.leaveTeam),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
@@ -629,17 +659,18 @@ class ProfileScreen extends GetView<InnerScreenController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Takımdan Ayrıl'),
+          title: Text(AppLocalizations.of(context)!.leaveTeam),
           content: Text(
-            'Takımdan ayrılmak istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+            AppLocalizations.of(context)!.leaveTeamConfirm,
           ),
           actions: [
             TextButton(
-              child: Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Ayrıl', style: TextStyle(color: Colors.red)),
+              child: Text(AppLocalizations.of(context)!.leave,
+                  style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop();
                 controller.leaveTeam();

@@ -6,6 +6,7 @@ import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/services/team_service.dart';
 import 'package:tuncbt/core/models/team.dart';
 import 'package:tuncbt/core/models/user_model.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/bindings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/profile.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
@@ -95,11 +96,11 @@ class DrawerController extends GetxController {
     if (currentTeam.value != null) {
       Get.dialog(
         AlertDialog(
-          title: const Text('Takım Davet Kodu'),
+          title: Text(AppLocalizations.of(Get.context!)!.referralCode),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Takım davet kodunuz:'),
+              Text(AppLocalizations.of(Get.context!)!.inviteMembersHint),
               SelectableText(
                 currentTeam.value!.referralCode,
                 style: const TextStyle(
@@ -112,7 +113,7 @@ class DrawerController extends GetxController {
           actions: [
             TextButton(
               onPressed: () => Get.back(),
-              child: const Text('Kapat'),
+              child: Text(AppLocalizations.of(Get.context!)!.cancel),
             ),
           ],
         ),
@@ -131,15 +132,15 @@ class DrawerController extends GetxController {
                   Icons.person,
                   size: 20.r,
                 )),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Çıkış Yap'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(AppLocalizations.of(Get.context!)!.logout),
             ),
           ],
         ),
-        content: const Text(
-          'Çıkış yapmak istediğinize emin misiniz?',
-          style: TextStyle(
+        content: Text(
+          AppLocalizations.of(Get.context!)!.logoutConfirm,
+          style: const TextStyle(
             fontSize: 20,
             fontStyle: FontStyle.italic,
           ),
@@ -147,15 +148,15 @@ class DrawerController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(Get.context!)!.cancel),
           ),
           TextButton(
             onPressed: () async {
-              // Cleanup team-related data if needed
               await _auth.signOut();
               Get.offAll(() => const UserState());
             },
-            child: const Text('Tamam', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(Get.context!)!.ok,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -182,7 +183,7 @@ class DrawerWidget extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              _buildDrawerHeader(),
+              _buildDrawerHeader(context),
               SizedBox(height: 20.h),
               Expanded(
                 child: SingleChildScrollView(
@@ -193,17 +194,20 @@ class DrawerWidget extends StatelessWidget {
                     return Column(
                       children: [
                         _buildAnimatedListTile(
-                          label: 'Takım Görevleri',
+                          context: context,
+                          label: AppLocalizations.of(context)!.teamTasks,
                           icon: Icons.task_outlined,
                           onTap: controller.navigateToTeamTasks,
                         ),
                         _buildAnimatedListTile(
-                          label: 'Profilim',
+                          context: context,
+                          label: AppLocalizations.of(context)!.myAccount,
                           icon: Icons.settings_outlined,
                           onTap: controller.navigateToProfile,
                         ),
                         _buildAnimatedListTile(
-                          label: 'Takım Üyeleri',
+                          context: context,
+                          label: AppLocalizations.of(context)!.teamMembers,
                           icon: Icons.groups_outlined,
                           onTap: controller.navigateToTeamMembers,
                         ),
@@ -211,18 +215,22 @@ class DrawerWidget extends StatelessWidget {
                             controller.currentUser.value?.teamRole?.name ==
                                 'manager')
                           _buildAnimatedListTile(
-                            label: 'Görev Ekle',
+                            context: context,
+                            label: AppLocalizations.of(context)!.newTask,
                             icon: Icons.add_task,
                             onTap: controller.navigateToAddTask,
                           ),
                         _buildAnimatedListTile(
-                          label: 'Davet Kodu Paylaş',
+                          context: context,
+                          label:
+                              AppLocalizations.of(context)!.shareReferralCode,
                           icon: Icons.share,
                           onTap: controller.shareReferralCode,
                         ),
                         if (controller.isAdmin.value)
                           _buildAnimatedListTile(
-                            label: 'Takım Ayarları',
+                            context: context,
+                            label: AppLocalizations.of(context)!.teamSettings,
                             icon: Icons.settings,
                             onTap: controller.navigateToTeamSettings,
                           ),
@@ -231,7 +239,8 @@ class DrawerWidget extends StatelessWidget {
                             thickness: 1,
                             height: 40.h),
                         _buildAnimatedListTile(
-                          label: 'Çıkış Yap',
+                          context: context,
+                          label: AppLocalizations.of(context)!.logout,
                           icon: Icons.logout,
                           onTap: controller.logout,
                           isLogout: true,
@@ -248,7 +257,7 @@ class DrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawerHeader() {
+  Widget _buildDrawerHeader(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
         return Container(
@@ -286,7 +295,8 @@ class DrawerWidget extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             Text(
-              controller.currentTeam.value?.teamName ?? 'TuncBT',
+              controller.currentTeam.value?.teamName ??
+                  AppLocalizations.of(context)!.appTitle,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22.sp,
@@ -309,6 +319,7 @@ class DrawerWidget extends StatelessWidget {
   }
 
   Widget _buildAnimatedListTile({
+    required BuildContext context,
     required String label,
     required IconData icon,
     required VoidCallback onTap,

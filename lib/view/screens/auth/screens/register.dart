@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
 class SignUp extends GetView<AuthController> {
@@ -31,15 +32,15 @@ class SignUp extends GetView<AuthController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: size.height * 0.1),
-                  _buildHeader(size),
+                  _buildHeader(size, context),
                   SizedBox(height: 20.h),
                   if (controller.teamName.value.isNotEmpty) ...[
                     _buildTeamInfo(),
                     SizedBox(height: 20.h),
                   ],
-                  _buildForm(size),
+                  _buildForm(size, context),
                   SizedBox(height: 40.h),
-                  _buildSignUpButton(),
+                  _buildSignUpButton(context),
                 ],
               ),
             ),
@@ -70,14 +71,14 @@ class SignUp extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildHeader(Size size) {
+  Widget _buildHeader(Size size, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           controller.isSocialSignIn.value
               ? 'Complete Your Profile'
-              : 'Register',
+              : AppLocalizations.of(context)!.register,
           style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -92,7 +93,7 @@ class SignUp extends GetView<AuthController> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Already have an account',
+                        text: AppLocalizations.of(context)!.registerHasAccount,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -102,7 +103,7 @@ class SignUp extends GetView<AuthController> {
                       TextSpan(
                         recognizer: TapGestureRecognizer()
                           ..onTap = () => Get.back(),
-                        text: 'Login',
+                        text: AppLocalizations.of(context)!.login,
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           color: Colors.red[200],
@@ -166,45 +167,45 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildForm(Size size) {
+  Widget _buildForm(Size size, BuildContext context) {
     return Form(
       key: _signUpFormKey,
       child: Column(
         children: [
           if (!controller.isSocialSignIn.value) ...[
-            _buildNameAndImageSection(size)
+            _buildNameAndImageSection(size, context)
           ],
           const SizedBox(height: 20),
           if (!controller.isSocialSignIn.value) ...[
-            _buildPasswordField(),
+            _buildPasswordField(context),
             const SizedBox(height: 20),
-            _buildConfirmPasswordField(),
+            _buildConfirmPasswordField(context),
             const SizedBox(height: 20),
           ],
-          _buildPhoneNumberField(),
+          _buildPhoneNumberField(context),
           const SizedBox(height: 20),
-          _buildPositionField(),
+          _buildPositionField(context),
         ],
       ),
     );
   }
 
-  Widget _buildNameAndImageSection(Size size) {
+  Widget _buildNameAndImageSection(Size size, BuildContext context) {
     return Column(
       children: [
         TextFormField(
           controller: controller.emailController,
           validator: (value) => value!.isEmpty ? "This Field is missing" : null,
           style: const TextStyle(color: Colors.black),
-          decoration: const InputDecoration(
-            hintText: 'Email Adress',
-            hintStyle: TextStyle(color: Colors.black),
-            enabledBorder: UnderlineInputBorder(
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.registerEmail,
+            hintStyle: const TextStyle(color: Colors.black),
+            enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
-            errorBorder:
-                UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+            errorBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.red)),
           ),
         ),
         SizedBox(
@@ -214,15 +215,15 @@ class SignUp extends GetView<AuthController> {
           controller: controller.fullNameController,
           validator: (value) => value!.isEmpty ? "This Field is missing" : null,
           style: const TextStyle(color: Colors.black),
-          decoration: const InputDecoration(
-            hintText: 'Full name',
-            hintStyle: TextStyle(color: Colors.black),
-            enabledBorder: UnderlineInputBorder(
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.registerName,
+            hintStyle: const TextStyle(color: Colors.black),
+            enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
-            errorBorder:
-                UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+            errorBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.red)),
           ),
         ),
       ],
@@ -287,7 +288,7 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(BuildContext context) {
     return Obx(() => TextFormField(
           controller: controller.passwordController,
           obscureText: controller.obscureText.value,
@@ -304,7 +305,7 @@ class SignUp extends GetView<AuthController> {
                       : Icons.visibility_off,
                   color: Colors.white),
             ),
-            hintText: 'Password',
+            hintText: AppLocalizations.of(context)!.registerPassword,
             hintStyle: const TextStyle(color: Colors.black),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
@@ -316,7 +317,7 @@ class SignUp extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildConfirmPasswordField() {
+  Widget _buildConfirmPasswordField(BuildContext context) {
     return Obx(() => TextFormField(
           controller: controller.confirmPasswordController,
           obscureText: controller.obscureText.value,
@@ -333,7 +334,7 @@ class SignUp extends GetView<AuthController> {
                       : Icons.visibility_off,
                   color: Colors.white),
             ),
-            hintText: 'Confirm Password',
+            hintText: AppLocalizations.of(context)!.registerConfirmPassword,
             hintStyle: const TextStyle(color: Colors.black),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
@@ -345,25 +346,25 @@ class SignUp extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildPhoneNumberField() {
+  Widget _buildPhoneNumberField(BuildContext context) {
     return TextFormField(
       controller: controller.phoneNumberController,
       validator: (value) => value!.isEmpty ? "This Field is missing" : null,
       style: const TextStyle(color: Colors.black),
-      decoration: const InputDecoration(
-        hintText: 'Phone number',
-        hintStyle: TextStyle(color: Colors.black),
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-        focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-        errorBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      decoration: InputDecoration(
+        hintText: AppLocalizations.of(context)!.registerPhone,
+        hintStyle: const TextStyle(color: Colors.black),
+        enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
+        focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
+        errorBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.red)),
       ),
     );
   }
 
-  Widget _buildPositionField() {
+  Widget _buildPositionField(BuildContext context) {
     return GestureDetector(
       onTap: () => controller.showJobCategoriesDialog(),
       child: TextFormField(
@@ -371,24 +372,25 @@ class SignUp extends GetView<AuthController> {
         controller: controller.positionCPController,
         validator: (value) => value!.isEmpty ? "This field is missing" : null,
         style: const TextStyle(color: Colors.black),
-        decoration: const InputDecoration(
-          suffixIcon: Icon(Icons.arrow_downward_rounded, color: Colors.black),
-          hintText: 'Position in the company',
-          hintStyle: TextStyle(color: Colors.black),
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          errorBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-          disabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        decoration: InputDecoration(
+          suffixIcon:
+              const Icon(Icons.arrow_downward_rounded, color: Colors.black),
+          hintText: AppLocalizations.of(context)!.registerPosition,
+          hintStyle: const TextStyle(color: Colors.black),
+          enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          errorBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red)),
+          disabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
         ),
       ),
     );
   }
 
-  Widget _buildSignUpButton() {
+  Widget _buildSignUpButton(BuildContext context) {
     return Obx(() => controller.isLoading.value
         ? const Center(child: CircularProgressIndicator())
         : MaterialButton(
@@ -409,7 +411,7 @@ class SignUp extends GetView<AuthController> {
                   Text(
                     controller.isSocialSignIn.value
                         ? 'Complete Profile'
-                        : 'SignUp',
+                        : AppLocalizations.of(context)!.signUp,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

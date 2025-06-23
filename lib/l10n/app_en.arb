@@ -1,0 +1,263 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "TuncBT",
+  "@appTitle": {
+    "description": "Application name"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Label for language selection"
+  },
+
+  "login": "Login",
+  "@login": {
+    "description": "Login button and screen title text"
+  },
+
+  "register": "Register",
+  "@register": {
+    "description": "Register button and screen title text"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "General cancel button text"
+  },
+
+  "ok": "OK",
+  "@ok": {
+    "description": "General confirmation button text"
+  },
+
+  "tasks": "Tasks",
+  "@tasks": {
+    "description": "Navigation label for tasks section"
+  },
+
+  "profile": "Profile",
+  "@profile": {
+    "description": "Navigation label for user profile"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Navigation label for settings"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "General save operation button"
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "General delete operation button"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "General edit operation button"
+  },
+
+  "create": "Create",
+  "@create": {
+    "description": "General create operation button"
+  },
+
+  "loginTitle": "Login",
+  "@loginTitle": {
+    "description": "Title shown on login screen"
+  },
+
+  "loginEmail": "Email",
+  "@loginEmail": {
+    "description": "Label for email field in login form"
+  },
+
+  "loginPassword": "Password",
+  "@loginPassword": {
+    "description": "Label for password field in login form"
+  },
+
+  "loginNoAccount": "Don't have an account?",
+  "@loginNoAccount": {
+    "description": "Text shown when user doesn't have an account"
+  },
+
+  "loginResetPassword": "Forgot Password",
+  "@loginResetPassword": {
+    "description": "Text for reset password button"
+  },
+
+  "registerTitle": "Register",
+  "@registerTitle": {
+    "description": "Title shown on register screen"
+  },
+
+  "registerName": "Full Name",
+  "@registerName": {
+    "description": "Label for name field in register form"
+  },
+
+  "registerEmail": "Email Address",
+  "@registerEmail": {
+    "description": "Label for email field in register form"
+  },
+
+  "registerPassword": "Password",
+  "@registerPassword": {
+    "description": "Label for password field in register form"
+  },
+
+  "registerConfirmPassword": "Confirm Password",
+  "@registerConfirmPassword": {
+    "description": "Label for confirm password field"
+  },
+
+  "registerPhone": "Phone Number",
+  "@registerPhone": {
+    "description": "Label for phone number field"
+  },
+
+  "registerPosition": "Position in Company",
+  "@registerPosition": {
+    "description": "Label for position field"
+  },
+
+  "registerHasAccount": "Already have an account?",
+  "@registerHasAccount": {
+    "description": "Text shown when user already has an account"
+  },
+
+  "forgotPasswordTitle": "Forgot Password",
+  "@forgotPasswordTitle": {
+    "description": "Title shown on forgot password screen"
+  },
+
+  "forgotPasswordSubtitle": "Enter your email address to reset your password",
+  "@forgotPasswordSubtitle": {
+    "description": "Subtitle shown on forgot password screen"
+  },
+
+  "forgotPasswordEmail": "Email Address",
+  "@forgotPasswordEmail": {
+    "description": "Label for email field in forgot password form"
+  },
+
+  "forgotPasswordReset": "Reset Password",
+  "@forgotPasswordReset": {
+    "description": "Text for reset password button"
+  },
+
+  "forgotPasswordBackToLogin": "Back to Login",
+  "@forgotPasswordBackToLogin": {
+    "description": "Text for back to login button"
+  },
+
+  "taskTitle": "Task Title",
+  "taskDescription": "Task Description",
+  "taskDeadline": "Deadline",
+  "taskCategory": "Task Category",
+  "uploadTask": "Upload Task",
+  "addComment": "Add Comment",
+  "taskDone": "Task Completed",
+  "taskNotDone": "Task In Progress",
+  "deleteTask": "Delete Task",
+  "deleteTaskConfirm": "Are you sure you want to delete this task?",
+  "taskDeleted": "Task successfully deleted",
+  "taskDeleteError": "An error occurred while deleting the task",
+  "taskUploadSuccess": "Task uploaded and notification created",
+  "taskUploadError": "An error occurred while uploading the task",
+  "noTasks": "No team tasks yet",
+  "addTaskHint": "Click the + button to add a new task",
+  "allFieldsRequired": "All fields are required",
+  "fieldRequired": "This field is required",
+  "teamTasks": "Team Tasks",
+  "newTask": "New Task",
+
+  "teamMembers": "Team Members",
+  "teamMembersCount": "{count} Members",
+  "@teamMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noTeamMembers": "No team members yet",
+  "inviteMembersHint": "Share your referral code to add new members to your team",
+  "myAccount": "My Account",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "teamName": "Team Name",
+  "referralCode": "Referral Code",
+  "inviteMembers": "Invite Members",
+  "shareReferralCode": "Share Referral Code",
+  "teamSettings": "Team Settings",
+  "leaveTeam": "Leave Team",
+  "leaveTeamConfirm": "Are you sure you want to leave the team?",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+  "jobInformation": "Job Information",
+  "contactInformation": "Contact Information",
+  "teamInformation": "Team Information",
+  "position": "Position",
+  "joinedDate": "Joined: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noName": "No Name",
+  "editName": "Edit Name",
+  "enterName": "Enter your name",
+  "quickActions": "Quick Actions",
+  "messages": "Messages",
+  "notifications": "Notifications",
+  "contact": "Contact",
+  "commentActions": "Comment Actions",
+  "replyToComment": "Reply to Comment",
+
+  "close": "Close",
+  "leave": "Leave",
+  "loginRequired": "Login required",
+  "userNotFound": "User not found",
+  "referralCodeTitle": "What is a Referral Code?",
+  "referralCodeDescription": "A referral code is an 8-character special code you receive from an existing user. By registering with this code, you can benefit from extra advantages.",
+
+  "authErrorUserNotFound": "No user found with this email address",
+  "authErrorWrongPassword": "Incorrect password. Please try again",
+  "authErrorInvalidEmail": "Invalid email address",
+  "authErrorUserDisabled": "This account has been disabled",
+  "authErrorEmailInUse": "This email address is already in use",
+  "authErrorOperationNotAllowed": "This operation is not allowed at the moment",
+  "authErrorWeakPassword": "The password is too weak. Please choose a stronger password",
+  "authErrorNetworkFailed": "Network connection error. Please check your internet connection",
+  "authErrorTooManyRequests": "Too many failed login attempts. Please try again later",
+  "authErrorInvalidCredential": "Invalid credentials",
+  "authErrorAccountExists": "An account already exists with this email using a different sign-in method",
+  "authErrorInvalidVerificationCode": "Invalid verification code",
+  "authErrorInvalidVerificationId": "Invalid verification ID",
+  "authErrorQuotaExceeded": "Quota exceeded. Please try again later",
+  "authErrorCredentialInUse": "These credentials are already associated with another account",
+  "authErrorRequiresRecentLogin": "This operation requires a recent login. Please log out and log in again",
+  "authErrorGeneric": "An error occurred. Please try again",
+
+  "notInTeam": "You are not a member of any team yet",
+  "addMember": "Add Member",
+  "teamJoinDate": "Joined: {date}",
+  "@teamJoinDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+
+  "signUp": "Sign Up",
+  "noPermissionToDelete": "You don't have permission to perform this action"
+} 

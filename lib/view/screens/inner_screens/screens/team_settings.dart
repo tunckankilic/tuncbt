@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 
 class TeamSettingsScreen extends StatelessWidget {
@@ -80,14 +81,14 @@ class TeamSettingsScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
               await onSave(controller.text);
               Navigator.pop(context);
             },
-            child: const Text('Kaydet'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -98,7 +99,7 @@ class TeamSettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Davet Kodu'),
+        title: Text(AppLocalizations.of(context)!.referralCode),
         content: SelectableText(
           code,
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -106,7 +107,7 @@ class TeamSettingsScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Kapat'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),

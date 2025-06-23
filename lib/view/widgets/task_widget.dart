@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/task_details.dart';
 import 'package:tuncbt/core/services/global_methods.dart';
 import 'package:tuncbt/core/models/user_model.dart';
@@ -152,13 +153,13 @@ class TaskWidget extends StatelessWidget {
     return await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Görevi Sil',
+            title: Text(AppLocalizations.of(context)!.deleteTask,
                 style: TextStyle(color: AppTheme.primaryColor)),
-            content: Text('Bu görevi silmek istediğinizden emin misiniz?'),
+            content: Text(AppLocalizations.of(context)!.deleteTaskConfirm),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('İptal',
+                child: Text(AppLocalizations.of(context)!.cancel,
                     style: TextStyle(color: AppTheme.secondaryColor)),
               ),
               TextButton(
@@ -168,7 +169,8 @@ class TaskWidget extends StatelessWidget {
                   children: [
                     Icon(Icons.delete, color: Colors.red),
                     SizedBox(width: 8.w),
-                    Text('Sil', style: TextStyle(color: Colors.red)),
+                    Text(AppLocalizations.of(context)!.delete,
+                        style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -183,7 +185,7 @@ class TaskWidget extends StatelessWidget {
       final User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         GlobalMethod.showErrorDialog(
-          error: 'Oturum açmanız gerekiyor',
+          error: AppLocalizations.of(context)!.loginRequired,
           context: context,
         );
         return;
@@ -197,7 +199,7 @@ class TaskWidget extends StatelessWidget {
 
       if (!userDoc.exists) {
         GlobalMethod.showErrorDialog(
-          error: 'Kullanıcı bilgileri bulunamadı',
+          error: AppLocalizations.of(context)!.userNotFound,
           context: context,
         );
         return;
@@ -208,7 +210,7 @@ class TaskWidget extends StatelessWidget {
       // Takım kontrolü
       if (userData.teamId != teamId) {
         GlobalMethod.showErrorDialog(
-          error: 'Bu görevi silme yetkiniz yok',
+          error: AppLocalizations.of(context)!.noPermissionToDelete,
           context: context,
         );
         return;
@@ -219,7 +221,7 @@ class TaskWidget extends StatelessWidget {
           userData.teamRole?.name != 'admin' &&
           userData.teamRole?.name != 'manager') {
         GlobalMethod.showErrorDialog(
-          error: 'Bu işlemi gerçekleştirme yetkiniz yok',
+          error: AppLocalizations.of(context)!.noPermissionToDelete,
           context: context,
         );
         return;
@@ -227,14 +229,14 @@ class TaskWidget extends StatelessWidget {
 
       await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
       await Fluttertoast.showToast(
-        msg: "Görev başarıyla silindi",
+        msg: AppLocalizations.of(context)!.taskDeleted,
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.grey,
         fontSize: 18.0,
       );
     } catch (error) {
       GlobalMethod.showErrorDialog(
-        error: 'Görev silinirken bir hata oluştu',
+        error: AppLocalizations.of(context)!.taskDeleteError,
         context: context,
       );
     }

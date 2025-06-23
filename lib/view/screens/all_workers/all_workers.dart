@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/all_workers/all_workers_controller.dart';
 import 'package:tuncbt/view/widgets/all_workers_widget.dart';
@@ -39,7 +40,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context, teamProvider),
-          _buildWorkersList(teamProvider),
+          _buildWorkersList(teamProvider, context),
         ],
       ),
     );
@@ -56,7 +57,8 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              teamProvider.currentTeam?.teamName ?? 'Takım Üyeleri',
+              teamProvider.currentTeam?.teamName ??
+                  AppLocalizations.of(context)!.teamMembers,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20.sp,
@@ -64,7 +66,8 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
               ),
             ),
             Text(
-              '${teamProvider.teamMembers.length} Üye',
+              AppLocalizations.of(context)!
+                  .teamMembersCount(teamProvider.teamMembers.length),
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 14.sp,
@@ -92,7 +95,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
     );
   }
 
-  Widget _buildWorkersList(TeamProvider teamProvider) {
+  Widget _buildWorkersList(TeamProvider teamProvider, BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const SliverFillRemaining(
@@ -111,7 +114,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
                 ),
                 SizedBox(height: 16.h),
                 Text(
-                  'Henüz takım üyesi bulunmuyor',
+                  AppLocalizations.of(context)!.noTeamMembers,
                   style: TextStyle(
                     fontSize: 18.sp,
                     color: AppTheme.textColor,
@@ -121,7 +124,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
                 SizedBox(height: 8.h),
                 if (teamProvider.isAdmin)
                   Text(
-                    'Takımınıza yeni üyeler eklemek için\nreferans kodunuzu paylaşın',
+                    AppLocalizations.of(context)!.inviteMembersHint,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14.sp,

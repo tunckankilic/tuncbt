@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
@@ -51,7 +52,7 @@ class UploadTask extends GetView<InnerScreenController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${teamProvider.currentTeam?.teamName ?? 'Takım'} - Yeni Görev',
+          '${teamProvider.currentTeam?.teamName ?? AppLocalizations.of(context)!.teamTasks} - ${AppLocalizations.of(context)!.newTask}',
           style: const TextStyle(color: AppTheme.textColor),
         ),
         backgroundColor: AppTheme.backgroundColor,
@@ -75,14 +76,14 @@ class UploadTask extends GetView<InnerScreenController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildHeader(),
+                      _buildHeader(context),
                       SizedBox(height: 20.h),
-                      _buildTaskCategory(),
-                      _buildTaskTitle(),
-                      _buildTaskDescription(),
-                      _buildTaskDeadline(),
+                      _buildTaskCategory(context),
+                      _buildTaskTitle(context),
+                      _buildTaskDescription(context),
+                      _buildTaskDeadline(context),
                       SizedBox(height: 20.h),
-                      _buildUploadButton(),
+                      _buildUploadButton(context),
                     ],
                   ),
                 ),
@@ -94,9 +95,9 @@ class UploadTask extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Text(
-      'Tüm alanlar zorunludur',
+      AppLocalizations.of(context)!.allFieldsRequired,
       style: TextStyle(
         color: AppTheme.primaryColor,
         fontSize: 20.sp,
@@ -105,28 +106,31 @@ class UploadTask extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildTaskCategory() {
+  Widget _buildTaskCategory(BuildContext context) {
     return _buildFormField(
-      label: 'Görev Kategorisi*',
+      context: context,
+      label: '${AppLocalizations.of(context)!.taskCategory}*',
       controller: controller.taskCategoryController,
-      onTap: () => controller.showTaskCategoriesDialog(Get.context!),
+      onTap: () => controller.showTaskCategoriesDialog(context),
       enabled: false,
       icon: Icons.category,
     );
   }
 
-  Widget _buildTaskTitle() {
+  Widget _buildTaskTitle(BuildContext context) {
     return _buildFormField(
-      label: 'Görev Başlığı*',
+      context: context,
+      label: '${AppLocalizations.of(context)!.taskTitle}*',
       controller: controller.taskTitleController,
       maxLength: 100,
       icon: Icons.title,
     );
   }
 
-  Widget _buildTaskDescription() {
+  Widget _buildTaskDescription(BuildContext context) {
     return _buildFormField(
-      label: 'Görev Açıklaması*',
+      context: context,
+      label: '${AppLocalizations.of(context)!.taskDescription}*',
       controller: controller.taskDescriptionController,
       maxLength: 1000,
       maxLines: 3,
@@ -134,17 +138,19 @@ class UploadTask extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildTaskDeadline() {
+  Widget _buildTaskDeadline(BuildContext context) {
     return _buildFormField(
-      label: 'Son Tarih*',
+      context: context,
+      label: '${AppLocalizations.of(context)!.taskDeadline}*',
       controller: controller.deadlineDateController,
-      onTap: () => controller.pickDateDialog(Get.context!),
+      onTap: () => controller.pickDateDialog(context),
       enabled: false,
       icon: Icons.calendar_today,
     );
   }
 
   Widget _buildFormField({
+    required BuildContext context,
     required String label,
     required TextEditingController controller,
     VoidCallback? onTap,
@@ -195,7 +201,7 @@ class UploadTask extends GetView<InnerScreenController> {
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return "Bu alan zorunludur";
+                  return AppLocalizations.of(context)!.fieldRequired;
                 }
                 return null;
               },
@@ -206,7 +212,7 @@ class UploadTask extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildUploadButton() {
+  Widget _buildUploadButton(BuildContext context) {
     return Center(
       child: Obx(
         () => controller.isLoading.value
@@ -214,7 +220,7 @@ class UploadTask extends GetView<InnerScreenController> {
             : ElevatedButton.icon(
                 onPressed: _uploadTaskAndNotify,
                 icon: const Icon(Icons.upload_file),
-                label: const Text('Görevi Yükle'),
+                label: Text(AppLocalizations.of(context)!.uploadTask),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentColor,
                   padding:
@@ -236,11 +242,10 @@ class UploadTask extends GetView<InnerScreenController> {
     if (controller.formKey.currentState!.validate()) {
       try {
         await controller.uploadTask();
-        // Görev başarıyla yüklendi, bildirim oluştur
         await _createTaskAddedNotification();
         Get.snackbar(
-          'Başarılı',
-          'Görev yüklendi ve bildirim oluşturuldu',
+          AppLocalizations.of(Get.context!)!.ok,
+          AppLocalizations.of(Get.context!)!.taskUploadSuccess,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -248,8 +253,8 @@ class UploadTask extends GetView<InnerScreenController> {
       } catch (e) {
         print('Error uploading task: $e');
         Get.snackbar(
-          'Hata',
-          'Görev yüklenirken hata oluştu',
+          AppLocalizations.of(Get.context!)!.ok,
+          AppLocalizations.of(Get.context!)!.taskUploadError,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,

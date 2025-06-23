@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 import 'package:tuncbt/view/screens/auth/screens/password_renew.dart';
@@ -35,7 +36,7 @@ class Login extends GetView<AuthController> {
               children: [
                 SizedBox(height: size.height * 0.05.h),
                 Text(
-                  'TuncBT',
+                  AppLocalizations.of(context)!.appTitle,
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -46,7 +47,7 @@ class Login extends GetView<AuthController> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Don\'t have an account',
+                      AppLocalizations.of(context)!.loginNoAccount,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -56,7 +57,7 @@ class Login extends GetView<AuthController> {
                       onTap: () =>
                           Get.to(() => SignUp(), binding: AuthBindings()),
                       child: Text(
-                        'Register',
+                        AppLocalizations.of(context)!.register,
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           color: Colors.red[900],
@@ -68,9 +69,12 @@ class Login extends GetView<AuthController> {
                   ],
                 ),
                 SizedBox(height: 40.h),
-                Form(key: controller.emailKey, child: _buildEmailField()),
+                Form(
+                    key: controller.emailKey, child: _buildEmailField(context)),
                 SizedBox(height: 15.h),
-                Form(key: controller.passKay, child: _buildPasswordField()),
+                Form(
+                    key: controller.passKay,
+                    child: _buildPasswordField(context)),
                 SizedBox(height: 15.h),
                 Container(
                   padding: const EdgeInsets.all(5),
@@ -80,7 +84,7 @@ class Login extends GetView<AuthController> {
                   child: TextButton(
                     onPressed: () => Get.toNamed(PasswordRenew.routeName),
                     child: Text(
-                      'Reset Password',
+                      AppLocalizations.of(context)!.loginResetPassword,
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -98,7 +102,7 @@ class Login extends GetView<AuthController> {
                   child: TextButton(
                     onPressed: () => controller.login(),
                     child: Text(
-                      'Login',
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 17.sp,
@@ -161,12 +165,12 @@ class Login extends GetView<AuthController> {
   //   );
   // }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email address',
+          AppLocalizations.of(context)!.loginEmail,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -190,7 +194,7 @@ class Login extends GetView<AuthController> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: 'Enter your email',
+            hintText: AppLocalizations.of(context)!.loginEmail,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide.none,
@@ -203,12 +207,12 @@ class Login extends GetView<AuthController> {
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          AppLocalizations.of(context)!.loginPassword,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -229,7 +233,7 @@ class Login extends GetView<AuthController> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: 'Enter your Password',
+            hintText: AppLocalizations.of(context)!.loginPassword,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide.none,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 import 'package:tuncbt/view/screens/auth/screens/forget_pass.dart';
 
@@ -70,7 +71,7 @@ class AuthScreen extends GetView<AuthController> {
               _buildToggleAuthModeText(),
               SizedBox(height: 40.h),
               _buildForm(context),
-              if (isLogin) _buildForgetPasswordButton(),
+              if (isLogin) _buildForgetPasswordButton(context),
               SizedBox(height: 40.h),
               _buildSubmitButton(),
             ],
@@ -130,7 +131,7 @@ class AuthScreen extends GetView<AuthController> {
           _buildPasswordField(),
           if (!isLogin) ...[
             SizedBox(height: 16.h),
-            _buildPhoneNumberField(),
+            _buildPhoneNumberField(context),
             SizedBox(height: 16.h),
             _buildPositionField(context),
           ],
@@ -180,12 +181,13 @@ class AuthScreen extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildPhoneNumberField() {
+  Widget _buildPhoneNumberField(BuildContext context) {
     return TextFormField(
       controller: controller.phoneNumberController,
-      validator: (value) => value!.isEmpty ? "This Field is missing" : null,
+      validator: (value) =>
+          value!.isEmpty ? AppLocalizations.of(context)!.fieldRequired : null,
       style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration('Phone number'),
+      decoration: _inputDecoration(AppLocalizations.of(context)!.registerPhone),
     );
   }
 
@@ -195,9 +197,12 @@ class AuthScreen extends GetView<AuthController> {
       child: AbsorbPointer(
         child: TextFormField(
           controller: controller.positionCPController,
-          validator: (value) => value!.isEmpty ? "This field is missing" : null,
+          validator: (value) => value!.isEmpty
+              ? AppLocalizations.of(context)!.fieldRequired
+              : null,
           style: const TextStyle(color: Colors.white),
-          decoration: _inputDecoration('Position in the company'),
+          decoration:
+              _inputDecoration(AppLocalizations.of(context)!.registerPosition),
         ),
       ),
     );
@@ -206,26 +211,26 @@ class AuthScreen extends GetView<AuthController> {
   InputDecoration _inputDecoration(String hint, {Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white70),
-      enabledBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.white70)),
-      focusedBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+      hintStyle: const TextStyle(color: Colors.white70),
+      enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white70)),
+      focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white)),
       errorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       focusedErrorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       suffixIcon: suffixIcon,
     );
   }
 
-  Widget _buildForgetPasswordButton() {
+  Widget _buildForgetPasswordButton(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () => Get.to(() => const ForgetPasswordScreen()),
         child: Text(
-          'Forgot password?',
+          AppLocalizations.of(context)!.loginResetPassword,
           style: TextStyle(
             color: Colors.white70,
             fontSize: 14.sp,

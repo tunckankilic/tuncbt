@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/enums/team_role.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/screens.dart';
@@ -85,41 +86,42 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   void toggleObscureText() => obscureText.toggle();
 
   String _getReadableAuthError(FirebaseAuthException e) {
+    final context = Get.context!;
     switch (e.code) {
       case 'user-not-found':
-        return 'No user found with this email address.';
+        return AppLocalizations.of(context)!.authErrorUserNotFound;
       case 'wrong-password':
-        return 'Incorrect password. Please try again.';
+        return AppLocalizations.of(context)!.authErrorWrongPassword;
       case 'invalid-email':
-        return 'Invalid email address.';
+        return AppLocalizations.of(context)!.authErrorInvalidEmail;
       case 'user-disabled':
-        return 'This account has been disabled.';
+        return AppLocalizations.of(context)!.authErrorUserDisabled;
       case 'email-already-in-use':
-        return 'This email address is already in use.';
+        return AppLocalizations.of(context)!.authErrorEmailInUse;
       case 'operation-not-allowed':
-        return 'This operation is not allowed at the moment.';
+        return AppLocalizations.of(context)!.authErrorOperationNotAllowed;
       case 'weak-password':
-        return 'The password is too weak. Please choose a stronger password.';
+        return AppLocalizations.of(context)!.authErrorWeakPassword;
       case 'network-request-failed':
-        return 'Network connection error. Please check your internet connection.';
+        return AppLocalizations.of(context)!.authErrorNetworkFailed;
       case 'too-many-requests':
-        return 'Too many failed login attempts. Please try again later.';
+        return AppLocalizations.of(context)!.authErrorTooManyRequests;
       case 'invalid-credential':
-        return 'Invalid credentials.';
+        return AppLocalizations.of(context)!.authErrorInvalidCredential;
       case 'account-exists-with-different-credential':
-        return 'An account already exists with this email using a different sign-in method.';
+        return AppLocalizations.of(context)!.authErrorAccountExists;
       case 'invalid-verification-code':
-        return 'Invalid verification code.';
+        return AppLocalizations.of(context)!.authErrorInvalidVerificationCode;
       case 'invalid-verification-id':
-        return 'Invalid verification ID.';
+        return AppLocalizations.of(context)!.authErrorInvalidVerificationId;
       case 'quota-exceeded':
-        return 'Quota exceeded. Please try again later.';
+        return AppLocalizations.of(context)!.authErrorQuotaExceeded;
       case 'credential-already-in-use':
-        return 'These credentials are already associated with another account.';
+        return AppLocalizations.of(context)!.authErrorCredentialInUse;
       case 'requires-recent-login':
-        return 'This operation requires a recent login. Please log out and log in again.';
+        return AppLocalizations.of(context)!.authErrorRequiresRecentLogin;
       default:
-        return 'An error occurred. Please try again.';
+        return AppLocalizations.of(context)!.authErrorGeneric;
     }
   }
 

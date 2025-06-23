@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/config/router.dart';
 import 'package:tuncbt/firebase_options.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/screens.dart';
@@ -14,6 +15,9 @@ import 'package:tuncbt/core/services/push_notifications.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+const String LANGUAGE_CODE = 'languageCode';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,26 +28,33 @@ void main() async {
   // SharedPreferences'ı başlat
   final prefs = await SharedPreferences.getInstance();
 
+  // Kayıtlı dil kodunu al veya varsayılan olarak 'tr' kullan
+  final String savedLanguage = prefs.getString(LANGUAGE_CODE) ?? 'tr';
+
   // Mevcut kullanıcıları yeni yapıya geçir
   await UserModel.migrateExistingUsers();
 
-  // timeago Türkçe desteği
+  // timeago dil desteği
   timeago.setLocaleMessages('tr', timeago.TrMessages());
-  timeago.setDefaultLocale('tr');
+  timeago.setLocaleMessages('en', timeago.EnMessages());
+  timeago.setLocaleMessages('de', timeago.DeMessages());
+  timeago.setDefaultLocale(savedLanguage);
 
   final pushNotificationSystems = PushNotificationSystems();
   await pushNotificationSystems.init();
   Get.put(pushNotificationSystems);
 
-  runApp(MyApp(prefs: prefs));
+  runApp(MyApp(prefs: prefs, initialLocale: savedLanguage));
 }
 
 class MyApp extends StatefulWidget {
   final SharedPreferences prefs;
+  final String initialLocale;
 
   const MyApp({
     Key? key,
     required this.prefs,
+    required this.initialLocale,
   }) : super(key: key);
 
   @override
@@ -51,9 +62,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late String _currentLocale;
+
   @override
   void initState() {
     super.initState();
+    _currentLocale = widget.initialLocale;
     _setupNotifications();
   }
 
@@ -67,18 +81,24 @@ class _MyAppState extends State<MyApp> {
     notificationSystems.setNotificationHandler((message) {
       print("Received notification: ${message.notification?.title}");
 
-      // Bildirimden task ID'sini ve uploadedBy bilgisini al
       final taskId = message.data['taskId'];
       final uploadedBy = message.data['uploadedBy'];
 
       if (taskId != null && uploadedBy != null) {
-        // Task detay sayfasını aç
         Get.toNamed(TaskDetailsScreen.routeName, arguments: {
           'taskID': taskId,
           'uploadedBy': uploadedBy,
         });
       }
     });
+  }
+
+  void _changeLanguage(String languageCode) async {
+    setState(() {
+      _currentLocale = languageCode;
+    });
+    await widget.prefs.setString(LANGUAGE_CODE, languageCode);
+    timeago.setDefaultLocale(languageCode);
   }
 
   @override
@@ -98,6 +118,33 @@ class _MyAppState extends State<MyApp> {
           initialBinding: AuthBindings(),
           getPages: RouteManager.routes,
           home: const UserState(),
+          locale: Locale(_currentLocale),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('tr'), // Turkish
+            Locale('en'), // English
+            Locale('de'), // German
+          ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            if (locale == null) {
+              return supportedLocales.first;
+            }
+
+            // Desteklenen dilleri kontrol et
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale.languageCode) {
+                return supportedLocale;
+              }
+            }
+
+            // Eğer desteklenmeyen bir dil ise varsayılan olarak Türkçe'ye dön
+            return const Locale('tr');
+          },
         ),
       ),
     );
