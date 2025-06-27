@@ -13,6 +13,7 @@ import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
 
 class RouteManager {
   static const String home = '/home';
@@ -119,14 +120,12 @@ class RouteManager {
         RouteGuard(),
       ],
     ),
+    GetPage(
+      name: InviteMembersScreen.routeName,
+      page: () => InviteMembersScreen(),
+      binding: InnerScreenBindings(),
+    ),
   ];
-
-  // static String getInitialRoute() {
-  //   // Logic to determine the initial route
-  //   // For example, check if user is logged in
-  //   bool isLoggedIn = false; // This should be your actual login check
-  //   return isLoggedIn ? home : login;
-  // }
 }
 
 class RouteGuard extends GetMiddleware {

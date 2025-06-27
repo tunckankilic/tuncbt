@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:tuncbt/core/config/env_config.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -49,20 +50,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAkwiNCCAf5AKgwP2xnsOiIAVp42Iddjg4',
-    appId: '1:610259100358:android:078ec1c194844113346dc7',
-    messagingSenderId: '610259100358',
-    projectId: 'tuncbt-e4824',
-    storageBucket: 'tuncbt-e4824.appspot.com',
-  );
+  static FirebaseOptions get android => FirebaseOptions(
+        apiKey: EnvConfig.firebaseApiKey,
+        appId: EnvConfig.firebaseAppId,
+        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
+        projectId: EnvConfig.firebaseProjectId,
+        storageBucket: EnvConfig.firebaseStorageBucket,
+      );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDZhhLePXHvhOQhdyjnoki5UEIcettiYOA',
-    appId: '1:610259100358:ios:82d996baeb3488c0346dc7',
-    messagingSenderId: '610259100358',
-    projectId: 'tuncbt-e4824',
-    storageBucket: 'tuncbt-e4824.appspot.com',
-    iosBundleId: 'site.tunckankilic.tuncbt',
-  );
+  static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: EnvConfig.firebaseApiKey,
+        appId: EnvConfig.firebaseAppId,
+        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
+        projectId: EnvConfig.firebaseProjectId,
+        storageBucket: EnvConfig.firebaseStorageBucket,
+        iosBundleId: 'site.tunckankilic.tuncbt',
+      );
 }

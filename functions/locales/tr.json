@@ -1,0 +1,8 @@
+{
+  "notifications": {
+    "new_task": "Yeni Görev",
+    "status_update": "Görev Durumu Güncellendi",
+    "new_comment": "Yeni Yorum",
+    "default": "Bildirim"
+  }
+} 
