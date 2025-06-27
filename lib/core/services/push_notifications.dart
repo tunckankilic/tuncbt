@@ -9,38 +9,98 @@ class PushNotificationSystems extends GetxController {
       FlutterLocalNotificationsPlugin();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Bildirim kanalı ID'si
+  static const String _notificationChannelId = 'high_importance_channel';
+  static const String _notificationChannelName =
+      'High Importance Notifications';
+  static const String _notificationChannelDesc =
+      'This channel is used for important notifications.';
+
   Future<void> init() async {
-    await _initializeLocalNotifications();
-    await _requestNotificationPermissions();
-    await _configureForegroundNotificationPresentationOptions();
-    await _setupInteractedMessage();
-    _registerForegroundMessageHandler();
+    try {
+      await _initializeLocalNotifications();
+      await _requestNotificationPermissions();
+      await _configureForegroundNotificationPresentationOptions();
+      await _setupInteractedMessage();
+      _registerForegroundMessageHandler();
+      print('Bildirim sistemi başarıyla başlatıldı');
+    } catch (e) {
+      print('Bildirim sistemi başlatılırken hata: $e');
+    }
   }
 
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+
     final DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
     );
+
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        print('Bildirime tıklandı: ${response.payload}');
+        _handleNotificationTap(response.payload);
+      },
+    );
+
+    // Android için bildirim kanalı oluştur
+    await _createNotificationChannel();
+  }
+
+  Future<void> _createNotificationChannel() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      _notificationChannelId,
+      _notificationChannelName,
+      description: _notificationChannelDesc,
+      importance: Importance.max,
+      enableVibration: true,
+      enableLights: true,
+    );
+
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 
   Future<void> _requestNotificationPermissions() async {
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    print('User granted permission: ${settings.authorizationStatus}');
+    try {
+      NotificationSettings settings =
+          await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+        criticalAlert: true,
+        announcement: true,
+        carPlay: true,
+      );
+
+      print('Bildirim izin durumu: ${settings.authorizationStatus}');
+
+      // iOS için ek izinler
+      await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    } catch (e) {
+      print('Bildirim izinleri alınırken hata: $e');
+    }
   }
 
   Future<void> _configureForegroundNotificationPresentationOptions() async {
@@ -53,27 +113,35 @@ class PushNotificationSystems extends GetxController {
   }
 
   Future<void> _setupInteractedMessage() async {
+    // Uygulama kapalıyken gelen bildirimler
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       _handleMessage(initialMessage);
     }
+
+    // Uygulama arka planda iken tıklanan bildirimler
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
   void _registerForegroundMessageHandler() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("Foreground message received: ${message.messageId}");
+      print('Ön planda bildirim alındı: ${message.messageId}');
       _showLocalNotification(message);
     });
   }
 
   void _handleMessage(RemoteMessage message) {
-    print("Handling a message: ${message.messageId}");
+    print('Bildirim işleniyor: ${message.messageId}');
 
     final data = message.data;
-    final type = data['type'];
-    final taskId = data['taskId'];
+    final String? type = data['type'];
+    final String? taskId = data['taskId'];
+
+    if (type == null || taskId == null) {
+      print('Geçersiz bildirim verisi');
+      return;
+    }
 
     switch (type) {
       case 'new_task':
@@ -95,82 +163,141 @@ class PushNotificationSystems extends GetxController {
           'scrollToComment': data['commentId'],
         });
         break;
+      default:
+        print('Bilinmeyen bildirim tipi: $type');
+    }
+  }
+
+  void _handleNotificationTap(String? payload) {
+    if (payload != null) {
+      try {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(
+          Map.from(payload as Map),
+        );
+        // Bildirime özgü yönlendirme işlemleri
+        if (data.containsKey('route')) {
+          Get.toNamed(data['route'], arguments: data['arguments']);
+        }
+      } catch (e) {
+        print('Bildirim tıklama işlenirken hata: $e');
+      }
     }
   }
 
   Future<void> _showLocalNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
+    try {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
 
-    if (notification != null && android != null) {
-      await _flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            'high_importance_channel',
-            'High Importance Notifications',
-            channelDescription:
-                'This channel is used for important notifications.',
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: android.smallIcon,
+      if (notification != null) {
+        await _flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title ?? 'Yeni Bildirim',
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              _notificationChannelId,
+              _notificationChannelName,
+              channelDescription: _notificationChannelDesc,
+              importance: Importance.max,
+              priority: Priority.high,
+              icon: android?.smallIcon ?? '@mipmap/ic_launcher',
+              styleInformation: BigTextStyleInformation(
+                notification.body ?? '',
+                htmlFormatBigText: true,
+                contentTitle: notification.title,
+                htmlFormatContentTitle: true,
+              ),
+            ),
+            iOS: const DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
           ),
-          iOS: const DarwinNotificationDetails(),
-        ),
-      );
+          payload: message.data.toString(),
+        );
+      }
+    } catch (e) {
+      print('Yerel bildirim gösterilirken hata: $e');
     }
   }
 
   Future<void> createTaskAddedNotification(
       String taskId, String uploadedBy) async {
-    await _firestore.collection('notifications').add({
-      'message': 'Yeni görev eklendi',
-      'taskId': taskId,
-      'uploadedBy': uploadedBy,
-      'createdAt': FieldValue.serverTimestamp(),
-      'read': false,
-      'type': 'new_task',
-    });
+    try {
+      await _firestore.collection('notifications').add({
+        'message': 'Yeni görev eklendi',
+        'taskId': taskId,
+        'uploadedBy': uploadedBy,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+        'type': 'new_task',
+      });
+    } catch (e) {
+      print('Görev bildirim oluşturulurken hata: $e');
+    }
   }
 
   Future<void> createStatusUpdateNotification(
       String taskId, bool newStatus, String uploadedBy) async {
-    await _firestore.collection('notifications').add({
-      'message':
-          'Task status updated to ${newStatus ? "completed" : "incomplete"}',
-      'taskId': taskId,
-      'uploadedBy': uploadedBy,
-      'createdAt': FieldValue.serverTimestamp(),
-      'read': false,
-      'type': 'status_update',
-    });
+    try {
+      await _firestore.collection('notifications').add({
+        'message':
+            'Görev durumu ${newStatus ? "tamamlandı" : "devam ediyor"} olarak güncellendi',
+        'taskId': taskId,
+        'uploadedBy': uploadedBy,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+        'type': 'status_update',
+      });
+    } catch (e) {
+      print('Durum güncelleme bildirimi oluşturulurken hata: $e');
+    }
   }
 
   Future<void> createCommentNotification(String taskId, String commentId,
       String commenterName, String uploadedBy) async {
-    await _firestore.collection('notifications').add({
-      'message': '$commenterName commented on a task',
-      'taskId': taskId,
-      'commentId': commentId,
-      'uploadedBy': uploadedBy,
-      'createdAt': FieldValue.serverTimestamp(),
-      'read': false,
-      'type': 'new_comment',
-    });
+    try {
+      await _firestore.collection('notifications').add({
+        'message': '$commenterName göreve yorum yaptı',
+        'taskId': taskId,
+        'commentId': commentId,
+        'uploadedBy': uploadedBy,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+        'type': 'new_comment',
+      });
+    } catch (e) {
+      print('Yorum bildirimi oluşturulurken hata: $e');
+    }
   }
 
   Future<String?> getFirebaseToken() async {
-    return await _firebaseMessaging.getToken();
+    try {
+      return await _firebaseMessaging.getToken();
+    } catch (e) {
+      print('Firebase token alınırken hata: $e');
+      return null;
+    }
   }
 
   void subscribeToTopic(String topic) {
-    _firebaseMessaging.subscribeToTopic(topic);
+    try {
+      _firebaseMessaging.subscribeToTopic(topic);
+      print('$topic konusuna abone olundu');
+    } catch (e) {
+      print('Konuya abone olunurken hata: $e');
+    }
   }
 
   void unsubscribeFromTopic(String topic) {
-    _firebaseMessaging.unsubscribeFromTopic(topic);
+    try {
+      _firebaseMessaging.unsubscribeFromTopic(topic);
+      print('$topic konusundan çıkıldı');
+    } catch (e) {
+      print('Konudan çıkılırken hata: $e');
+    }
   }
 
   void setNotificationHandler(Function(RemoteMessage) handler) {

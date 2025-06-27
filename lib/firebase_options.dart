@@ -16,6 +16,8 @@ import 'package:tuncbt/core/config/env_config.dart';
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  static final _config = EnvConfig();
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       throw UnsupportedError(
@@ -51,19 +53,19 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions get android => FirebaseOptions(
-        apiKey: EnvConfig.firebaseApiKey,
-        appId: EnvConfig.firebaseAppId,
-        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
-        projectId: EnvConfig.firebaseProjectId,
-        storageBucket: EnvConfig.firebaseStorageBucket,
+        apiKey: _config.firebaseApiKey,
+        appId: _config.firebaseAppId,
+        messagingSenderId: _config.firebaseMessagingSenderId,
+        projectId: _config.firebaseProjectId,
+        storageBucket: _config.firebaseStorageBucket,
       );
 
   static FirebaseOptions get ios => FirebaseOptions(
-        apiKey: EnvConfig.firebaseApiKey,
-        appId: EnvConfig.firebaseAppId,
-        messagingSenderId: EnvConfig.firebaseMessagingSenderId,
-        projectId: EnvConfig.firebaseProjectId,
-        storageBucket: EnvConfig.firebaseStorageBucket,
+        apiKey: _config.firebaseApiKey,
+        appId: _config.firebaseAppId,
+        messagingSenderId: _config.firebaseMessagingSenderId,
+        projectId: _config.firebaseProjectId,
+        storageBucket: _config.firebaseStorageBucket,
         iosBundleId: 'site.tunckankilic.tuncbt',
       );
 }

@@ -16,13 +16,12 @@ import 'package:tuncbt/core/models/user_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tuncbt/core/config/env_config.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const String LANGUAGE_CODE = 'languageCode';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EnvConfig.init();
+  await EnvConfig().init();
 
   // Initialize Firebase
   await Firebase.initializeApp();

@@ -1,98 +1,155 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EnvConfig {
+  static final EnvConfig _instance = EnvConfig._internal();
+  factory EnvConfig() => _instance;
+  EnvConfig._internal();
+
+  bool _isInitialized = false;
+
   // Firebase Configuration
-  static String get firebaseApiKey => dotenv.env['FIREBASE_API_KEY'] ?? '';
-  static String get firebaseAppId => dotenv.env['FIREBASE_APP_ID'] ?? '';
-  static String get firebaseMessagingSenderId =>
-      dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '';
-  static String get firebaseProjectId =>
-      dotenv.env['FIREBASE_PROJECT_ID'] ?? '';
-  static String get firebaseStorageBucket =>
-      dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '';
-  static String get firebaseAuthDomain =>
-      dotenv.env['FIREBASE_AUTH_DOMAIN'] ?? '';
+  String get firebaseApiKey => _getEnvVar('FIREBASE_API_KEY');
+  String get firebaseAppId => _getEnvVar('FIREBASE_APP_ID');
+  String get firebaseMessagingSenderId =>
+      _getEnvVar('FIREBASE_MESSAGING_SENDER_ID');
+  String get firebaseProjectId => _getEnvVar('FIREBASE_PROJECT_ID');
+  String get firebaseStorageBucket => _getEnvVar('FIREBASE_STORAGE_BUCKET');
+  String get firebaseAuthDomain => _getEnvVar('FIREBASE_AUTH_DOMAIN');
 
   // App Configuration
-  static String get appName => dotenv.env['APP_NAME'] ?? 'TuncBT';
-  static String get appVersion => dotenv.env['APP_VERSION'] ?? '2.0.0';
-  static String get appEnv => dotenv.env['APP_ENV'] ?? 'production';
+  String get appName => _getEnvVar('APP_NAME', defaultValue: 'TuncBT');
+  String get appVersion => _getEnvVar('APP_VERSION', defaultValue: '2.0.0');
+  String get appEnv => _getEnvVar('APP_ENV', defaultValue: 'production');
 
   // API Configuration
-  static String get apiBaseUrl => dotenv.env['API_BASE_URL'] ?? '';
-  static String get apiVersion => dotenv.env['API_VERSION'] ?? 'v1';
+  String get apiBaseUrl => _getEnvVar('API_BASE_URL');
+  String get apiVersion => _getEnvVar('API_VERSION', defaultValue: 'v1');
 
   // Push Notifications
-  static String get pushNotificationKey =>
-      dotenv.env['PUSH_NOTIFICATION_KEY'] ?? '';
-  static String get fcmServerKey => dotenv.env['FCM_SERVER_KEY'] ?? '';
-  static String get notificationChannelId =>
-      dotenv.env['NOTIFICATION_CHANNEL_ID'] ?? 'high_importance_channel';
-  static String get notificationChannelName =>
-      dotenv.env['NOTIFICATION_CHANNEL_NAME'] ??
-      'High Importance Notifications';
-  static String get notificationChannelDescription =>
-      dotenv.env['NOTIFICATION_CHANNEL_DESCRIPTION'] ??
-      'This channel is used for important notifications.';
+  String get pushNotificationKey => _getEnvVar('PUSH_NOTIFICATION_KEY');
+  String get fcmServerKey => _getEnvVar('FCM_SERVER_KEY');
+  String get notificationChannelId => _getEnvVar(
+        'NOTIFICATION_CHANNEL_ID',
+        defaultValue: 'high_importance_channel',
+      );
+  String get notificationChannelName => _getEnvVar(
+        'NOTIFICATION_CHANNEL_NAME',
+        defaultValue: 'High Importance Notifications',
+      );
+  String get notificationChannelDescription => _getEnvVar(
+        'NOTIFICATION_CHANNEL_DESCRIPTION',
+        defaultValue: 'This channel is used for important notifications.',
+      );
 
   // Analytics
-  static String get analyticsTrackingId =>
-      dotenv.env['ANALYTICS_TRACKING_ID'] ?? '';
+  String get analyticsTrackingId => _getEnvVar('ANALYTICS_TRACKING_ID');
 
   // Storage Configuration
-  static String get storageMaxSize => dotenv.env['STORAGE_MAX_SIZE'] ?? '50MB';
-  static String get maxUploadSize => dotenv.env['MAX_UPLOAD_SIZE'] ?? '10MB';
+  String get storageMaxSize =>
+      _getEnvVar('STORAGE_MAX_SIZE', defaultValue: '50MB');
+  String get maxUploadSize =>
+      _getEnvVar('MAX_UPLOAD_SIZE', defaultValue: '10MB');
 
   // Security
-  static String get jwtSecret => dotenv.env['JWT_SECRET'] ?? '';
-  static String get encryptionKey => dotenv.env['ENCRYPTION_KEY'] ?? '';
+  String get jwtSecret => _getEnvVar('JWT_SECRET');
+  String get encryptionKey => _getEnvVar('ENCRYPTION_KEY');
 
   // Cache Configuration
-  static int get cacheDuration =>
-      int.tryParse(dotenv.env['CACHE_DURATION'] ?? '') ?? 3600;
-  static String get maxCacheSize => dotenv.env['MAX_CACHE_SIZE'] ?? '100MB';
+  int get cacheDuration => _getIntEnvVar('CACHE_DURATION', defaultValue: 3600);
+  String get maxCacheSize =>
+      _getEnvVar('MAX_CACHE_SIZE', defaultValue: '100MB');
 
   // Team Configuration
-  static int get maxTeamSize =>
-      int.tryParse(dotenv.env['MAX_TEAM_SIZE'] ?? '') ?? 50;
-  static int get referralCodeLength =>
-      int.tryParse(dotenv.env['REFERRAL_CODE_LENGTH'] ?? '') ?? 8;
+  int get maxTeamSize => _getIntEnvVar('MAX_TEAM_SIZE', defaultValue: 50);
+  int get referralCodeLength =>
+      _getIntEnvVar('REFERRAL_CODE_LENGTH', defaultValue: 8);
 
   // Error Tracking
-  static bool get errorReportingEnabled =>
-      dotenv.env['ERROR_REPORTING_ENABLED']?.toLowerCase() == 'true';
+  bool get errorReportingEnabled => _getBoolEnvVar('ERROR_REPORTING_ENABLED');
 
   // Environment Loading
-  static Future<void> init() async {
+  Future<void> init() async {
+    if (_isInitialized) return;
+
     try {
-      await dotenv.load(fileName: '.env.${appEnv.toLowerCase()}');
+      final envFileName = '.env.${appEnv.toLowerCase()}';
+      await dotenv.load(fileName: envFileName);
+      print('Ortam yapılandırması yüklendi: $envFileName');
+      _validateRequiredVariables();
+      _isInitialized = true;
     } catch (e) {
-      print('Environment configuration error: $e');
-      // Varsayılan production ortamını yüklemeyi dene
-      await dotenv.load(fileName: '.env.production');
+      print('Ortam yapılandırması yüklenirken hata oluştu: $e');
+      try {
+        print('Varsayılan production ortamı yükleniyor...');
+        await dotenv.load(fileName: '.env.production');
+        _validateRequiredVariables();
+        _isInitialized = true;
+      } catch (e) {
+        print('Kritik hata: Hiçbir ortam yapılandırması yüklenemedi!');
+        rethrow;
+      }
     }
   }
 
-  // Validation Methods
-  static bool isProduction() => appEnv.toLowerCase() == 'production';
-  static bool isDevelopment() => appEnv.toLowerCase() == 'development';
-  static bool isStaging() => appEnv.toLowerCase() == 'staging';
+  // Private Helper Methods
+  String _getEnvVar(String key, {String defaultValue = ''}) {
+    _checkInitialization();
+    return dotenv.env[key] ?? defaultValue;
+  }
 
-  // Helper Methods
-  static Map<String, dynamic> toJson() => {
-        'firebaseApiKey': firebaseApiKey,
-        'firebaseAppId': firebaseAppId,
-        'firebaseMessagingSenderId': firebaseMessagingSenderId,
-        'firebaseProjectId': firebaseProjectId,
-        'firebaseStorageBucket': firebaseStorageBucket,
-        'firebaseAuthDomain': firebaseAuthDomain,
+  int _getIntEnvVar(String key, {int defaultValue = 0}) {
+    _checkInitialization();
+    return int.tryParse(dotenv.env[key] ?? '') ?? defaultValue;
+  }
+
+  bool _getBoolEnvVar(String key, {bool defaultValue = false}) {
+    _checkInitialization();
+    final value = dotenv.env[key]?.toLowerCase();
+    if (value == null) return defaultValue;
+    return value == 'true' || value == '1' || value == 'yes';
+  }
+
+  void _checkInitialization() {
+    if (!_isInitialized) {
+      throw StateError(
+          'EnvConfig henüz başlatılmadı. Önce init() metodunu çağırın.');
+    }
+  }
+
+  void _validateRequiredVariables() {
+    final requiredVars = [
+      'FIREBASE_API_KEY',
+      'FIREBASE_APP_ID',
+      'FIREBASE_PROJECT_ID',
+      'API_BASE_URL',
+      'JWT_SECRET',
+      'ENCRYPTION_KEY',
+    ];
+
+    final missingVars =
+        requiredVars.where((variable) => _getEnvVar(variable).isEmpty).toList();
+
+    if (missingVars.isNotEmpty) {
+      throw Exception(
+        'Gerekli ortam değişkenleri eksik: ${missingVars.join(', ')}',
+      );
+    }
+  }
+
+  // Environment Type Checks
+  bool get isProduction => appEnv.toLowerCase() == 'production';
+  bool get isDevelopment => appEnv.toLowerCase() == 'development';
+  bool get isStaging => appEnv.toLowerCase() == 'staging';
+
+  // Debug Information
+  Map<String, dynamic> toJson() => {
         'appName': appName,
         'appVersion': appVersion,
         'appEnv': appEnv,
         'apiBaseUrl': apiBaseUrl,
         'apiVersion': apiVersion,
+        'firebaseProjectId': firebaseProjectId,
         'notificationChannelId': notificationChannelId,
-        'notificationChannelName': notificationChannelName,
         'analyticsTrackingId': analyticsTrackingId,
         'storageMaxSize': storageMaxSize,
         'maxUploadSize': maxUploadSize,
@@ -102,4 +159,7 @@ class EnvConfig {
         'referralCodeLength': referralCodeLength,
         'errorReportingEnabled': errorReportingEnabled,
       };
+
+  @override
+  String toString() => 'EnvConfig(${toJson()})';
 }
