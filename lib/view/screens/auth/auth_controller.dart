@@ -289,23 +289,64 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         imageUrl = _auth.currentUser?.photoURL ?? '';
       }
 
-      UserModel newUser = UserModel(
-        id: uid,
-        name: fullNameController.text,
-        email: emailController.text,
-        imageUrl: imageUrl,
-        phoneNumber: phoneNumberController.text,
-        position: positionCPController.text,
-        createdAt: DateTime.now(),
-        hasTeam: _teamId != null,
-        teamId: _teamId,
-        invitedBy: _invitedBy,
-        teamRole: _teamId != null ? TeamRole.member : null,
-      );
+      // Referans kodu yoksa yeni takım oluştur
+      if (_referralCode == null) {
+        // Yeni takım oluştur
+        DocumentReference teamRef = await _firestore.collection('teams').add({
+          'name': '${fullNameController.text}\'s Team',
+          'createdAt': FieldValue.serverTimestamp(),
+          'createdBy': uid,
+          'members': [uid],
+          'admins': [uid],
+        });
 
-      await _firestore.collection('users').doc(uid).set(newUser.toFirestore());
+        // Kullanıcıyı admin olarak kaydet
+        UserModel newUser = UserModel(
+          id: uid,
+          name: fullNameController.text,
+          email: emailController.text,
+          imageUrl: imageUrl,
+          phoneNumber: phoneNumberController.text,
+          position: positionCPController.text,
+          createdAt: DateTime.now(),
+          hasTeam: true,
+          teamId: teamRef.id,
+          teamRole: TeamRole.admin,
+        );
 
-      if (_referralCode != null) {
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .set(newUser.toFirestore());
+      } else {
+        // Referans kodu varsa mevcut takıma üye olarak ekle
+        UserModel newUser = UserModel(
+          id: uid,
+          name: fullNameController.text,
+          email: emailController.text,
+          imageUrl: imageUrl,
+          phoneNumber: phoneNumberController.text,
+          position: positionCPController.text,
+          createdAt: DateTime.now(),
+          hasTeam: _teamId != null,
+          teamId: _teamId,
+          invitedBy: _invitedBy,
+          teamRole: TeamRole.member,
+        );
+
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .set(newUser.toFirestore());
+
+        // Takım belgesini güncelle
+        if (_teamId != null) {
+          await _firestore.collection('teams').doc(_teamId).update({
+            'members': FieldValue.arrayUnion([uid]),
+          });
+        }
+
+        // Referans kodunu kullanıldı olarak işaretle
         await _firestore
             .collection('referral_codes')
             .doc(_referralCode)
@@ -317,8 +358,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       }
 
       if (!isSocial) {
-        await _auth.currentUser!.updateDisplayName(newUser.name);
-        await _auth.currentUser!.updatePhotoURL(newUser.imageUrl);
+        await _auth.currentUser!.updateDisplayName(fullNameController.text);
+        await _auth.currentUser!.updatePhotoURL(imageUrl);
         await _auth.currentUser!.reload();
       }
 
@@ -326,6 +367,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Kayıt Başarısız', _getReadableAuthError(e));
     } catch (error) {
+      print('Error during signup: $error');
       Get.snackbar(
           'Hata', 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {

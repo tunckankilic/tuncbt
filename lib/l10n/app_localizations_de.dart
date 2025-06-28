@@ -372,4 +372,23 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get maximumRetryExceeded =>
       'Maximale Anzahl der Wiederholungsversuche überschritten';
+
+  @override
+  String get joinTeam => 'Team beitreten';
+
+  @override
+  String get createTeam => 'Team erstellen';
+
+  @override
+  String get fieldMissing => 'Dieses Feld ist erforderlich';
+
+  @override
+  String get invalidPassword => 'Bitte geben Sie ein gültiges Passwort ein';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get teamAdminInfo =>
+      'Nach der Registrierung werden Sie der Administrator Ihres eigenen Teams sein';
 }

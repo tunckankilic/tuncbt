@@ -33,7 +33,7 @@ void main() async {
   final String savedLanguage = prefs.getString(LANGUAGE_CODE) ?? 'tr';
 
   // Mevcut kullanıcıları yeni yapıya geçir
-  await UserModel.migrateExistingUsers();
+  // Rawait UserModel.migrateExistingUsers();
 
   // timeago dil desteği
   timeago.setLocaleMessages('tr', timeago.TrMessages());
@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(320, 568),
+        designSize: const Size(375, 812),
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'TuncBT',
