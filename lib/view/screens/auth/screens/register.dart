@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
@@ -32,18 +33,17 @@ class SignUp extends GetView<AuthController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: size.height * 0.1),
-                  _buildHeader(size, context, referralCode != null),
+                  _buildHeader(size, context),
+                  SizedBox(height: 20.h),
+                  _buildReferralCodeField(context),
                   SizedBox(height: 20.h),
                   if (controller.teamName.value.isNotEmpty) ...[
                     _buildTeamInfo(context),
                     SizedBox(height: 20.h),
-                  ] else if (referralCode == null) ...[
-                    _buildNewTeamInfo(context),
-                    SizedBox(height: 20.h),
                   ],
                   _buildForm(size, context),
                   SizedBox(height: 40.h),
-                  _buildSignUpButton(context, referralCode != null),
+                  _buildSignUpButton(context),
                 ],
               ),
             ),
@@ -74,14 +74,12 @@ class SignUp extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildHeader(Size size, BuildContext context, bool hasReferralCode) {
+  Widget _buildHeader(Size size, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          hasReferralCode
-              ? AppLocalizations.of(context)!.joinTeam
-              : AppLocalizations.of(context)!.createTeam,
+          AppLocalizations.of(context)!.createTeam,
           style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -126,6 +124,80 @@ class SignUp extends GetView<AuthController> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildReferralCodeField(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.referralCode,
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.referralCodeController,
+                  decoration: InputDecoration(
+                    hintText: 'XXXXXXXX',
+                    hintStyle: const TextStyle(color: Colors.black54),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      onPressed: () => _showReferralInfo(context),
+                    ),
+                  ),
+                  inputFormatters: [
+                    UpperCaseTextFormatter(),
+                    LengthLimitingTextInputFormatter(8),
+                    FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+                  ],
+                  onChanged: (value) => controller.setReferralCode(value),
+                  textCapitalization: TextCapitalization.characters,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)!.referralCodeOptional,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 12.sp,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showReferralInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.referralCodeTitle),
+        content: Text(AppLocalizations.of(context)!.referralCodeDescription),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.ok),
+          ),
+        ],
+      ),
     );
   }
 
@@ -439,7 +511,7 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildSignUpButton(BuildContext context, bool hasReferralCode) {
+  Widget _buildSignUpButton(BuildContext context) {
     return Obx(() => controller.isLoading.value
         ? const Center(child: CircularProgressIndicator())
         : MaterialButton(
@@ -448,7 +520,7 @@ class SignUp extends GetView<AuthController> {
                 controller.signUp(isSocial: controller.isSocialSignIn.value);
               }
             },
-            color: hasReferralCode ? Colors.green[800] : Colors.blue[900],
+            color: Colors.blue[900],
             elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(13.r)),
@@ -458,20 +530,28 @@ class SignUp extends GetView<AuthController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    hasReferralCode
-                        ? AppLocalizations.of(context)!.joinTeam
-                        : AppLocalizations.of(context)!.createTeam,
+                    AppLocalizations.of(context)!.createTeam,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp),
                   ),
                   SizedBox(width: 16.r),
-                  Icon(hasReferralCode ? Icons.group_add : Icons.add_moderator,
-                      color: Colors.white, size: 30.r),
+                  Icon(Icons.add_moderator, color: Colors.white, size: 30.r),
                 ],
               ),
             ),
           ));
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
   }
 }

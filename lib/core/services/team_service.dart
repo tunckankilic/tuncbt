@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../models/team.dart';
 import '../models/team_member.dart';
 import '../models/user_model.dart';
@@ -24,6 +25,7 @@ class TeamService extends GetxService {
   final maxTeamSize = 50;
   final _cache = Get.put(TeamCache());
   final _sync = Get.put(TeamSync());
+  final _uuid = Uuid();
 
   final isLoading = false.obs;
   final hasError = false.obs;
@@ -102,22 +104,29 @@ class TeamService extends GetxService {
         throw TeamPermissionException();
       }
 
+      // UUID oluştur
+      final teamId = _uuid.v4();
+      final referralCode = Team.generateReferralCode(sanitizedName, teamId);
+
       // Takım oluştur
-      final teamDoc =
-          await _firestore.collection(FirebaseCollections.teams).add({
+      await _firestore.collection(FirebaseCollections.teams).doc(teamId).set({
         FirebaseFields.name: sanitizedName,
         FirebaseFields.createdAt: FieldValue.serverTimestamp(),
         FirebaseFields.createdBy: user.uid,
         FirebaseFields.memberCount: 1,
+        FirebaseFields.referralCode: referralCode,
       });
 
       // Üye ekle
       await _firestore
           .collection(FirebaseCollections.teamMembers)
-          .doc(user.uid)
+          .doc('${teamId}_${user.uid}')
           .set({
+        FirebaseFields.teamId: teamId,
+        FirebaseFields.userId: user.uid,
         FirebaseFields.role: TeamRole.admin.toString().split('.').last,
         FirebaseFields.joinedAt: FieldValue.serverTimestamp(),
+        FirebaseFields.isActive: true,
       });
 
       // Kullanıcı bilgilerini güncelle
@@ -125,21 +134,22 @@ class TeamService extends GetxService {
           .collection(FirebaseCollections.users)
           .doc(user.uid)
           .update({
-        FirebaseFields.teamId: teamDoc.id,
+        FirebaseFields.teamId: teamId,
         FirebaseFields.teamRole: TeamRole.admin.toString().split('.').last,
+        FirebaseFields.hasTeam: true,
       });
 
       final team = Team(
-        teamId: teamDoc.id,
+        teamId: teamId,
         teamName: sanitizedName,
         createdBy: user.uid,
         memberCount: 1,
-        referralCode: '',
+        referralCode: referralCode,
         createdAt: DateTime.now(),
       );
 
       // Önbelleğe ekle
-      _cache.cacheTeam(teamDoc.id, team);
+      _cache.cacheTeam(teamId, team);
 
       return TeamOperationResult.success(data: team);
     } on FirebaseException catch (e) {
@@ -236,7 +246,7 @@ class TeamService extends GetxService {
           teamName: teamDoc.data()?[FirebaseFields.name] ?? '',
           createdBy: user.uid,
           memberCount: memberCount + 1,
-          referralCode: '',
+          referralCode: null,
           createdAt: DateTime.now(),
         ),
       );
@@ -274,8 +284,10 @@ class TeamService extends GetxService {
         );
       }
 
+      final data = doc.data()!;
+      data['teamId'] = doc.id;
       return TeamOperationResult.success(
-        data: Team.fromJson(doc.data()!),
+        data: Team.fromJson(data),
       );
     } on FirebaseException catch (e) {
       return TeamOperationResult.failure(
@@ -332,7 +344,7 @@ class TeamService extends GetxService {
                 TeamRole.member.toString().split('.').last,
             joinedAt:
                 (doc.data()[FirebaseFields.joinedAt] as Timestamp).toDate(),
-            invitedBy: userData.data()?[FirebaseFields.invitedBy] ?? '',
+            invitedBy: userData.data()?[FirebaseFields.invitedBy],
           );
         }),
       );

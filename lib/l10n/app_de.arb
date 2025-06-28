@@ -193,6 +193,9 @@
   "logoutConfirm": "Möchten Sie sich wirklich abmelden?",
   "teamName": "Teamname",
   "referralCode": "Empfehlungscode",
+  "referralCodeTitle": "Was ist ein Empfehlungscode?",
+  "referralCodeDescription": "Ein Empfehlungscode ist ein einzigartiger 8-stelliger Code, der verwendet wird, um einem Team beizutreten. Wenn Sie einem bestehenden Team beitreten möchten, geben Sie den Empfehlungscode ein, den Sie vom Team-Administrator erhalten haben. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie dieses Feld leer lassen.",
+  "referralCodeOptional": "Der Empfehlungscode ist optional. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie ihn leer lassen.",
   "inviteMembers": "Mitglieder einladen",
   "shareReferralCode": "Empfehlungscode teilen",
   "teamSettings": "Teameinstellungen",
@@ -226,9 +229,6 @@
   "leave": "Verlassen",
   "loginRequired": "Anmeldung erforderlich",
   "userNotFound": "Benutzer nicht gefunden",
-  "referralCodeTitle": "Was ist ein Empfehlungscode?",
-  "referralCodeDescription": "Ein Empfehlungscode ist ein 8-stelliger Spezialcode, den Sie von einem bestehenden Benutzer erhalten. Durch die Registrierung mit diesem Code können Sie von zusätzlichen Vorteilen profitieren.",
-  
   "authErrorUserNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden",
   "authErrorWrongPassword": "Falsches Passwort. Bitte versuchen Sie es erneut",
   "authErrorInvalidEmail": "Ungültige E-Mail-Adresse",
@@ -295,5 +295,7 @@
   "teamAdminInfo": "Nach der Registrierung werden Sie der Administrator Ihres eigenen Teams sein",
   "@teamAdminInfo": {
     "description": "Information message about becoming team admin after registration"
-  }
+  },
+
+  "creatingTeam": "Ihr Team wird erstellt...\nBitte warten."
 } 

@@ -101,28 +101,77 @@ class TeamProvider with ChangeNotifier {
       final user = _auth.currentUser;
       if (user == null) {
         _error = 'Kullanıcı oturumu bulunamadı';
+        print('TeamProvider: Kullanıcı oturumu bulunamadı');
         return;
       }
 
+      print('TeamProvider: Kullanıcı bilgileri yükleniyor... UID: ${user.uid}');
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (!userDoc.exists) {
         _error = 'Kullanıcı bilgileri bulunamadı';
+        print('TeamProvider: Kullanıcı dokümanı bulunamadı');
         return;
       }
 
       final userData = UserModel.fromFirestore(userDoc);
-      if (userData.teamId == null) {
+      print(
+          'TeamProvider: Kullanıcı verileri yüklendi: ${userData.toFirestore()}');
+
+      // Kullanıcının takım bilgilerini kontrol et
+      if (!userData.hasTeam || userData.teamId == null) {
         _error = 'Kullanıcı henüz bir takıma ait değil';
+        print('TeamProvider: Kullanıcının takım bilgisi yok');
         return;
       }
 
+      print(
+          'TeamProvider: Takım bilgileri yükleniyor... Team ID: ${userData.teamId}');
+      // Takımın var olduğunu kontrol et
+      final teamDoc =
+          await _firestore.collection('teams').doc(userData.teamId!).get();
+      if (!teamDoc.exists || !(teamDoc.data()?['isActive'] ?? false)) {
+        print('TeamProvider: Takım bulunamadı veya aktif değil');
+        // Takım silinmiş veya aktif değil, kullanıcı bilgilerini güncelle
+        await _firestore.collection('users').doc(user.uid).update({
+          'hasTeam': false,
+          'teamId': null,
+          'teamRole': null,
+        });
+        _error = 'Takım bulunamadı veya artık aktif değil';
+        return;
+      }
+
+      print('TeamProvider: Takım üyeliği kontrolü yapılıyor...');
+      // Kullanıcının takım üyeliğini kontrol et
+      final memberDoc = await _firestore
+          .collection('team_members')
+          .doc('${userData.teamId!}_${user.uid}')
+          .get();
+
+      if (!memberDoc.exists || !(memberDoc.data()?['isActive'] ?? false)) {
+        print('TeamProvider: Takım üyeliği bulunamadı veya aktif değil');
+        // Üyelik silinmiş veya aktif değil, kullanıcı bilgilerini güncelle
+        await _firestore.collection('users').doc(user.uid).update({
+          'hasTeam': false,
+          'teamId': null,
+          'teamRole': null,
+        });
+        _error = 'Takım üyeliği bulunamadı veya artık aktif değil';
+        return;
+      }
+
+      print('TeamProvider: Takım verileri yükleniyor...');
       await loadTeamData(userData.teamId!);
       _isInitialized = true;
+      print('TeamProvider: Başlatma işlemi tamamlandı');
+      notifyListeners();
     } catch (e) {
       _error = 'Takım bilgileri yüklenirken hata oluştu: $e';
-      log('Error initializing team data: $e');
+      print('TeamProvider Error: $e');
+      print('Stack trace: ${StackTrace.current}');
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
@@ -157,7 +206,7 @@ class TeamProvider with ChangeNotifier {
           orElse: () => TeamMember(
             teamId: teamId,
             userId: user.uid,
-            invitedBy: '',
+            invitedBy: null,
             joinedAt: DateTime.now(),
             role: TeamRole.member,
           ),
@@ -168,8 +217,8 @@ class TeamProvider with ChangeNotifier {
       await _cacheTeamData();
       notifyListeners();
     } catch (e) {
-      _error = 'Takım bilgileri yüklenirken hata oluştu: $e';
-      log('Error loading team data: $e');
+      _error = 'Beklenmeyen bir hata oluştu: $e';
+      log('TeamProvider - Beklenmeyen hata: $e');
     } finally {
       _setLoading(false);
     }
@@ -276,5 +325,4 @@ class TeamProvider with ChangeNotifier {
     await _cacheTeamData();
     notifyListeners();
   }
-
 }

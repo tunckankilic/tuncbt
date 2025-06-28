@@ -103,6 +103,9 @@
   "logoutConfirm": "Çıkış yapmak istediğinizden emin misiniz?",
   "teamName": "Ekip Adı",
   "referralCode": "Referans Kodu",
+  "referralCodeTitle": "Referans Kodu Nedir?",
+  "referralCodeDescription": "Referans kodu, bir takıma katılmak için kullanılan 8 karakterlik özel bir koddur. Eğer bir takıma katılmak istiyorsanız, takım yöneticisinden alacağınız referans kodunu giriniz. Eğer kendi takımınızı oluşturmak istiyorsanız bu alanı boş bırakabilirsiniz.",
+  "referralCodeOptional": "Referans kodu opsiyoneldir. Eğer kendi takımınızı oluşturmak istiyorsanız boş bırakabilirsiniz.",
   "inviteMembers": "Üye Davet Et",
   "shareReferralCode": "Referans Kodunu Paylaş",
   "teamSettings": "Ekip Ayarları",
@@ -136,9 +139,7 @@
   "leave": "Ayrıl",
   "loginRequired": "Giriş yapmanız gerekiyor",
   "userNotFound": "Kullanıcı bulunamadı",
-  "referralCodeTitle": "Referans Kodu Nedir?",
-  "referralCodeDescription": "Referans kodu, mevcut bir kullanıcıdan aldığınız 8 karakterlik özel bir koddur. Bu kod ile sisteme kayıt olarak ekstra avantajlardan yararlanabilirsiniz.",
-  
+
   "loginEmail": "E-posta",
   "loginPassword": "Şifre",
   "loginNoAccount": "Hesabınız yok mu?",
@@ -220,5 +221,7 @@
   "teamAdminInfo": "Kaydolduktan sonra kendi takımınızın yöneticisi olacaksınız",
   "@teamAdminInfo": {
     "description": "Information message about becoming team admin after registration"
-  }
+  },
+
+  "creatingTeam": "Takımınız oluşturuluyor...\nLütfen bekleyin."
 } 

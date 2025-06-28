@@ -37,8 +37,8 @@ class TeamSettingsScreen extends StatelessWidget {
           ),
           _buildSettingCard(
             title: 'Davet Kodu',
-            value: team.referralCode,
-            onTap: () => _showReferralCode(context, team.referralCode),
+            value: team.referralCode ?? '',
+            onTap: () => _showReferralCode(context, team.referralCode ?? ''),
           ),
           _buildSettingCard(
             title: 'Üye Sayısı',

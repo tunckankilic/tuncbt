@@ -194,6 +194,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String get referralCode => 'Referans Kodu';
 
   @override
+  String get referralCodeTitle => 'Referans Kodu Nedir?';
+
+  @override
+  String get referralCodeDescription =>
+      'Referans kodu, bir takıma katılmak için kullanılan 8 karakterlik özel bir koddur. Eğer bir takıma katılmak istiyorsanız, takım yöneticisinden alacağınız referans kodunu giriniz. Eğer kendi takımınızı oluşturmak istiyorsanız bu alanı boş bırakabilirsiniz.';
+
+  @override
+  String get referralCodeOptional =>
+      'Referans kodu opsiyoneldir. Eğer kendi takımınızı oluşturmak istiyorsanız boş bırakabilirsiniz.';
+
+  @override
   String get inviteMembers => 'Üye Davet Et';
 
   @override
@@ -271,13 +282,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get userNotFound => 'Kullanıcı bulunamadı';
-
-  @override
-  String get referralCodeTitle => 'Referans Kodu Nedir?';
-
-  @override
-  String get referralCodeDescription =>
-      'Referans kodu, mevcut bir kullanıcıdan aldığınız 8 karakterlik özel bir koddur. Bu kod ile sisteme kayıt olarak ekstra avantajlardan yararlanabilirsiniz.';
 
   @override
   String get authErrorUserNotFound =>

@@ -26,10 +26,18 @@ class _TasksScreenState extends State<TasksScreen> {
   void initState() {
     super.initState();
     controller = Get.put(TasksScreenController());
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final teamProvider = Provider.of<TeamProvider>(context, listen: false);
-      if (!teamProvider.isInitialized) {
-        teamProvider.initializeTeamData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        print('TasksScreen: TeamProvider başlatılıyor...');
+        final teamProvider = Provider.of<TeamProvider>(context, listen: false);
+        if (!teamProvider.isInitialized) {
+          await teamProvider.initializeTeamData();
+        }
+        print(
+            'TasksScreen: TeamProvider başlatma durumu: ${teamProvider.isInitialized}');
+      } catch (e) {
+        print('TasksScreen Error: $e');
+        print('Stack trace: ${StackTrace.current}');
       }
     });
   }
@@ -37,16 +45,62 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     final teamProvider = Provider.of<TeamProvider>(context);
+    print(
+        'TasksScreen build: TeamProvider durumu - initialized: ${teamProvider.isInitialized}, error: ${teamProvider.error}');
+
+    if (teamProvider.isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (teamProvider.error != null) {
+      print('TasksScreen: TeamProvider hatası: ${teamProvider.error}');
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 64.sp,
+                color: Colors.red,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                teamProvider.error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.red,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              ElevatedButton(
+                onPressed: () {
+                  Get.offAllNamed('/auth');
+                },
+                child: Text(AppLocalizations.of(context)!.login),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     if (teamProvider.teamId == null) {
+      print('TasksScreen: Takım ID\'si bulunamadı');
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.back();
+        Get.offAllNamed('/auth');
         Get.snackbar(
           'Hata',
-          'Takım bilgisi bulunamadı',
+          'Takım bilgisi bulunamadı. Lütfen tekrar giriş yapın.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          duration: const Duration(seconds: 5),
         );
       });
       return const SizedBox.shrink();

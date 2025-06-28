@@ -4,7 +4,7 @@ import '../enums/team_role.dart';
 class TeamMember {
   final String teamId;
   final String userId;
-  final String invitedBy;
+  final String? invitedBy;
   final DateTime joinedAt;
   final TeamRole role;
   final bool isActive;
@@ -12,7 +12,7 @@ class TeamMember {
   TeamMember({
     required this.teamId,
     required this.userId,
-    required this.invitedBy,
+    this.invitedBy,
     required this.joinedAt,
     this.role = TeamRole.member,
     this.isActive = true,
@@ -33,7 +33,7 @@ class TeamMember {
     return TeamMember(
       teamId: json['teamId'] as String,
       userId: json['userId'] as String,
-      invitedBy: json['invitedBy'] as String,
+      invitedBy: json['invitedBy'] as String?,
       joinedAt: (json['joinedAt'] as Timestamp).toDate(),
       role: TeamRole.fromString(json['role'] as String),
       isActive: json['isActive'] as bool,

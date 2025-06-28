@@ -191,7 +191,8 @@ class InnerScreenController extends GetxController {
 
   void copyReferralCode() {
     if (currentTeam.value != null) {
-      Clipboard.setData(ClipboardData(text: currentTeam.value!.referralCode));
+      Clipboard.setData(
+          ClipboardData(text: currentTeam.value!.referralCode ?? ''));
       Get.snackbar(
         'Başarılı',
         'Referans kodu kopyalandı',

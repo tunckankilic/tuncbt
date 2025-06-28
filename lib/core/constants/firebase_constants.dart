@@ -26,6 +26,7 @@ class FirebaseFields {
   static const String phoneNumber = 'phoneNumber';
   static const String position = 'position';
   static const String fcmToken = 'fcmToken';
+  static const String hasTeam = 'hasTeam';
 
   // Takım alanları
   static const String teamName = 'teamName';

@@ -193,6 +193,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralCode => 'Referral Code';
 
   @override
+  String get referralCodeTitle => 'What is Referral Code?';
+
+  @override
+  String get referralCodeDescription =>
+      'A referral code is a unique 8-character code used to join a team. If you want to join an existing team, enter the referral code you received from the team administrator. If you want to create your own team, you can leave this field empty.';
+
+  @override
+  String get referralCodeOptional =>
+      'Referral code is optional. If you want to create your own team, you can leave it empty.';
+
+  @override
   String get inviteMembers => 'Invite Members';
 
   @override
@@ -269,13 +280,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userNotFound => 'User not found';
-
-  @override
-  String get referralCodeTitle => 'What is a Referral Code?';
-
-  @override
-  String get referralCodeDescription =>
-      'A referral code is an 8-character special code you receive from an existing user. By registering with this code, you can benefit from extra advantages.';
 
   @override
   String get authErrorUserNotFound => 'No user found with this email address';
