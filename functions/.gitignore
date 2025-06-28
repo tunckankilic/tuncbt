@@ -1,2 +1,6 @@
 node_modules/
-*.local
+.env
+*.log
+.DS_Store
+coverage/
+.runtimeconfig.json 

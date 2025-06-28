@@ -10,31 +10,48 @@ import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_controller.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:tuncbt/view/widgets/task_widget.dart';
 
-class TasksScreen extends GetView<TasksScreenController> {
+class TasksScreen extends StatefulWidget {
   static const routeName = "/tasks";
 
   const TasksScreen({super.key});
 
   @override
+  State<TasksScreen> createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
+  late final TasksScreenController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(TasksScreenController());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final teamProvider = Provider.of<TeamProvider>(context, listen: false);
+      if (!teamProvider.isInitialized) {
+        teamProvider.initializeTeamData();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final teamProvider = Provider.of<TeamProvider>(context);
-    if (!teamProvider.isInitialized) {
-      teamProvider.initializeTeamData();
-    }
 
     if (teamProvider.teamId == null) {
-      Get.back();
-      Get.snackbar(
-        'Hata',
-        'Takım bilgisi bulunamadı',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.back();
+        Get.snackbar(
+          'Hata',
+          'Takım bilgisi bulunamadı',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      });
       return const SizedBox.shrink();
     }
 
-    Get.put(TasksScreenController());
     return Scaffold(
       drawer: DrawerWidget(),
       body: CustomScrollView(

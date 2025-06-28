@@ -3,7 +3,7 @@
   
   "appTitle": "TuncBT",
   "@appTitle": {
-    "description": "Uygulama adı"
+    "description": "Application name"
   },
 
   "language": "Dil",
@@ -190,5 +190,35 @@
   "retry": "Tekrar Dene",
   "maximumRetryExceeded": "Maksimum yeniden deneme sayısı aşıldı",
   "success": "Başarılı",
-  "operationSuccess": "İşlem başarıyla tamamlandı"
+  "operationSuccess": "İşlem başarıyla tamamlandı",
+
+  "joinTeam": "Takıma Katıl",
+  "@joinTeam": {
+    "description": "Title for joining an existing team"
+  },
+
+  "createTeam": "Takım Oluştur",
+  "@createTeam": {
+    "description": "Title for creating a new team"
+  },
+
+  "fieldMissing": "Bu alan zorunludur",
+  "@fieldMissing": {
+    "description": "Error message for missing required field"
+  },
+
+  "invalidPassword": "Lütfen geçerli bir şifre girin",
+  "@invalidPassword": {
+    "description": "Error message for invalid password"
+  },
+
+  "passwordsDoNotMatch": "Şifreler eşleşmiyor",
+  "@passwordsDoNotMatch": {
+    "description": "Error message for password mismatch"
+  },
+
+  "teamAdminInfo": "Kaydolduktan sonra kendi takımınızın yöneticisi olacaksınız",
+  "@teamAdminInfo": {
+    "description": "Information message about becoming team admin after registration"
+  }
 } 

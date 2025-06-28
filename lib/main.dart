@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/config/router.dart';
-import 'package:tuncbt/firebase_options.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
@@ -16,14 +15,16 @@ import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:tuncbt/core/config/env_config.dart';
 
 const String LANGUAGE_CODE = 'languageCode';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await EnvConfig().init();
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
 
   // SharedPreferences'ı başlat
   final prefs = await SharedPreferences.getInstance();
@@ -32,7 +33,7 @@ void main() async {
   final String savedLanguage = prefs.getString(LANGUAGE_CODE) ?? 'tr';
 
   // Mevcut kullanıcıları yeni yapıya geçir
-  await UserModel.migrateExistingUsers();
+  // Rawait UserModel.migrateExistingUsers();
 
   // timeago dil desteği
   timeago.setLocaleMessages('tr', timeago.TrMessages());
@@ -110,7 +111,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(320, 568),
+        designSize: const Size(375, 812),
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'TuncBT',

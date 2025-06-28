@@ -1,0 +1,8 @@
+{
+  "notifications": {
+    "new_task": "Neue Aufgabe",
+    "status_update": "Aufgabenstatus Aktualisiert",
+    "new_comment": "Neuer Kommentar",
+    "default": "Benachrichtigung"
+  }
+} 

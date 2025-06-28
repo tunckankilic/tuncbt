@@ -32,15 +32,18 @@ class SignUp extends GetView<AuthController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: size.height * 0.1),
-                  _buildHeader(size, context),
+                  _buildHeader(size, context, referralCode != null),
                   SizedBox(height: 20.h),
                   if (controller.teamName.value.isNotEmpty) ...[
-                    _buildTeamInfo(),
+                    _buildTeamInfo(context),
+                    SizedBox(height: 20.h),
+                  ] else if (referralCode == null) ...[
+                    _buildNewTeamInfo(context),
                     SizedBox(height: 20.h),
                   ],
                   _buildForm(size, context),
                   SizedBox(height: 40.h),
-                  _buildSignUpButton(context),
+                  _buildSignUpButton(context, referralCode != null),
                 ],
               ),
             ),
@@ -71,14 +74,14 @@ class SignUp extends GetView<AuthController> {
         ));
   }
 
-  Widget _buildHeader(Size size, BuildContext context) {
+  Widget _buildHeader(Size size, BuildContext context, bool hasReferralCode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          controller.isSocialSignIn.value
-              ? 'Complete Your Profile'
-              : AppLocalizations.of(context)!.register,
+          hasReferralCode
+              ? AppLocalizations.of(context)!.joinTeam
+              : AppLocalizations.of(context)!.createTeam,
           style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -126,7 +129,47 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildTeamInfo() {
+  Widget _buildNewTeamInfo(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.createTeam,
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.add_moderator, color: Colors.blue, size: 24.sp),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.teamAdminInfo,
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTeamInfo(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -138,7 +181,7 @@ class SignUp extends GetView<AuthController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Katılacağınız Takım:',
+            AppLocalizations.of(context)!.joinTeam,
             style: TextStyle(
               color: Colors.black87,
               fontSize: 16.sp,
@@ -195,7 +238,9 @@ class SignUp extends GetView<AuthController> {
       children: [
         TextFormField(
           controller: controller.emailController,
-          validator: (value) => value!.isEmpty ? "This Field is missing" : null,
+          validator: (value) => value!.isEmpty
+              ? AppLocalizations.of(context)!.fieldMissing
+              : null,
           style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.registerEmail,
@@ -213,7 +258,9 @@ class SignUp extends GetView<AuthController> {
         ),
         TextFormField(
           controller: controller.fullNameController,
-          validator: (value) => value!.isEmpty ? "This Field is missing" : null,
+          validator: (value) => value!.isEmpty
+              ? AppLocalizations.of(context)!.fieldMissing
+              : null,
           style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.registerName,
@@ -293,7 +340,7 @@ class SignUp extends GetView<AuthController> {
           controller: controller.passwordController,
           obscureText: controller.obscureText.value,
           validator: (value) => value!.isEmpty || value.length < 7
-              ? "Please enter a valid password"
+              ? AppLocalizations.of(context)!.invalidPassword
               : null,
           style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
@@ -322,7 +369,7 @@ class SignUp extends GetView<AuthController> {
           controller: controller.confirmPasswordController,
           obscureText: controller.obscureText.value,
           validator: (value) => value != controller.passwordController.text
-              ? "Passwords do not match"
+              ? AppLocalizations.of(context)!.passwordsDoNotMatch
               : null,
           style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
@@ -349,7 +396,8 @@ class SignUp extends GetView<AuthController> {
   Widget _buildPhoneNumberField(BuildContext context) {
     return TextFormField(
       controller: controller.phoneNumberController,
-      validator: (value) => value!.isEmpty ? "This Field is missing" : null,
+      validator: (value) =>
+          value!.isEmpty ? AppLocalizations.of(context)!.fieldMissing : null,
       style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         hintText: AppLocalizations.of(context)!.registerPhone,
@@ -370,7 +418,8 @@ class SignUp extends GetView<AuthController> {
       child: TextFormField(
         enabled: false,
         controller: controller.positionCPController,
-        validator: (value) => value!.isEmpty ? "This field is missing" : null,
+        validator: (value) =>
+            value!.isEmpty ? AppLocalizations.of(context)!.fieldMissing : null,
         style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
           suffixIcon:
@@ -390,7 +439,7 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildSignUpButton(BuildContext context) {
+  Widget _buildSignUpButton(BuildContext context, bool hasReferralCode) {
     return Obx(() => controller.isLoading.value
         ? const Center(child: CircularProgressIndicator())
         : MaterialButton(
@@ -399,7 +448,7 @@ class SignUp extends GetView<AuthController> {
                 controller.signUp(isSocial: controller.isSocialSignIn.value);
               }
             },
-            color: Colors.red[900],
+            color: hasReferralCode ? Colors.green[800] : Colors.blue[900],
             elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(13.r)),
@@ -409,16 +458,17 @@ class SignUp extends GetView<AuthController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    controller.isSocialSignIn.value
-                        ? 'Complete Profile'
-                        : AppLocalizations.of(context)!.signUp,
+                    hasReferralCode
+                        ? AppLocalizations.of(context)!.joinTeam
+                        : AppLocalizations.of(context)!.createTeam,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp),
                   ),
                   SizedBox(width: 16.r),
-                  Icon(Icons.person_add, color: Colors.white, size: 30.r),
+                  Icon(hasReferralCode ? Icons.group_add : Icons.add_moderator,
+                      color: Colors.white, size: 30.r),
                 ],
               ),
             ),

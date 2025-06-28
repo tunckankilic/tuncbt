@@ -364,4 +364,23 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get maximumRetryExceeded => 'Maksimum yeniden deneme sayısı aşıldı';
+
+  @override
+  String get joinTeam => 'Takıma Katıl';
+
+  @override
+  String get createTeam => 'Takım Oluştur';
+
+  @override
+  String get fieldMissing => 'Bu alan zorunludur';
+
+  @override
+  String get invalidPassword => 'Lütfen geçerli bir şifre girin';
+
+  @override
+  String get passwordsDoNotMatch => 'Şifreler eşleşmiyor';
+
+  @override
+  String get teamAdminInfo =>
+      'Kaydolduktan sonra kendi takımınızın yöneticisi olacaksınız';
 }

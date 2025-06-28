@@ -265,5 +265,35 @@
 
   "error": "Error",
   "retry": "Retry",
-  "maximumRetryExceeded": "Maximum retry attempts exceeded"
+  "maximumRetryExceeded": "Maximum retry attempts exceeded",
+
+  "joinTeam": "Join Team",
+  "@joinTeam": {
+    "description": "Title for joining an existing team"
+  },
+
+  "createTeam": "Create Team",
+  "@createTeam": {
+    "description": "Title for creating a new team"
+  },
+
+  "fieldMissing": "This field is required",
+  "@fieldMissing": {
+    "description": "Error message for missing required field"
+  },
+
+  "invalidPassword": "Please enter a valid password",
+  "@invalidPassword": {
+    "description": "Error message for invalid password"
+  },
+
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Error message for password mismatch"
+  },
+
+  "teamAdminInfo": "After registration, you will be the administrator of your own team",
+  "@teamAdminInfo": {
+    "description": "Information message about becoming team admin after registration"
+  }
 } 
