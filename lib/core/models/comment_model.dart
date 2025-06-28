@@ -21,23 +21,25 @@ class CommentModel {
 
   factory CommentModel.fromMap(Map<String, dynamic> map) {
     return CommentModel(
-      id: map['commentId'] ?? '',
+      id: map['id'] ?? '',
       userId: map['userId'] ?? '',
       name: map['name'] ?? '',
       userImageUrl: map['userImageUrl'] ?? '',
-      body: map['commentBody'] ?? '',
-      time: (map['time'] as Timestamp).toDate(),
+      body: map['body'] ?? '',
+      time: (map['time'] is Timestamp)
+          ? (map['time'] as Timestamp).toDate()
+          : DateTime.now(),
       teamRole: map['teamRole'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'commentId': id,
+      'id': id,
       'userId': userId,
       'name': name,
       'userImageUrl': userImageUrl,
-      'commentBody': body,
+      'body': body,
       'time': Timestamp.fromDate(time),
       'teamRole': teamRole,
     };

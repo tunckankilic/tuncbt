@@ -296,5 +296,13 @@
     "description": "Information message about becoming team admin after registration"
   },
 
-  "creatingTeam": "Creating your team...\nPlease wait."
+  "creatingTeam": "Creating your team...\nPlease wait.",
+
+  "email": "Email",
+  "name": "Name",
+  "phoneNumber": "Phone Number",
+  "allWorkers": "All Workers",
+
+  "teamNotFound": "Team not found",
+  "permissionDenied": "You don't have permission for this action"
 } 

@@ -1,43 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tuncbt/l10n/app_localizations.dart';
+import 'package:tuncbt/core/config/constants.dart';
 
 class LoadingScreen extends StatelessWidget {
-  final String message;
+  final String? message;
 
-  const LoadingScreen({Key? key, required this.message}) : super(key: key);
+  const LoadingScreen({
+    super.key,
+    this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue, Colors.indigo],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 3.w,
-              ),
-              SizedBox(height: 30.h),
-              Text(
-                message,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+            ),
+            if (message != null) ...[
+              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppTheme.textColor,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
-          ),
+          ],
         ),
       ),
     );

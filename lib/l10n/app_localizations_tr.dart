@@ -109,7 +109,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get taskDescription => 'Görev Açıklaması';
 
   @override
-  String get taskDeadline => 'Son Tarih';
+  String get taskDeadline => 'Görev Son Tarihi';
 
   @override
   String get taskCategory => 'Görev Kategorisi';
@@ -140,10 +140,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get taskDeleteError => 'Görev silinirken bir hata oluştu';
 
   @override
-  String get taskUploadSuccess => 'Görev yüklendi ve bildirim oluşturuldu';
+  String get taskUploadSuccess => 'Görev başarıyla yüklendi';
 
   @override
-  String get taskUploadError => 'Görev yüklenirken bir hata oluştu';
+  String get taskUploadError => 'Görev yüklenirken hata oluştu';
 
   @override
   String get noTasks => 'Henüz ekip görevi yok';
@@ -158,7 +158,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get fieldRequired => 'Bu alan zorunludur';
 
   @override
-  String get teamTasks => 'Ekip Görevleri';
+  String get teamTasks => 'Takım Görevleri';
 
   @override
   String get newTask => 'Yeni Görev';
@@ -387,4 +387,25 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get teamAdminInfo =>
       'Kaydolduktan sonra kendi takımınızın yöneticisi olacaksınız';
+
+  @override
+  String get creatingTeam => 'Takımınız oluşturuluyor...\nLütfen bekleyin.';
+
+  @override
+  String get email => 'E-posta';
+
+  @override
+  String get name => 'Ad Soyad';
+
+  @override
+  String get phoneNumber => 'Telefon Numarası';
+
+  @override
+  String get allWorkers => 'Tüm Çalışanlar';
+
+  @override
+  String get teamNotFound => 'Takım bulunamadı';
+
+  @override
+  String get permissionDenied => 'Bu işlem için yetkiniz bulunmamaktadır';
 }

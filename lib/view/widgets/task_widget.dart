@@ -137,6 +137,8 @@ class TaskWidget extends StatelessWidget {
   }
 
   void _navigateToTaskDetails(BuildContext context) {
+    print(
+        'TaskWidget: Görev detayına yönlendiriliyor - TaskID: $taskId, TeamID: $teamId');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -227,7 +229,14 @@ class TaskWidget extends StatelessWidget {
         return;
       }
 
-      await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
+      // Görevi sil
+      await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .delete();
+
       await Fluttertoast.showToast(
         msg: AppLocalizations.of(context)!.taskDeleted,
         toastLength: Toast.LENGTH_LONG,

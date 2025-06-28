@@ -813,6 +813,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'After registration, you will be the administrator of your own team'**
   String get teamAdminInfo;
+
+  /// No description provided for @creatingTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating your team...\nPlease wait.'**
+  String get creatingTeam;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @allWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'All Workers'**
+  String get allWorkers;
+
+  /// No description provided for @teamNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Team not found'**
+  String get teamNotFound;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission for this action'**
+  String get permissionDenied;
 }
 
 class _AppLocalizationsDelegate

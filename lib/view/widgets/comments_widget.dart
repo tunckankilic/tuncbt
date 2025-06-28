@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/config/constants.dart';
+import 'package:tuncbt/core/models/comment_model.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CommentWidget extends StatelessWidget {
   final String commentId;
@@ -28,190 +31,229 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-      child: OpenContainer(
-        transitionDuration: const Duration(milliseconds: 500),
-        openBuilder: (context, _) => ProfileScreen(
-          userId: commenterId,
-          userType: UserType.commenter,
-        ),
-        closedElevation: 0,
-        closedColor: Colors.transparent,
-        closedBuilder: (context, openContainer) => InkWell(
-          onTap: openContainer,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCommenterAvatar(context),
-              SizedBox(width: 12.w),
-              Expanded(child: _buildCommentContent(context)),
-            ],
-          ),
+    print('CommentWidget oluşturuluyor');
+    print('Comment ID: $commentId');
+    print('Commenter Name: $commenterName');
+    print('Comment Body: $commentBody');
+
+    final controller = Get.find<InnerScreenController>();
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final isCommentOwner = currentUserId == commenterId;
+
+    print('Yorum sahibi mi: $isCommentOwner');
+
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 20.r,
+                  backgroundImage: NetworkImage(
+                    commenterImageUrl.isEmpty
+                        ? 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
+                        : commenterImageUrl,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                commenterName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                  color: AppTheme.primaryColor,
+                                ),
+                              ),
+                              Text(
+                                commenterTeamRole,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: AppTheme.secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (isCommentOwner)
+                            PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'edit') {
+                                  controller.startEditingComment(
+                                    CommentModel(
+                                      id: commentId,
+                                      userId: commenterId,
+                                      name: commenterName,
+                                      userImageUrl: commenterImageUrl,
+                                      body: commentBody,
+                                      time: commentTime,
+                                      teamRole: commenterTeamRole,
+                                    ),
+                                  );
+                                } else if (value == 'delete') {
+                                  _showDeleteDialog(context, controller);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit, size: 18.sp),
+                                      SizedBox(width: 8.w),
+                                      Text('Düzenle'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.delete,
+                                          size: 18.sp, color: Colors.red),
+                                      SizedBox(width: 8.w),
+                                      Text('Sil',
+                                          style: TextStyle(color: Colors.red)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 8.h),
+                      Obx(() {
+                        if (controller.isEditingComment.value &&
+                            controller.editingCommentId.value == commentId) {
+                          return Column(
+                            children: [
+                              TextField(
+                                controller: controller.editCommentController,
+                                maxLines: null,
+                                decoration: InputDecoration(
+                                  hintText: 'Yorumu düzenle...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        controller.cancelEditingComment(),
+                                    child: Text('İptal'),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  ElevatedButton(
+                                    onPressed: () =>
+                                        controller.updateComment(commentId),
+                                    child: Text('Kaydet'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }
+                        return Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: AppTheme.backgroundColor.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            commentBody,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: AppTheme.textColor,
+                              height: 1.5,
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                _getTimeAgo(commentTime),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppTheme.lightTextColor,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildCommenterAvatar(BuildContext context) {
-    return Stack(
-      children: [
-        Hero(
-          tag: 'avatar_$commenterId',
-          child: Container(
-            height: 40.w,
-            width: 40.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                width: 2.w,
-                color: _getRoleColor(),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.r),
-              child: commenterImageUrl.isNotEmpty
-                  ? Image.network(
-                      commenterImageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          _defaultAvatar(context),
-                    )
-                  : _defaultAvatar(context),
-            ),
+  Future<void> _showDeleteDialog(
+      BuildContext context, InnerScreenController controller) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Yorumu Sil'),
+        content: Text('Bu yorumu silmek istediğinizden emin misiniz?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('İptal'),
           ),
-        ),
-        if (commenterTeamRole.isNotEmpty)
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.all(4.r),
-              decoration: BoxDecoration(
-                color: _getRoleColor(),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 1.5.w,
-                ),
-              ),
-              child: Icon(
-                _getRoleIcon(),
-                size: 10.sp,
-                color: Colors.white,
-              ),
-            ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              controller.deleteComment(commentId);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Sil'),
           ),
-      ],
+        ],
+      ),
     );
   }
 
-  Color _getRoleColor() {
-    switch (commenterTeamRole.toLowerCase()) {
-      case 'admin':
-        return Colors.red;
-      case 'manager':
-        return Colors.orange;
-      case 'member':
-        return Colors.blue;
-      default:
-        return Theme.of(Get.context!).colorScheme.secondary;
+  String _getTimeAgo(DateTime dateTime) {
+    final difference = DateTime.now().difference(dateTime);
+    if (difference.inDays > 7) {
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} gün önce';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} saat önce';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} dakika önce';
+    } else {
+      return 'Az önce';
     }
-  }
-
-  IconData _getRoleIcon() {
-    switch (commenterTeamRole.toLowerCase()) {
-      case 'admin':
-        return Icons.admin_panel_settings;
-      case 'manager':
-        return Icons.manage_accounts;
-      case 'member':
-        return Icons.person;
-      default:
-        return Icons.person_outline;
-    }
-  }
-
-  Widget _defaultAvatar(BuildContext context) {
-    return Icon(
-      Icons.person,
-      size: 24.sp,
-      color: Theme.of(context).primaryColor,
-    );
-  }
-
-  Widget _buildCommentContent(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              commenterName,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-            if (commenterTeamRole.isNotEmpty) ...[
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                decoration: BoxDecoration(
-                  color: _getRoleColor().withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  commenterTeamRole.capitalize!,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: _getRoleColor(),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-        SizedBox(height: 4.h),
-        Container(
-          padding: EdgeInsets.all(12.r),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Text(
-            commentBody,
-            style: TextStyle(
-              color: AppTheme.textColor,
-              fontSize: 14.sp,
-            ),
-          ),
-        ),
-        SizedBox(height: 4.h),
-        Row(
-          children: [
-            Icon(Icons.access_time,
-                size: 12.sp, color: AppTheme.lightTextColor),
-            SizedBox(width: 4.w),
-            Text(
-              timeago.format(commentTime, locale: 'tr'),
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: AppTheme.lightTextColor,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
   }
 }

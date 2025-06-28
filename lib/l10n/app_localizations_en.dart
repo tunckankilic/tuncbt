@@ -384,4 +384,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get teamAdminInfo =>
       'After registration, you will be the administrator of your own team';
+
+  @override
+  String get creatingTeam => 'Creating your team...\nPlease wait.';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get allWorkers => 'All Workers';
+
+  @override
+  String get teamNotFound => 'Team not found';
+
+  @override
+  String get permissionDenied => 'You don\'t have permission for this action';
 }

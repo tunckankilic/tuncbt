@@ -20,19 +20,54 @@ class TeamSecurity {
   /// Kullanıcının takımdaki yetkisini kontrol eder
   static Future<bool> validateTeamPermission(
       String teamId, List<String> allowedRoles) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw TeamPermissionException();
+    try {
+      print(
+          'TeamSecurity: Yetki kontrolü başlatılıyor... TeamID: $teamId, AllowedRoles: $allowedRoles');
+
+      final user = _auth.currentUser;
+      if (user == null) {
+        print('TeamSecurity: Kullanıcı oturumu bulunamadı');
+        throw TeamPermissionException();
+      }
+
+      // Kullanıcı dokümanından rol bilgisini al
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        print('TeamSecurity: Kullanıcı dokümanı bulunamadı');
+        return false;
+      }
+
+      final userData = userDoc.data()!;
+      final userTeamId = userData['teamId'] as String?;
+      final userRole = userData['teamRole'] as String?;
+
+      print(
+          'TeamSecurity: Kullanıcı verileri - TeamID: $userTeamId, Role: $userRole');
+
+      // Takım ID'si eşleşmiyor
+      if (userTeamId != teamId) {
+        print('TeamSecurity: Takım ID uyuşmazlığı');
+        return false;
+      }
+
+      // Rol kontrolü
+      if (userRole == null) {
+        print('TeamSecurity: Kullanıcı rolü bulunamadı');
+        return false;
+      }
+
+      // Rol eşleşmesi kontrolü (case-insensitive)
+      final hasPermission = allowedRoles
+          .any((role) => role.toLowerCase() == userRole.toLowerCase());
+
+      print(
+          'TeamSecurity: Yetki kontrolü sonucu - HasPermission: $hasPermission');
+      return hasPermission;
+    } catch (e, stackTrace) {
+      print('TeamSecurity Error: $e');
+      print('Stack trace: $stackTrace');
+      return false;
     }
-
-    final memberDoc = await _firestore
-        .collection('teams')
-        .doc(teamId)
-        .collection('members')
-        .doc(user.uid)
-        .get();
-
-    return memberDoc.exists && allowedRoles.contains(memberDoc.data()?['role']);
   }
 
   /// Takım adı ve kodları için güvenlik kontrolü
@@ -77,13 +112,28 @@ class TeamSecurity {
   /// Takım verilerine erişim için güvenlik kontrolü
   static Future<void> validateTeamDataAccess(String teamId,
       {List<String>? requiredRoles}) async {
-    await preventCrossTeamAccess(teamId);
+    try {
+      print(
+          'TeamSecurity: Veri erişim kontrolü başlatılıyor... TeamID: $teamId, RequiredRoles: $requiredRoles');
 
-    if (requiredRoles != null) {
-      final hasPermission = await validateTeamPermission(teamId, requiredRoles);
-      if (!hasPermission) {
-        throw TeamPermissionException();
+      await preventCrossTeamAccess(teamId);
+
+      if (requiredRoles != null && requiredRoles.isNotEmpty) {
+        print(
+            'TeamSecurity: Rol kontrolü yapılıyor... RequiredRoles: $requiredRoles');
+        final hasPermission =
+            await validateTeamPermission(teamId, requiredRoles);
+        if (!hasPermission) {
+          print('TeamSecurity: Yetkisiz erişim');
+          throw TeamPermissionException();
+        }
       }
+
+      print('TeamSecurity: Veri erişim kontrolü başarılı');
+    } catch (e, stackTrace) {
+      print('TeamSecurity Error: $e');
+      print('Stack trace: $stackTrace');
+      throw TeamPermissionException();
     }
   }
 }

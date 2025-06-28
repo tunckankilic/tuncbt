@@ -32,6 +32,15 @@ class UserModel {
 
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    print('UserModel.fromFirestore - Raw data: $data');
+
+    final teamRole = data['teamRole'];
+    final hasTeam = data['hasTeam'] ?? false;
+    final teamId = data['teamId'];
+
+    print(
+        'UserModel.fromFirestore - Team data: teamRole: $teamRole, hasTeam: $hasTeam, teamId: $teamId');
+
     return UserModel(
       id: doc.id,
       name: data['name'] ?? '',
@@ -41,12 +50,11 @@ class UserModel {
       position: data['position'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isOnline: data["isOnline"] ?? false,
-      teamId: data['teamId'],
+      teamId: teamId,
       invitedBy: data['invitedBy'],
-      teamRole: data['teamRole'] != null
-          ? TeamRole.fromString(data['teamRole'])
-          : null,
-      hasTeam: data['hasTeam'] ?? false,
+      teamRole: teamRole != null ? TeamRole.fromString(teamRole) : null,
+      hasTeam:
+          hasTeam && teamId != null, // hasTeam sadece teamId varsa true olmalı
     );
   }
 
@@ -63,7 +71,8 @@ class UserModel {
       'teamId': teamId,
       'invitedBy': invitedBy,
       'teamRole': teamRole?.toString().split('.').last,
-      'hasTeam': hasTeam,
+      'hasTeam':
+          hasTeam && teamId != null, // hasTeam sadece teamId varsa true olmalı
     };
   }
 
