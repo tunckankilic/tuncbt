@@ -297,5 +297,24 @@
     "description": "Information message about becoming team admin after registration"
   },
 
-  "creatingTeam": "Ihr Team wird erstellt...\nBitte warten."
+  "creatingTeam": "Ihr Team wird erstellt...\nBitte warten.",
+
+  "email": "E-Mail",
+  "password": "Passwort",
+  "name": "Name",
+  "phoneNumber": "Telefonnummer",
+  "allWorkers": "Alle Mitarbeiter",
+  "teamTasks": "Team-Aufgaben",
+  "noTasks": "Keine Aufgaben gefunden",
+  "addTaskHint": "Klicken Sie auf +, um eine neue Aufgabe hinzuzufügen",
+  "taskTitle": "Aufgabentitel",
+  "taskDescription": "Aufgabenbeschreibung",
+  "taskCategory": "Aufgabenkategorie",
+  "taskDeadline": "Aufgabenfrist",
+  "allFieldsRequired": "Alle Felder sind erforderlich",
+  "taskUploadSuccess": "Aufgabe erfolgreich hochgeladen",
+  "taskUploadError": "Fehler beim Hochladen der Aufgabe",
+  "notInTeam": "Sie gehören noch keinem Team an",
+  "teamNotFound": "Team nicht gefunden",
+  "permissionDenied": "Sie haben keine Berechtigung für diese Aktion"
 } 

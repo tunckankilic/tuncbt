@@ -62,6 +62,11 @@ class InnerScreenController extends GetxController {
   final Rx<DateTime?> picked = Rx<DateTime?>(null);
   final Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
 
+  // Yorum düzenleme için controller
+  final editCommentController = TextEditingController();
+  final RxBool isEditingComment = false.obs;
+  final RxString editingCommentId = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -225,13 +230,17 @@ class InnerScreenController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // Önce kullanıcının takım üyeliğini kontrol et
-      final User? user = _auth.currentUser;
+      print(
+          'InnerScreenController: Görev detayları yükleniyor - TaskID: $taskId');
+
+      // Kullanıcı kontrolü
+      final user = _auth.currentUser;
       if (user == null) {
         errorMessage.value = 'Oturum açmanız gerekiyor';
         return;
       }
 
+      // Kullanıcı verilerini al
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (!userDoc.exists) {
         errorMessage.value = 'Kullanıcı bilgileri bulunamadı';
@@ -239,34 +248,172 @@ class InnerScreenController extends GetxController {
       }
 
       final userData = UserModel.fromFirestore(userDoc);
-      if (userData.teamId != _teamProvider.teamId) {
-        errorMessage.value = 'Bu görevi görüntüleme yetkiniz yok';
+      if (userData.teamId == null || !userData.hasTeam) {
+        errorMessage.value = 'Takım bilgisi bulunamadı';
         return;
       }
 
-      final DocumentSnapshot taskDoc =
-          await _firestore.collection('tasks').doc(taskId).get();
+      print('InnerScreenController: Takım ID: ${userData.teamId}');
 
-      if (taskDoc.exists) {
-        currentTask.value = TaskModel.fromFirestore(taskDoc);
-        await getUserData(currentTask.value.uploadedBy);
+      // Görev verilerini al
+      final taskDoc = await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .get();
 
-        // Yetkilendirmeleri ayarla
-        final bool isAdmin = userData.teamRole?.name == 'admin';
-        final bool isManager = userData.teamRole?.name == 'manager';
-        final bool isTaskCreator = currentTask.value.uploadedBy == user.uid;
-
-        canUpdateTaskStatus.value = isTaskCreator || isAdmin || isManager;
-        canAddComment.value = true; // Tüm takım üyeleri yorum yapabilir
-      } else {
-        log('Task document does not exist for ID: $taskId');
+      if (!taskDoc.exists) {
         errorMessage.value = 'Görev bulunamadı';
+        return;
       }
+
+      final taskData = taskDoc.data()!;
+      print('InnerScreenController: Görev verisi: $taskData');
+
+      // Görevi oluşturan kullanıcının bilgilerini al
+      final uploaderDoc = await _firestore
+          .collection('users')
+          .doc(taskData['uploadedBy'])
+          .get();
+
+      if (!uploaderDoc.exists) {
+        errorMessage.value = 'Görev sahibi bilgileri bulunamadı';
+        return;
+      }
+
+      final uploaderData = UserModel.fromFirestore(uploaderDoc);
+      currentUser.value = uploaderData;
+
+      // Görev modelini oluştur
+      currentTask.value = TaskModel(
+        id: taskId,
+        title: taskData['taskTitle'] ?? '',
+        description: taskData['taskDescription'] ?? '',
+        isDone: taskData['isDone'] ?? false,
+        uploadedBy: taskData['uploadedBy'] ?? '',
+        createdAt: (taskData['createdAt'] as Timestamp).toDate(),
+        deadline: (taskData['deadlineDate'] as Timestamp?)?.toDate() ??
+            DateTime.now(),
+        deadlineDate: (taskData['deadlineDate'] as Timestamp?)
+                ?.toDate()
+                .toString()
+                .split(' ')[0] ??
+            '',
+        comments: await _loadComments(taskData),
+        teamId: userData.teamId!,
+        category: taskData['taskCategory'] ?? 'Genel',
+      );
+
+      // Yorum yapma ve durum güncelleme yetkilerini kontrol et
+      canAddComment.value = true; // Tüm üyeler yorum yapabilir
+      canUpdateTaskStatus.value = user.uid == taskData['uploadedBy'] ||
+          userData.teamRole?.name == 'admin' ||
+          userData.teamRole?.name == 'manager';
+
+      print('InnerScreenController: Görev detayları yüklendi');
     } catch (e) {
-      log('Error fetching task data: $e');
-      errorMessage.value = 'Görev bilgileri alınırken hata oluştu';
+      print('InnerScreenController Error: $e');
+      errorMessage.value = 'Görev detayları yüklenirken hata oluştu: $e';
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<List<CommentModel>> _loadComments(
+      Map<String, dynamic> taskData) async {
+    try {
+      print('_loadComments başlatılıyor...');
+      print('Task Data: $taskData');
+
+      final List<CommentModel> comments = [];
+      final commentsList =
+          List<Map<String, dynamic>>.from(taskData['taskComments'] ?? []);
+
+      print('Yorumlar yükleniyor - Ham veri: $commentsList');
+      print('Yorumlar yükleniyor - Toplam: ${commentsList.length}');
+
+      for (var commentData in commentsList) {
+        try {
+          print('Yorum verisi işleniyor: $commentData');
+
+          // Yorum verilerini kontrol et
+          if (commentData == null) {
+            print('Yorum verisi null, atlıyorum');
+            continue;
+          }
+
+          // ID kontrolü
+          String commentId = commentData['id'] as String? ?? '';
+          if (commentId.isEmpty) {
+            print('Yorum ID boş, yeni ID oluşturuluyor');
+            commentId = const Uuid().v4();
+          }
+
+          // UserID kontrolü
+          final userId = commentData['userId'] as String?;
+          if (userId == null || userId.isEmpty) {
+            print('UserID boş, bu yorumu atlıyorum');
+            continue;
+          }
+
+          // Body kontrolü
+          String commentBody = commentData['body'] as String? ?? '';
+          if (commentBody.isEmpty) {
+            print('Yorum içeriği boş, bu yorumu atlıyorum');
+            continue;
+          }
+
+          // Kullanıcı bilgilerini al
+          final userDoc =
+              await _firestore.collection('users').doc(userId).get();
+
+          String userName = commentData['name'] as String? ?? '';
+          String userImage = commentData['userImageUrl'] as String? ?? '';
+          String teamRole = commentData['teamRole'] as String? ?? 'member';
+          DateTime commentTime;
+
+          if (commentData['time'] is Timestamp) {
+            commentTime = (commentData['time'] as Timestamp).toDate();
+          } else {
+            commentTime = DateTime.now();
+            print('Zaman damgası bulunamadı, şu anki zaman kullanılıyor');
+          }
+
+          if (userDoc.exists) {
+            final userData = UserModel.fromFirestore(userDoc);
+            userName = userData.name;
+            userImage = userData.imageUrl;
+            teamRole = userData.teamRole?.name ?? teamRole;
+            print('Kullanıcı bilgileri Firestore\'dan alındı: $userName');
+          } else {
+            print('Kullanıcı dokümanı bulunamadı: $userId');
+          }
+
+          final comment = CommentModel(
+            id: commentId,
+            userId: userId,
+            name: userName,
+            userImageUrl: userImage,
+            body: commentBody,
+            time: commentTime,
+            teamRole: teamRole,
+          );
+
+          comments.add(comment);
+          print('Yorum başarıyla eklendi: ${comment.body}');
+        } catch (e) {
+          print('Yorum yükleme hatası: $e');
+          continue;
+        }
+      }
+
+      print('Yorumlar başarıyla yüklendi - Toplam: ${comments.length}');
+      print('Yüklenen yorumlar: $comments');
+      return comments;
+    } catch (e) {
+      print('Yorumları yükleme hatası: $e');
+      return [];
     }
   }
 
@@ -304,6 +451,11 @@ class InnerScreenController extends GetxController {
   }
 
   Future<void> addComment(String taskID) async {
+    if (commentController.text.trim().isEmpty) {
+      Get.snackbar('Hata', 'Yorum boş olamaz');
+      return;
+    }
+
     if (commentController.text.length < 7) {
       Get.snackbar('Hata', 'Yorum en az 7 karakter olmalıdır');
       return;
@@ -316,7 +468,7 @@ class InnerScreenController extends GetxController {
         return;
       }
 
-      // Kullanıcının takım rolünü al
+      // Kullanıcı verilerini al
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (!userDoc.exists) {
         Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
@@ -324,60 +476,78 @@ class InnerScreenController extends GetxController {
       }
 
       final userData = UserModel.fromFirestore(userDoc);
-      if (userData.teamId != currentTask.value.teamId) {
-        Get.snackbar('Hata', 'Bu göreve yorum yapma yetkiniz yok');
+      if (userData.teamId == null) {
+        Get.snackbar('Hata', 'Takım bilgisi bulunamadı');
         return;
       }
 
-      final teamRole = userData.teamRole?.name ?? 'member';
+      print('Yorum ekleniyor - TaskID: $taskID, UserID: ${user.uid}');
 
-      CommentModel newComment = CommentModel(
-        id: const Uuid().v4(),
+      final commentId = const Uuid().v4();
+      final now = DateTime.now();
+
+      final comment = CommentModel(
+        id: commentId,
         userId: user.uid,
-        name: currentUser.value.name,
-        userImageUrl: currentUser.value.imageUrl,
-        body: commentController.text,
-        time: DateTime.now(),
-        teamRole: teamRole,
+        name: userData.name,
+        userImageUrl: userData.imageUrl,
+        body: commentController.text.trim(),
+        time: now,
+        teamRole: userData.teamRole?.name ?? 'member',
       );
 
-      await _firestore.collection('tasks').doc(taskID).update({
-        'taskComments': FieldValue.arrayUnion([newComment.toMap()]),
+      // Önce mevcut görevi al
+      final taskDoc = await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(taskID)
+          .get();
+
+      if (!taskDoc.exists) {
+        Get.snackbar('Hata', 'Görev bulunamadı');
+        return;
+      }
+
+      // Yorumu tasks koleksiyonuna ekle
+      await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(taskID)
+          .update({
+        'taskComments': FieldValue.arrayUnion([comment.toMap()]),
       });
 
+      // Yerel listeyi güncelle
       currentTask.update((task) {
-        task!.comments.add(newComment);
+        if (task != null) {
+          task.comments.add(comment);
+        }
       });
 
-      // Yorum bildirimi oluştur
-      await _createCommentNotification(taskID, newComment);
-
-      log("Comment successfully added to Firestore");
-
-      await Fluttertoast.showToast(
-        msg: "Yorumunuz eklendi",
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.grey,
-        fontSize: 18.0,
-      );
-
+      // Yorum kontrollerini sıfırla
       commentController.clear();
       isCommenting.value = false;
 
-      log("Comment process completed successfully");
-    } catch (error) {
-      log("Error adding comment: $error");
-      Get.snackbar('Hata', 'Yorum eklenirken hata oluştu: $error');
+      print('Yorum başarıyla eklendi');
+      Get.snackbar('Başarılı', 'Yorumunuz eklendi');
+
+      // Yorum bildirimi oluştur
+      await _createCommentNotification(taskID, commentId);
+    } catch (e) {
+      print('Yorum ekleme hatası: $e');
+      Get.snackbar('Hata', 'Yorum eklenirken bir hata oluştu');
     }
   }
 
   Future<void> _createCommentNotification(
-      String taskID, CommentModel comment) async {
+      String taskID, String commentId) async {
     try {
       await _firestore.collection('notifications').add({
-        'message': '${comment.name} bir göreve yorum yaptı',
+        'message': 'Yeni yorum eklendi',
         'taskId': taskID,
-        'commentId': comment.id,
+        'commentId': commentId,
         'createdAt': FieldValue.serverTimestamp(),
         'read': false,
         'type': 'new_comment',
@@ -419,53 +589,116 @@ class InnerScreenController extends GetxController {
     }
 
     try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
+        return;
+      }
+
+      // Kullanıcı verilerini al
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
+        return;
+      }
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId == null) {
+        Get.snackbar('Hata', 'Takım bilgisi bulunamadı');
+        return;
+      }
+
+      print(
+          'Görev durumu güncelleniyor - TaskID: $taskId, NewStatus: $newStatus');
+
+      // Görevi güncelle
       await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
           .collection('tasks')
           .doc(taskId)
           .update({'isDone': newStatus});
 
+      // Yerel state'i güncelle
       currentTask.update((task) {
         task!.isDone = newStatus;
       });
 
-      // Create Notification
+      // Bildirim oluştur
       await _createStatusUpdateNotification(taskId, newStatus);
 
-      Get.snackbar('Başarılı', 'Görev durumu güncellendi');
+      print('Görev durumu başarıyla güncellendi');
+      Get.snackbar(
+        'Başarılı',
+        'Görev durumu güncellendi',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (err) {
-      log('Error updating task status: $err');
-      Get.snackbar('Hata', 'İşlem gerçekleştirilemedi');
+      print('Görev durumu güncelleme hatası: $err');
+      Get.snackbar(
+        'Hata',
+        'İşlem gerçekleştirilemedi: $err',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
   Future<void> _createStatusUpdateNotification(
       String taskId, bool newStatus) async {
     try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId == null) return;
+
+      print('Görev durumu bildirimi oluşturuluyor');
+
       await _firestore.collection('notifications').add({
+        'taskId': taskId,
+        'teamId': userData.teamId,
+        'type': 'status_update',
         'message':
             'Görev durumu ${newStatus ? "tamamlandı" : "devam ediyor"} olarak güncellendi',
-        'taskId': taskId,
+        'updatedBy': user.uid,
+        'updaterName': userData.name,
         'createdAt': FieldValue.serverTimestamp(),
         'read': false,
-        'type': 'status_update',
       });
+
+      print('Görev durumu bildirimi oluşturuldu');
     } catch (e) {
-      log('Error creating status update notification: $e');
+      print('Bildirim oluşturma hatası: $e');
     }
   }
 
   Future<String?> getLastUploadedTaskID() async {
     try {
+      final user = _auth.currentUser;
+      if (user == null) return null;
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) return null;
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId == null) return null;
+
       var querySnapshot = await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
           .collection('tasks')
           .orderBy('createdAt', descending: true)
           .limit(1)
           .get();
+
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.first.id;
       }
     } catch (e) {
-      log('Error getting last uploaded task ID: $e');
+      print('Son yüklenen görev ID\'si alınamadı: $e');
     }
     return null;
   }
@@ -483,6 +716,8 @@ class InnerScreenController extends GetxController {
         return;
       }
 
+      print('Görev yükleme başladı - UserID: ${user.uid}');
+
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (!userDoc.exists) {
         Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
@@ -490,77 +725,140 @@ class InnerScreenController extends GetxController {
       }
 
       final userData = UserModel.fromFirestore(userDoc);
-      if (userData.teamId == null) {
+      print('Kullanıcı verileri: ${userData.toFirestore()}');
+
+      if (userData.teamId == null || userData.teamId!.isEmpty) {
         Get.snackbar(
             'Hata', 'Görev eklemek için bir takıma ait olmanız gerekiyor');
         return;
       }
 
-      if (userData.teamRole?.name != 'admin' &&
-          userData.teamRole?.name != 'manager') {
-        Get.snackbar('Hata', 'Görev ekleme yetkiniz yok');
+      // Takım üyeliği kontrolü
+      final memberDocId = '${userData.teamId}_${user.uid}';
+      print('Takım üyeliği kontrolü - DocID: $memberDocId');
+
+      final memberDoc =
+          await _firestore.collection('team_members').doc(memberDocId).get();
+
+      print('Takım üyeliği dokümanı: ${memberDoc.data()}');
+
+      if (!memberDoc.exists || !(memberDoc.data()?['isActive'] ?? false)) {
+        Get.snackbar('Hata', 'Takım üyeliğiniz aktif değil');
         return;
       }
 
-      // Save To Firestore
-      String taskID = await _saveTaskToFirestore(userData.teamId!);
+      final memberRole = memberDoc.data()?['role'] as String? ?? '';
+      print('Üye rolü: $memberRole');
 
-      // Create Notification
-      await _createNotification(taskID);
+      if (memberRole.toLowerCase() != 'admin' &&
+          memberRole.toLowerCase() != 'manager') {
+        Get.snackbar('Hata', 'Bu işlem için yetkiniz bulunmamaktadır');
+        return;
+      }
 
-      _resetForm();
-      Fluttertoast.showToast(
-          msg: "Görev başarıyla eklendi",
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: Colors.grey,
-          fontSize: 18.0);
+      final taskId = const Uuid().v4();
+      final now = DateTime.now();
 
-      Get.back(); // Görev listesi ekranına dön
-    } catch (e) {
-      log('Error uploading task: $e');
-      Get.snackbar('Hata', 'Görev eklenirken hata oluştu');
+      print('Görev oluşturuluyor - TaskID: $taskId');
+
+      final taskData = {
+        'taskId': taskId,
+        'taskTitle': taskTitleController.text,
+        'taskDescription': taskDescriptionController.text,
+        'taskCategory': taskCategoryController.text,
+        'createdAt': Timestamp.fromDate(now),
+        'deadlineDate': deadlineDateTimeStamp.value,
+        'isDone': false,
+        'teamId': userData.teamId,
+        'uploadedBy': user.uid,
+        'taskComments': [],
+      };
+
+      print('Görev verisi: $taskData');
+
+      // Görevi ekle - teams koleksiyonunun altına
+      await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .set(taskData);
+
+      print('Görev başarıyla eklendi');
+
+      // Bildirim oluştur
+      await _createTaskNotification(taskId, userData.teamId!);
+
+      // Başarı mesajı
+      Get.snackbar(
+        'Başarılı',
+        'Görev başarıyla eklendi',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Form alanlarını temizle
+      taskTitleController.clear();
+      taskDescriptionController.clear();
+      taskCategoryController.text = 'Görev kategorisi seçin';
+      deadlineDateController.text = 'Görev son tarihini seçin';
+      deadlineDateTimeStamp.value = null;
+
+      // Önceki sayfaya dön
+      Get.back();
+    } catch (e, stackTrace) {
+      print('Görev ekleme hatası: $e');
+      print('Stack trace: $stackTrace');
+      Get.snackbar(
+        'Hata',
+        'Görev eklenirken bir hata oluştu',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<String> _saveTaskToFirestore(String teamId) async {
-    final taskID = const Uuid().v4();
-    final uid = _auth.currentUser!.uid;
-    final newTask = TaskModel(
-      id: taskID,
-      uploadedBy: uid,
-      title: taskTitleController.text,
-      description: taskDescriptionController.text,
-      deadline: deadlineDateTimeStamp.value!.toDate(),
-      deadlineDate: deadlineDateController.text,
-      category: taskCategoryController.text,
-      comments: [],
-      isDone: false,
-      createdAt: DateTime.now(),
-      teamId: teamId,
-    );
-    await _firestore.collection('tasks').doc(taskID).set(newTask.toFirestore());
-    return taskID;
-  }
-
-  Future<void> _createNotification(String taskId) async {
-    await _firestore.collection('notifications').add({
-      'message': 'Yeni görev eklendi',
-      'taskId': taskId,
-      'createdAt': FieldValue.serverTimestamp(),
-      'read': false,
-    });
+  Future<void> _createTaskNotification(String taskId, String teamId) async {
+    try {
+      await _firestore.collection('notifications').add({
+        'taskId': taskId,
+        'teamId': teamId,
+        'type': 'new_task',
+        'message': 'Yeni görev eklendi: ${taskTitleController.text}',
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+      });
+      print('Görev bildirimi oluşturuldu');
+    } catch (e) {
+      print('Bildirim oluşturma hatası: $e');
+    }
   }
 
   bool _validateForm() {
-    final isValid = formKey.currentState!.validate();
-    if (!isValid) return false;
-    if (deadlineDateController.text == 'Görev son tarihini seçin' ||
-        taskCategoryController.text == 'Görev kategorisi seçin') {
-      Get.snackbar('Hata', 'Lütfen tüm alanları doldurun');
+    if (taskTitleController.text.trim().isEmpty) {
+      Get.snackbar('Hata', 'Görev başlığı boş olamaz');
       return false;
     }
+
+    if (taskDescriptionController.text.trim().isEmpty) {
+      Get.snackbar('Hata', 'Görev açıklaması boş olamaz');
+      return false;
+    }
+
+    if (taskCategoryController.text == 'Görev kategorisi seçin') {
+      Get.snackbar('Hata', 'Lütfen bir kategori seçin');
+      return false;
+    }
+
+    if (deadlineDateController.text == 'Görev son tarihini seçin') {
+      Get.snackbar('Hata', 'Lütfen bir son tarih seçin');
+      return false;
+    }
+
     return true;
   }
 
@@ -637,5 +935,159 @@ class InnerScreenController extends GetxController {
           '${picked.value!.year}-${picked.value!.month}-${picked.value!.day}';
       deadlineDateTimeStamp.value = Timestamp.fromDate(picked.value!);
     }
+  }
+
+  Future<void> deleteComment(String commentId) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
+        return;
+      }
+
+      // Yorumu buluyor
+      final comment = currentTask.value.comments.firstWhere(
+        (c) => c.id == commentId,
+        orElse: () => CommentModel.empty(),
+      );
+
+      if (comment.id.isEmpty) {
+        Get.snackbar('Hata', 'Yorum bulunamadı');
+        return;
+      }
+
+      // Yorum sahibi veya admin/manager kontrolü
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      final userData = UserModel.fromFirestore(userDoc);
+      final isAdmin = userData.teamRole?.name.toLowerCase() == 'admin';
+      final isManager = userData.teamRole?.name.toLowerCase() == 'manager';
+      final isCommentOwner = comment.userId == user.uid;
+
+      if (!isCommentOwner && !isAdmin && !isManager) {
+        Get.snackbar('Hata', 'Bu yorumu silme yetkiniz yok');
+        return;
+      }
+
+      print('Yorum siliniyor - CommentID: $commentId');
+
+      // Yorumu tasks koleksiyonundan sil
+      await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(currentTask.value.id)
+          .update({
+        'taskComments': FieldValue.arrayRemove([comment.toMap()]),
+      });
+
+      // Yerel listeden yorumu kaldır
+      currentTask.update((task) {
+        task!.comments.removeWhere((c) => c.id == commentId);
+      });
+
+      print('Yorum başarıyla silindi');
+      Get.snackbar('Başarılı', 'Yorum silindi');
+    } catch (e) {
+      print('Yorum silme hatası: $e');
+      Get.snackbar('Hata', 'Yorum silinirken hata oluştu');
+    }
+  }
+
+  void startEditingComment(CommentModel comment) {
+    editingCommentId.value = comment.id;
+    editCommentController.text = comment.body;
+    isEditingComment.value = true;
+  }
+
+  Future<void> updateComment(String commentId) async {
+    if (editCommentController.text.length < 7) {
+      Get.snackbar('Hata', 'Yorum en az 7 karakter olmalıdır');
+      return;
+    }
+
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
+        return;
+      }
+
+      // Yorumu buluyor
+      final oldComment = currentTask.value.comments.firstWhere(
+        (c) => c.id == commentId,
+        orElse: () => CommentModel.empty(),
+      );
+
+      if (oldComment.id.isEmpty) {
+        Get.snackbar('Hata', 'Yorum bulunamadı');
+        return;
+      }
+
+      // Yorum sahibi kontrolü
+      if (oldComment.userId != user.uid) {
+        Get.snackbar('Hata', 'Sadece kendi yorumunuzu düzenleyebilirsiniz');
+        return;
+      }
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      final userData = UserModel.fromFirestore(userDoc);
+
+      print('Yorum düzenleniyor - CommentID: $commentId');
+
+      // Yeni yorum objesi oluştur
+      final updatedComment = CommentModel(
+        id: oldComment.id,
+        userId: oldComment.userId,
+        name: oldComment.name,
+        userImageUrl: oldComment.userImageUrl,
+        body: editCommentController.text,
+        time: DateTime.now(), // Düzenleme zamanını güncelle
+        teamRole: oldComment.teamRole,
+      );
+
+      // Eski yorumu kaldır ve yenisini ekle
+      await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(currentTask.value.id)
+          .update({
+        'taskComments': FieldValue.arrayRemove([oldComment.toMap()]),
+      });
+
+      await _firestore
+          .collection('teams')
+          .doc(userData.teamId)
+          .collection('tasks')
+          .doc(currentTask.value.id)
+          .update({
+        'taskComments': FieldValue.arrayUnion([updatedComment.toMap()]),
+      });
+
+      // Yerel listeyi güncelle
+      currentTask.update((task) {
+        final index = task!.comments.indexWhere((c) => c.id == commentId);
+        if (index != -1) {
+          task.comments[index] = updatedComment;
+        }
+      });
+
+      print('Yorum başarıyla güncellendi');
+      Get.snackbar('Başarılı', 'Yorum güncellendi');
+
+      // Düzenleme modunu kapat
+      isEditingComment.value = false;
+      editingCommentId.value = '';
+      editCommentController.clear();
+    } catch (e) {
+      print('Yorum güncelleme hatası: $e');
+      Get.snackbar('Hata', 'Yorum güncellenirken hata oluştu');
+    }
+  }
+
+  void cancelEditingComment() {
+    isEditingComment.value = false;
+    editingCommentId.value = '';
+    editCommentController.clear();
   }
 }

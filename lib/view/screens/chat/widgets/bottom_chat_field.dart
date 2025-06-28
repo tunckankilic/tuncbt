@@ -26,7 +26,7 @@ class BottomChatField extends GetView<ChatController> {
         children: [
           ListTile(
             leading: const Icon(Icons.photo),
-            title: const Text('Photo'),
+            title: const Text('Fotoğraf'),
             onTap: () async {
               Navigator.pop(context);
               final ImagePicker picker = ImagePicker();
@@ -67,7 +67,7 @@ class BottomChatField extends GetView<ChatController> {
           ),
           ListTile(
             leading: const Icon(Icons.mic),
-            title: const Text('Audio'),
+            title: const Text('Ses'),
             onTap: () async {
               Navigator.pop(context);
               final FilePickerResult? result =
@@ -123,19 +123,11 @@ class BottomChatField extends GetView<ChatController> {
                               color: Colors.grey,
                             ),
                           ),
-                          // IconButton(
-                          //   onPressed: () => controller.showGifPicker(
-                          //       context, receiverUserId),
-                          //   icon: const Icon(
-                          //     Icons.gif,
-                          //     color: Colors.grey,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
                   ),
-                  hintText: 'Type a message',
+                  hintText: 'Mesaj yazın',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide.none,
@@ -150,6 +142,30 @@ class BottomChatField extends GetView<ChatController> {
                 radius: 25,
                 child: Obx(
                   () => GestureDetector(
+                    onTapDown: controller.isShowSendButton.value
+                        ? null
+                        : (_) async {
+                            await controller.startRecording();
+                          },
+                    onTapUp: controller.isShowSendButton.value
+                        ? null
+                        : (_) async {
+                            final audioPath = await controller.stopRecording();
+                            if (audioPath != null) {
+                              await controller.sendFileMessage(
+                                context,
+                                File(audioPath),
+                                receiverUserId,
+                                MessageType.audio,
+                                isGroupChat,
+                              );
+                            }
+                          },
+                    onTapCancel: controller.isShowSendButton.value
+                        ? null
+                        : () async {
+                            await controller.stopRecording();
+                          },
                     child: Icon(
                       controller.isShowSendButton.value
                           ? Icons.send
@@ -157,11 +173,6 @@ class BottomChatField extends GetView<ChatController> {
                               ? Icons.close
                               : Icons.mic,
                       color: Colors.white,
-                    ),
-                    onTap: () => controller.sendTextMessage(
-                      context,
-                      receiverUserId,
-                      isGroupChat,
                     ),
                   ),
                 ),

@@ -29,6 +29,25 @@ class TasksScreenController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeUser();
+    _setupTeamListener();
+  }
+
+  void _setupTeamListener() {
+    _teamProvider.addListener(_onTeamProviderChanged);
+  }
+
+  void _onTeamProviderChanged() {
+    if (_teamProvider.isInitialized && _teamProvider.teamId != null) {
+      print(
+          'TasksScreenController: Takım değişikliği algılandı - TeamID: ${_teamProvider.teamId}');
+      fetchTasks();
+    }
+  }
+
+  @override
+  void onClose() {
+    _teamProvider.removeListener(_onTeamProviderChanged);
+    super.onClose();
   }
 
   Future<void> _initializeUser() async {
@@ -41,7 +60,14 @@ class TasksScreenController extends GetxController {
 
         if (userData.exists) {
           currentUser.value = UserModel.fromFirestore(userData);
-          fetchTasks();
+          if (currentUser.value?.teamId != null) {
+            print(
+                'TasksScreenController: Kullanıcı takımı bulundu - TeamID: ${currentUser.value?.teamId}');
+            fetchTasks();
+          } else {
+            print('TasksScreenController: Kullanıcının takımı yok');
+            errorMessage.value = 'Henüz bir takıma ait değilsiniz';
+          }
         } else {
           errorMessage.value = 'Kullanıcı bilgileri bulunamadı';
         }
@@ -60,29 +86,48 @@ class TasksScreenController extends GetxController {
     try {
       if (_teamProvider.teamId == null) {
         errorMessage.value = 'Henüz bir takıma ait değilsiniz';
+        print('TasksScreenController: TeamID bulunamadı');
         return;
       }
 
+      print(
+          'TasksScreenController: Görevler dinleniyor... TeamID: ${_teamProvider.teamId}');
       isLoading.value = true;
-      _firestore
-          .collection('tasks')
-          .where('teamId', isEqualTo: _teamProvider.teamId)
-          .snapshots()
-          .listen(
+
+      final tasksRef = _firestore
+          .collection('teams')
+          .doc(_teamProvider.teamId)
+          .collection('tasks');
+
+      print('TasksScreenController: Görev koleksiyonu yolu: ${tasksRef.path}');
+
+      tasksRef.orderBy('createdAt', descending: true).snapshots().listen(
         (snapshot) {
-          tasks.value = snapshot.docs.map((doc) => doc.data()).toList();
+          print(
+              'TasksScreenController: Görev snapshot alındı - Doküman sayısı: ${snapshot.docs.length}');
+
+          tasks.value = snapshot.docs.map((doc) {
+            final data = doc.data();
+            data['taskId'] = doc.id;
+            print('TasksScreenController: Görev verisi: $data');
+            return data;
+          }).toList();
+
+          print('TasksScreenController: ${tasks.length} görev güncellendi');
           applyFilter();
           isLoading.value = false;
           errorMessage.value = '';
         },
         onError: (error) {
           log("Error fetching tasks: $error");
-          errorMessage.value = 'Görevler yüklenirken hata oluştu';
+          print('TasksScreenController: Görev yükleme hatası: $error');
+          errorMessage.value = 'Görevler yüklenirken hata oluştu: $error';
           isLoading.value = false;
         },
       );
     } catch (e) {
       log("Error in fetchTasks: $e");
+      print('TasksScreenController: Beklenmeyen hata: $e');
       errorMessage.value = 'Görevler yüklenirken beklenmeyen bir hata oluştu';
       isLoading.value = false;
     }
@@ -173,6 +218,49 @@ class TasksScreenController extends GetxController {
       tasks.value = tasks
           .where((task) => task['taskCategory'] == currentFilter.value)
           .toList();
+    }
+  }
+
+  // Test için örnek görev ekleme fonksiyonu
+  Future<void> addTestTask() async {
+    try {
+      if (_teamProvider.teamId == null) {
+        errorMessage.value = 'Henüz bir takıma ait değilsiniz';
+        return;
+      }
+
+      final user = _auth.currentUser;
+      if (user == null) {
+        errorMessage.value = 'Oturum açmanız gerekiyor';
+        return;
+      }
+
+      print(
+          'TasksScreenController: Test görevi ekleniyor... TeamID: ${_teamProvider.teamId}');
+
+      final taskData = {
+        'taskTitle': 'Test Görevi',
+        'taskDescription': 'Bu bir test görevidir.',
+        'taskCategory': 'Genel',
+        'isDone': false,
+        'uploadedBy': user.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      final tasksRef = _firestore
+          .collection('teams')
+          .doc(_teamProvider.teamId)
+          .collection('tasks');
+
+      print('TasksScreenController: Görev koleksiyonu yolu: ${tasksRef.path}');
+
+      final docRef = await tasksRef.add(taskData);
+      print(
+          'TasksScreenController: Test görevi eklendi - TaskID: ${docRef.id}');
+    } catch (e) {
+      log("Error adding test task: $e");
+      print('TasksScreenController: Test görevi ekleme hatası: $e');
+      errorMessage.value = 'Test görevi eklenirken hata oluştu';
     }
   }
 }

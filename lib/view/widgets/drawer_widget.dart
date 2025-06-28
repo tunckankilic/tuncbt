@@ -16,6 +16,8 @@ import 'package:tuncbt/view/screens/tasks_screen/screens/tasks_screen.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer';
+import 'package:provider/provider.dart';
+import 'package:tuncbt/providers/team_provider.dart';
 
 class DrawerController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -165,189 +167,135 @@ class DrawerController extends GetxController {
 }
 
 class DrawerWidget extends StatelessWidget {
-  DrawerWidget({Key? key}) : super(key: key);
+  const DrawerWidget({Key? key}) : super(key: key);
 
-  final DrawerController controller = Get.put(DrawerController());
+  Future<void> _handleSignOut(BuildContext context) async {
+    try {
+      // Önce drawer'ı kapat
+      Navigator.of(context).pop();
+
+      // TeamProvider'ı temizle
+      final teamProvider = Provider.of<TeamProvider>(context, listen: false);
+      await teamProvider.clearTeamData();
+
+      // Firebase'den çıkış yap
+      await FirebaseAuth.instance.signOut();
+
+      // Auth sayfasına yönlendir
+      Get.offAllNamed('/auth');
+    } catch (e) {
+      print('Sign out error: $e');
+      Get.snackbar(
+        'Hata',
+        'Çıkış yapılırken bir sorun oluştu',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final teamProvider = Provider.of<TeamProvider>(context);
+    final currentTeam = teamProvider.currentTeam;
+    final isAdmin = teamProvider.isAdmin;
+
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildDrawerHeader(context),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return Column(
-                      children: [
-                        _buildAnimatedListTile(
-                          context: context,
-                          label: AppLocalizations.of(context)!.teamTasks,
-                          icon: Icons.task_outlined,
-                          onTap: controller.navigateToTeamTasks,
-                        ),
-                        _buildAnimatedListTile(
-                          context: context,
-                          label: AppLocalizations.of(context)!.myAccount,
-                          icon: Icons.settings_outlined,
-                          onTap: controller.navigateToProfile,
-                        ),
-                        _buildAnimatedListTile(
-                          context: context,
-                          label: AppLocalizations.of(context)!.teamMembers,
-                          icon: Icons.groups_outlined,
-                          onTap: controller.navigateToTeamMembers,
-                        ),
-                        if (controller.isAdmin.value ||
-                            controller.currentUser.value?.teamRole?.name ==
-                                'manager')
-                          _buildAnimatedListTile(
-                            context: context,
-                            label: AppLocalizations.of(context)!.newTask,
-                            icon: Icons.add_task,
-                            onTap: controller.navigateToAddTask,
-                          ),
-                        _buildAnimatedListTile(
-                          context: context,
-                          label:
-                              AppLocalizations.of(context)!.shareReferralCode,
-                          icon: Icons.share,
-                          onTap: controller.shareReferralCode,
-                        ),
-                        if (controller.isAdmin.value)
-                          _buildAnimatedListTile(
-                            context: context,
-                            label: AppLocalizations.of(context)!.teamSettings,
-                            icon: Icons.settings,
-                            onTap: controller.navigateToTeamSettings,
-                          ),
-                        Divider(
-                            color: Colors.white.withOpacity(0.5),
-                            thickness: 1,
-                            height: 40.h),
-                        _buildAnimatedListTile(
-                          context: context,
-                          label: AppLocalizations.of(context)!.logout,
-                          icon: Icons.logout,
-                          onTap: controller.logout,
-                          isLogout: true,
-                        ),
-                      ],
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerHeader(BuildContext context) {
-    return Obx(() {
-      if (controller.isLoading.value) {
-        return Container(
-          height: 170.h,
-          padding: EdgeInsets.symmetric(vertical: 20.h),
-          child: const Center(child: CircularProgressIndicator()),
-        );
-      }
-
-      return Container(
-        height: 170.h,
-        padding: EdgeInsets.symmetric(vertical: 20.h),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30.r),
-            bottomRight: Radius.circular(30.r),
-          ),
-        ),
+        color: AppTheme.backgroundColor,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 100.w,
-              height: 70.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2.w),
-              ),
-              child: ClipOval(
-                  child: Icon(
-                Icons.person,
-                size: 30.r,
-              )),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              controller.currentTeam.value?.teamName ??
-                  AppLocalizations.of(context)!.appTitle,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (controller.currentUser.value != null)
-              Text(
-                controller.currentUser.value!.teamRole?.name.toUpperCase() ??
-                    '',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14.sp,
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primaryColor, AppTheme.accentColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    currentTeam?.teamName ??
+                        AppLocalizations.of(context)!.teamTasks,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    leading:
+                        const Icon(Icons.task, color: AppTheme.primaryColor),
+                    title: Text(AppLocalizations.of(context)!.tasks),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(TasksScreen.routeName);
+                    },
+                  ),
+                  if (isAdmin) ...[
+                    ListTile(
+                      leading: const Icon(Icons.people,
+                          color: AppTheme.primaryColor),
+                      title: Text(AppLocalizations.of(context)!.allWorkers),
+                      onTap: () {
+                        Get.back();
+                        Get.toNamed(AllWorkersScreen.routeName);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.settings,
+                          color: AppTheme.primaryColor),
+                      title: const Text('Takım Ayarları'),
+                      onTap: () {
+                        Get.back();
+                        Get.toNamed('/team-settings');
+                      },
+                    ),
+                  ],
+                  ListTile(
+                    leading:
+                        const Icon(Icons.person, color: AppTheme.primaryColor),
+                    title: Text(AppLocalizations.of(context)!.profile),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed('/profile');
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(16.w),
+                child: ElevatedButton.icon(
+                  onPressed: () => _handleSignOut(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    minimumSize: Size(double.infinity, 50.h),
+                  ),
+                  icon: const Icon(Icons.exit_to_app, color: Colors.white),
+                  label: Text(
+                    'Çıkış Yap',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildAnimatedListTile({
-    required BuildContext context,
-    required String label,
-    required IconData icon,
-    required VoidCallback onTap,
-    bool isLogout = false,
-  }) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 300),
-      builder: (context, double value, child) {
-        return Transform.translate(
-          offset: Offset(-100 * (1 - value), 0),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
-        );
-      },
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon,
-            color: isLogout ? Colors.red : Colors.white, size: 24.sp),
-        title: Text(
-          label,
-          style: TextStyle(
-            color: isLogout ? Colors.red : Colors.white,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-          ),
         ),
       ),
     );

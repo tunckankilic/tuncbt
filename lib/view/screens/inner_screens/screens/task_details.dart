@@ -322,24 +322,32 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
   }
 
   Widget _buildCommentsList() {
-    return Obx(() => ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: controller.currentTask.value.comments.length,
-          itemBuilder: (context, index) {
-            final comment = controller.currentTask.value.comments[index];
-            return CommentWidget(
-              commentId: comment.id,
-              commenterId: comment.userId,
-              commentBody: comment.body,
-              commenterImageUrl: comment.userImageUrl,
-              commenterName: comment.name,
-              commenterTeamRole: comment.teamRole,
-              commentTime: comment.time,
-            );
-          },
-          separatorBuilder: (context, index) => const Divider(),
-        ));
+    return Obx(() {
+      print('Yorumlar listesi yeniden oluşturuluyor');
+      print('Mevcut yorumlar: ${controller.currentTask.value.comments}');
+      print('Yorum sayısı: ${controller.currentTask.value.comments.length}');
+
+      return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.currentTask.value.comments.length,
+        itemBuilder: (context, index) {
+          final comment = controller.currentTask.value.comments[index];
+          print('Yorum oluşturuluyor - Index: $index, Body: ${comment.body}');
+
+          return CommentWidget(
+            commentId: comment.id,
+            commenterId: comment.userId,
+            commentBody: comment.body,
+            commenterImageUrl: comment.userImageUrl,
+            commenterName: comment.name,
+            commenterTeamRole: comment.teamRole,
+            commentTime: comment.time,
+          );
+        },
+        separatorBuilder: (context, index) => const Divider(),
+      );
+    });
   }
 
   Widget _dividerWidget() {

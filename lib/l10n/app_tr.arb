@@ -223,5 +223,20 @@
     "description": "Information message about becoming team admin after registration"
   },
 
-  "creatingTeam": "Takımınız oluşturuluyor...\nLütfen bekleyin."
+  "creatingTeam": "Takımınız oluşturuluyor...\nLütfen bekleyin.",
+
+  "email": "E-posta",
+  "password": "Şifre",
+  "name": "Ad Soyad",
+  "phoneNumber": "Telefon Numarası",
+  "allWorkers": "Tüm Çalışanlar",
+  "teamTasks": "Takım Görevleri",
+  "taskTitle": "Görev Başlığı",
+  "taskDescription": "Görev Açıklaması",
+  "taskCategory": "Görev Kategorisi",
+  "taskDeadline": "Görev Son Tarihi",
+  "taskUploadSuccess": "Görev başarıyla yüklendi",
+  "taskUploadError": "Görev yüklenirken hata oluştu",
+  "teamNotFound": "Takım bulunamadı",
+  "permissionDenied": "Bu işlem için yetkiniz bulunmamaktadır"
 } 

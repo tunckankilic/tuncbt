@@ -46,25 +46,23 @@ class ChatController extends GetxController {
     super.onInit();
     soundRecorder = FlutterSoundRecorder();
     updateUserStatus(true);
-    openAudio();
-    _initAudio();
   }
 
   Future<bool> showPermissionRationale() async {
     final result = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Microphone Permission'),
-        content:
-            const Text('We need microphone permission to send voice messages. '
-                'Would you like to grant permission?'),
+        title: const Text('Mikrofon İzni'),
+        content: const Text(
+            'Sesli mesaj göndermek için mikrofon iznine ihtiyacımız var. '
+            'İzin vermek ister misiniz?'),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('NOT NOW'),
+            child: const Text('ŞIMDI DEĞIL'),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('CONTINUE'),
+            child: const Text('DEVAM ET'),
           ),
         ],
       ),
@@ -76,21 +74,20 @@ class ChatController extends GetxController {
   void _showOpenSettingsDialog() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Permission Required'),
-        content:
-            const Text('Microphone permission is required for voice messages. '
-                'Please enable it in settings.'),
+        title: const Text('İzin Gerekli'),
+        content: const Text('Sesli mesaj göndermek için mikrofon izni gerekli. '
+            'Lütfen ayarlardan izin verin.'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('CANCEL'),
+            child: const Text('İPTAL'),
           ),
           TextButton(
             onPressed: () async {
               Get.back();
               await openAppSettings();
             },
-            child: const Text('OPEN SETTINGS'),
+            child: const Text('AYARLARI AÇ'),
           ),
         ],
       ),
@@ -99,16 +96,36 @@ class ChatController extends GetxController {
 
   // Ses kaydını başlat
   Future<void> startRecording() async {
-    if (!isRecorderInit.value) {
-      Get.snackbar(
-        'Error',
-        'Audio recorder is not initialized',
-        backgroundColor: Colors.red.withOpacity(0.1),
-      );
-      return;
-    }
-
     try {
+      // Mikrofon iznini kontrol et
+      final status = await Permission.microphone.status;
+
+      if (status.isDenied) {
+        // İzin henüz istenmemiş, kullanıcıya açıklama göster
+        final showRationale = await showPermissionRationale();
+        if (!showRationale) return;
+
+        // İzni iste
+        final result = await Permission.microphone.request();
+        if (!result.isGranted) {
+          if (result.isPermanentlyDenied) {
+            _showOpenSettingsDialog();
+          }
+          return;
+        }
+      } else if (status.isPermanentlyDenied) {
+        _showOpenSettingsDialog();
+        return;
+      } else if (!status.isGranted) {
+        return;
+      }
+
+      // Kaydedici başlatılmamışsa başlat
+      if (!isRecorderInit.value) {
+        await soundRecorder.openRecorder();
+        isRecorderInit.value = true;
+      }
+
       // Geçici dosya yolu oluştur
       final tempDir = await getTemporaryDirectory();
       final filePath =
@@ -120,8 +137,8 @@ class ChatController extends GetxController {
     } catch (e) {
       print('Recording error: $e');
       Get.snackbar(
-        'Error',
-        'Failed to start recording',
+        'Hata',
+        'Kayıt başlatılamadı',
         backgroundColor: Colors.red.withOpacity(0.1),
       );
     }
@@ -138,8 +155,8 @@ class ChatController extends GetxController {
     } catch (e) {
       print('Stop recording error: $e');
       Get.snackbar(
-        'Error',
-        'Failed to stop recording',
+        'Hata',
+        'Kayıt durdurulamadı',
         backgroundColor: Colors.red.withOpacity(0.1),
       );
       return null;

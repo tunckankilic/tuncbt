@@ -109,7 +109,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get taskDescription => 'Aufgabenbeschreibung';
 
   @override
-  String get taskDeadline => 'Fälligkeitsdatum';
+  String get taskDeadline => 'Aufgabenfrist';
 
   @override
   String get taskCategory => 'Aufgabenkategorie';
@@ -140,19 +140,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'Beim Löschen der Aufgabe ist ein Fehler aufgetreten';
 
   @override
-  String get taskUploadSuccess =>
-      'Aufgabe hochgeladen und Benachrichtigung erstellt';
+  String get taskUploadSuccess => 'Aufgabe erfolgreich hochgeladen';
 
   @override
-  String get taskUploadError =>
-      'Beim Hochladen der Aufgabe ist ein Fehler aufgetreten';
+  String get taskUploadError => 'Fehler beim Hochladen der Aufgabe';
 
   @override
-  String get noTasks => 'Noch keine Teamaufgaben';
+  String get noTasks => 'Keine Aufgaben gefunden';
 
   @override
   String get addTaskHint =>
-      'Klicken Sie auf den +-Button, um eine neue Aufgabe hinzuzufügen';
+      'Klicken Sie auf +, um eine neue Aufgabe hinzuzufügen';
 
   @override
   String get allFieldsRequired => 'Alle Felder sind erforderlich';
@@ -161,7 +159,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fieldRequired => 'Dieses Feld ist erforderlich';
 
   @override
-  String get teamTasks => 'Teamaufgaben';
+  String get teamTasks => 'Team-Aufgaben';
 
   @override
   String get newTask => 'Neue Aufgabe';
@@ -350,7 +348,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut';
 
   @override
-  String get notInTeam => 'Sie sind noch kein Mitglied eines Teams';
+  String get notInTeam => 'Sie gehören noch keinem Team an';
 
   @override
   String get addMember => 'Mitglied hinzufügen';
@@ -395,4 +393,26 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get teamAdminInfo =>
       'Nach der Registrierung werden Sie der Administrator Ihres eigenen Teams sein';
+
+  @override
+  String get creatingTeam => 'Ihr Team wird erstellt...\nBitte warten.';
+
+  @override
+  String get email => 'E-Mail';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phoneNumber => 'Telefonnummer';
+
+  @override
+  String get allWorkers => 'Alle Mitarbeiter';
+
+  @override
+  String get teamNotFound => 'Team nicht gefunden';
+
+  @override
+  String get permissionDenied =>
+      'Sie haben keine Berechtigung für diese Aktion';
 }

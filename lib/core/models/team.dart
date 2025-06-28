@@ -33,7 +33,7 @@ class Team {
   Map<String, dynamic> toJson() {
     return {
       'teamId': teamId,
-      'teamName': teamName,
+      'name': teamName,
       'referralCode': referralCode,
       'createdBy': createdBy,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -43,15 +43,63 @@ class Team {
   }
 
   factory Team.fromJson(Map<String, dynamic> json) {
-    return Team(
-      teamId: json['teamId'] as String,
-      teamName: json['teamName'] as String,
-      referralCode: json['referralCode'] as String?,
-      createdBy: json['createdBy'] as String,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
-      memberCount: json['memberCount'] as int,
-      isActive: json['isActive'] as bool,
-    );
+    try {
+      print('Team.fromJson başlatılıyor... Data: $json');
+
+      // createdAt alanını DateTime'a çevir
+      DateTime createdAtDate;
+      final createdAtValue = json['createdAt'];
+      if (createdAtValue is Timestamp) {
+        createdAtDate = createdAtValue.toDate();
+      } else if (createdAtValue is DateTime) {
+        createdAtDate = createdAtValue;
+      } else {
+        throw FormatException('Invalid createdAt format: $createdAtValue');
+      }
+
+      // name alanını kontrol et (Firestore'da 'name' olarak saklanıyor)
+      final name = json['name'];
+      if (name == null || (name is String && name.trim().isEmpty)) {
+        throw FormatException(
+            'Team name is required. Available fields: ${json.keys.join(", ")}');
+      }
+
+      // createdBy alanını kontrol et
+      final createdBy = json['createdBy'];
+      if (createdBy == null ||
+          (createdBy is String && createdBy.trim().isEmpty)) {
+        throw FormatException('createdBy is required');
+      }
+
+      // memberCount'u kontrol et
+      final memberCount = json['memberCount'];
+      int parsedMemberCount = 1;
+      if (memberCount != null) {
+        if (memberCount is int) {
+          parsedMemberCount = memberCount;
+        } else if (memberCount is num) {
+          parsedMemberCount = memberCount.toInt();
+        }
+      }
+
+      final team = Team(
+        teamId: json['teamId'] as String? ?? '',
+        teamName: name as String,
+        referralCode: json['referralCode'] as String?,
+        createdBy: createdBy as String,
+        createdAt: createdAtDate,
+        memberCount: parsedMemberCount,
+        isActive: json['isActive'] as bool? ?? true,
+      );
+
+      print('Team.fromJson başarılı: ${team.toJson()}');
+      return team;
+    } catch (e, stackTrace) {
+      print('Team.fromJson error: $e');
+      print('Stack trace: $stackTrace');
+      print('JSON data: $json');
+      rethrow;
+    }
   }
 
   Team copyWith({
@@ -86,5 +134,19 @@ class Team {
       return 'Takım adı en fazla 50 karakter olabilir';
     }
     return null;
+  }
+
+  static Team empty() {
+    return Team(
+      teamId: '',
+      teamName: '',
+      createdBy: '',
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Team{teamId: $teamId, teamName: $teamName, referralCode: $referralCode, createdBy: $createdBy, createdAt: $createdAt, memberCount: $memberCount, isActive: $isActive}';
   }
 }
