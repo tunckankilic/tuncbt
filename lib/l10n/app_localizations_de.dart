@@ -197,6 +197,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get referralCode => 'Empfehlungscode';
 
   @override
+  String get referralCodeTitle => 'Was ist ein Empfehlungscode?';
+
+  @override
+  String get referralCodeDescription =>
+      'Ein Empfehlungscode ist ein einzigartiger 8-stelliger Code, der verwendet wird, um einem Team beizutreten. Wenn Sie einem bestehenden Team beitreten möchten, geben Sie den Empfehlungscode ein, den Sie vom Team-Administrator erhalten haben. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie dieses Feld leer lassen.';
+
+  @override
+  String get referralCodeOptional =>
+      'Der Empfehlungscode ist optional. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie ihn leer lassen.';
+
+  @override
   String get inviteMembers => 'Mitglieder einladen';
 
   @override
@@ -273,13 +284,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get userNotFound => 'Benutzer nicht gefunden';
-
-  @override
-  String get referralCodeTitle => 'Was ist ein Empfehlungscode?';
-
-  @override
-  String get referralCodeDescription =>
-      'Ein Empfehlungscode ist ein 8-stelliger Spezialcode, den Sie von einem bestehenden Benutzer erhalten. Durch die Registrierung mit diesem Code können Sie von zusätzlichen Vorteilen profitieren.';
 
   @override
   String get authErrorUserNotFound =>

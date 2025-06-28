@@ -594,7 +594,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
                             Row(
                               children: [
                                 Text(
-                                  controller.currentTeam.value!.referralCode,
+                                  controller.currentTeam.value!.referralCode ??
+                                      '',
                                   style: TextStyle(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,

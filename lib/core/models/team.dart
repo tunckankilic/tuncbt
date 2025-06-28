@@ -5,7 +5,7 @@ import 'dart:convert';
 class Team {
   final String teamId;
   final String teamName;
-  final String referralCode;
+  final String? referralCode;
   final String createdBy;
   final DateTime createdAt;
   final int memberCount;
@@ -14,7 +14,7 @@ class Team {
   Team({
     required this.teamId,
     required this.teamName,
-    required this.referralCode,
+    this.referralCode,
     required this.createdBy,
     required this.createdAt,
     this.memberCount = 1,
@@ -46,7 +46,7 @@ class Team {
     return Team(
       teamId: json['teamId'] as String,
       teamName: json['teamName'] as String,
-      referralCode: json['referralCode'] as String,
+      referralCode: json['referralCode'] as String?,
       createdBy: json['createdBy'] as String,
       createdAt: (json['createdAt'] as Timestamp).toDate(),
       memberCount: json['memberCount'] as int,

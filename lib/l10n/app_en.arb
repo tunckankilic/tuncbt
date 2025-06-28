@@ -193,6 +193,9 @@
   "logoutConfirm": "Are you sure you want to logout?",
   "teamName": "Team Name",
   "referralCode": "Referral Code",
+  "referralCodeTitle": "What is Referral Code?",
+  "referralCodeDescription": "A referral code is a unique 8-character code used to join a team. If you want to join an existing team, enter the referral code you received from the team administrator. If you want to create your own team, you can leave this field empty.",
+  "referralCodeOptional": "Referral code is optional. If you want to create your own team, you can leave it empty.",
   "inviteMembers": "Invite Members",
   "shareReferralCode": "Share Referral Code",
   "teamSettings": "Team Settings",
@@ -226,8 +229,6 @@
   "leave": "Leave",
   "loginRequired": "Login required",
   "userNotFound": "User not found",
-  "referralCodeTitle": "What is a Referral Code?",
-  "referralCodeDescription": "A referral code is an 8-character special code you receive from an existing user. By registering with this code, you can benefit from extra advantages.",
 
   "authErrorUserNotFound": "No user found with this email address",
   "authErrorWrongPassword": "Incorrect password. Please try again",
@@ -259,8 +260,6 @@
   },
 
   "signUp": "Sign Up",
-  "noPermissionToDelete": "You don't have permission to perform this action",
-
   "noPermissionToDelete": "You don't have permission to perform this action",
 
   "error": "Error",
@@ -295,5 +294,7 @@
   "teamAdminInfo": "After registration, you will be the administrator of your own team",
   "@teamAdminInfo": {
     "description": "Information message about becoming team admin after registration"
-  }
+  },
+
+  "creatingTeam": "Creating your team...\nPlease wait."
 } 

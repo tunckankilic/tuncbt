@@ -102,7 +102,7 @@ class DrawerController extends GetxController {
             children: [
               Text(AppLocalizations.of(Get.context!)!.inviteMembersHint),
               SelectableText(
-                currentTeam.value!.referralCode,
+                currentTeam.value!.referralCode ?? '',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

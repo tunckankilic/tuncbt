@@ -15,6 +15,11 @@ import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/screens.dart';
+import 'package:tuncbt/core/constants/constants.dart' as app_constants;
+import 'package:tuncbt/core/constants/firebase_constants.dart';
+import 'package:tuncbt/utils/team_errors.dart';
+import 'package:mime/mime.dart';
+import 'package:tuncbt/view/widgets/loading_screen.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -28,6 +33,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final phoneNumberController = TextEditingController();
   final positionCPController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final referralCodeController = TextEditingController();
 
   final obscureText = true.obs;
   final isLoading = false.obs;
@@ -80,6 +86,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     phoneNumberController.dispose();
     positionCPController.dispose();
     confirmPasswordController.dispose();
+    referralCodeController.dispose();
     super.onClose();
   }
 
@@ -223,6 +230,14 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void setReferralCode(String code) async {
+    if (code.isEmpty) {
+      teamName.value = '';
+      _referralCode = null;
+      _teamId = null;
+      _invitedBy = null;
+      return;
+    }
+
     _referralCode = code;
     await _validateAndLoadTeamInfo();
   }
@@ -263,42 +278,100 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
+  Future<String?> _uploadProfileImage(String uid, File imageFile) async {
+    try {
+      print('Profil resmi yükleme işlemi başlatılıyor...');
+
+      // Resim boyutunu kontrol et
+      final fileSize = await imageFile.length();
+      if (fileSize > 10 * 1024 * 1024) {
+        throw Exception('Resim boyutu 10MB\'dan büyük olamaz');
+      }
+
+      // Resim formatını kontrol et
+      final fileType = lookupMimeType(imageFile.path);
+      if (fileType == null || !fileType.startsWith('image/')) {
+        throw Exception(
+            'Geçersiz dosya formatı. Sadece resim dosyaları yüklenebilir.');
+      }
+
+      // Storage referansını oluştur
+      final fileName = '$uid.jpg';
+      final storageRef =
+          _storage.ref().child('profilePics').child(uid).child(fileName);
+
+      // Resmi yükle
+      print('Resim yükleniyor...');
+      final uploadTask = await storageRef.putFile(
+        imageFile,
+        SettableMetadata(
+          contentType: 'image/jpeg',
+          customMetadata: {
+            'uploadedBy': uid,
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        ),
+      );
+
+      if (uploadTask.state == TaskState.success) {
+        // Download URL'yi al
+        final downloadUrl = await storageRef.getDownloadURL();
+        print('Profil resmi başarıyla yüklendi: $downloadUrl');
+        return downloadUrl;
+      } else {
+        throw Exception('Resim yükleme başarısız oldu');
+      }
+    } catch (e) {
+      print('Profil resmi yükleme hatası: $e');
+      rethrow;
+    }
+  }
+
   Future<void> signUp({bool isSocial = false}) async {
     if (isLoading.value) return;
     isLoading.value = true;
-    _showLoadingOverlay();
+
     try {
       String uid = _auth.currentUser?.uid ?? '';
       String imageUrl = '';
 
+      // Loading ekranını göster
+      Get.to(() => LoadingScreen(
+            message: AppLocalizations.of(Get.context!)!.creatingTeam,
+          ));
+
       if (!isSocial) {
+        print('Kayıt işlemi başlatılıyor...');
         UserCredential authResult = await _auth.createUserWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
           password: passwordController.text.trim(),
         );
         uid = authResult.user!.uid;
+        print('Firebase Auth kaydı başarılı. UID: $uid');
       }
 
       if (imageFile.value != null) {
-        String fileName = '$uid.jpg';
-        Reference storageRef =
-            _storage.ref().child('userImages').child(fileName);
-        await storageRef.putFile(imageFile.value!);
-        imageUrl = await storageRef.getDownloadURL();
+        print('Profil resmi yükleniyor...');
+        try {
+          imageUrl = await _uploadProfileImage(uid, imageFile.value!) ?? '';
+        } catch (e) {
+          print('Profil resmi yükleme hatası: $e');
+        }
       } else if (isSocial) {
         imageUrl = _auth.currentUser?.photoURL ?? '';
       }
 
-      // Referans kodu yoksa yeni takım oluştur
       if (_referralCode == null) {
+        print('Yeni takım oluşturuluyor...');
         // Yeni takım oluştur
         DocumentReference teamRef = await _firestore.collection('teams').add({
           'name': '${fullNameController.text}\'s Team',
           'createdAt': FieldValue.serverTimestamp(),
           'createdBy': uid,
-          'members': [uid],
-          'admins': [uid],
+          'memberCount': 1,
+          'isActive': true,
         });
+        print('Takım oluşturuldu. Team ID: ${teamRef.id}');
 
         // Kullanıcıyı admin olarak kaydet
         UserModel newUser = UserModel(
@@ -314,12 +387,48 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           teamRole: TeamRole.admin,
         );
 
+        print('Kullanıcı bilgileri Firestore\'a kaydediliyor...');
         await _firestore
             .collection('users')
             .doc(uid)
             .set(newUser.toFirestore());
+        print('Kullanıcı bilgileri kaydedildi');
+
+        // Takım üyeleri koleksiyonuna ekle
+        print('Takım üyeliği oluşturuluyor...');
+        await _firestore
+            .collection('team_members')
+            .doc('${teamRef.id}_$uid')
+            .set({
+          'userId': uid,
+          'teamId': teamRef.id,
+          'role': TeamRole.admin.toString().split('.').last,
+          'joinedAt': FieldValue.serverTimestamp(),
+          'isActive': true,
+        });
+        print('Takım üyeliği oluşturuldu');
       } else {
-        // Referans kodu varsa mevcut takıma üye olarak ekle
+        print('Mevcut takıma katılma işlemi başlatılıyor...');
+        print('Referans kodu: $_referralCode, Team ID: $_teamId');
+
+        if (_teamId == null) {
+          throw TeamValidationException('Team not found');
+        }
+
+        // Takımın var olduğunu kontrol et
+        final teamDoc = await _firestore.collection('teams').doc(_teamId).get();
+        if (!teamDoc.exists || !(teamDoc.data()?['isActive'] ?? false)) {
+          throw TeamValidationException('Team not found or inactive');
+        }
+
+        print('Takım kontrolü başarılı. Takım aktif.');
+
+        // Takım kapasitesini kontrol et
+        final currentMemberCount = teamDoc.data()?['memberCount'] ?? 0;
+        if (currentMemberCount >= app_constants.Constants.maxTeamSize) {
+          throw TeamCapacityException();
+        }
+
         UserModel newUser = UserModel(
           id: uid,
           name: fullNameController.text,
@@ -328,51 +437,85 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           phoneNumber: phoneNumberController.text,
           position: positionCPController.text,
           createdAt: DateTime.now(),
-          hasTeam: _teamId != null,
+          hasTeam: true,
           teamId: _teamId,
           invitedBy: _invitedBy,
           teamRole: TeamRole.member,
         );
 
+        print('Kullanıcı bilgileri Firestore\'a kaydediliyor...');
         await _firestore
             .collection('users')
             .doc(uid)
             .set(newUser.toFirestore());
+        print('Kullanıcı bilgileri kaydedildi');
 
-        // Takım belgesini güncelle
-        if (_teamId != null) {
-          await _firestore.collection('teams').doc(_teamId).update({
-            'members': FieldValue.arrayUnion([uid]),
-          });
-        }
-
-        // Referans kodunu kullanıldı olarak işaretle
-        await _firestore
-            .collection('referral_codes')
-            .doc(_referralCode)
-            .update({
-          'isUsed': true,
-          'usedBy': uid,
-          'usedAt': FieldValue.serverTimestamp(),
+        print('Takım üyeliği oluşturuluyor...');
+        await _firestore.collection('team_members').doc('${_teamId}_$uid').set({
+          'userId': uid,
+          'teamId': _teamId,
+          'role': TeamRole.member.toString().split('.').last,
+          'joinedAt': FieldValue.serverTimestamp(),
+          'isActive': true,
+          'invitedBy': _invitedBy,
         });
+        print('Takım üyeliği oluşturuldu');
+
+        print('Takım üye sayısı güncelleniyor...');
+        await _firestore.collection('teams').doc(_teamId).update({
+          'memberCount': FieldValue.increment(1),
+        });
+        print('Takım üye sayısı güncellendi');
+
+        if (_referralCode != null) {
+          print('Referans kodu güncelleniyor...');
+          await _firestore
+              .collection('referral_codes')
+              .doc(_referralCode)
+              .update({
+            'usedBy': uid,
+            'usedAt': FieldValue.serverTimestamp(),
+            'isActive': false,
+          });
+          print('Referans kodu güncellendi');
+        }
       }
 
       if (!isSocial) {
+        print('Firebase Auth profili güncelleniyor...');
         await _auth.currentUser!.updateDisplayName(fullNameController.text);
         await _auth.currentUser!.updatePhotoURL(imageUrl);
         await _auth.currentUser!.reload();
+        print('Firebase Auth profili güncellendi');
       }
 
+      print('Kayıt işlemi başarılı, TasksScreen\'e yönlendiriliyor...');
+      await Future.delayed(const Duration(seconds: 1));
       Get.offAllNamed(TasksScreen.routeName);
     } on FirebaseAuthException catch (e) {
-      Get.snackbar('Kayıt Başarısız', _getReadableAuthError(e));
-    } catch (error) {
-      print('Error during signup: $error');
+      print('FirebaseAuthException: ${e.code} - ${e.message}');
+      Get.back(); // Loading ekranını kapat
       Get.snackbar(
-          'Hata', 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
+        'Kayıt Başarısız',
+        _getReadableAuthError(e),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+      );
+    } catch (error) {
+      print('Beklenmeyen hata: $error');
+      print('Hata detayı: ${error.toString()}');
+      print('Stack trace: ${StackTrace.current}');
+      Get.back(); // Loading ekranını kapat
+      Get.snackbar(
+        'Hata',
+        'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+      );
     } finally {
       isLoading.value = false;
-      _hideLoadingOverlay();
     }
   }
 

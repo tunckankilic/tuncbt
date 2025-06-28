@@ -460,6 +460,24 @@ abstract class AppLocalizations {
   /// **'Referral Code'**
   String get referralCode;
 
+  /// No description provided for @referralCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Referral Code?'**
+  String get referralCodeTitle;
+
+  /// No description provided for @referralCodeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A referral code is a unique 8-character code used to join a team. If you want to join an existing team, enter the referral code you received from the team administrator. If you want to create your own team, you can leave this field empty.'**
+  String get referralCodeDescription;
+
+  /// No description provided for @referralCodeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral code is optional. If you want to create your own team, you can leave it empty.'**
+  String get referralCodeOptional;
+
   /// No description provided for @inviteMembers.
   ///
   /// In en, this message translates to:
@@ -609,18 +627,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User not found'**
   String get userNotFound;
-
-  /// No description provided for @referralCodeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'What is a Referral Code?'**
-  String get referralCodeTitle;
-
-  /// No description provided for @referralCodeDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'A referral code is an 8-character special code you receive from an existing user. By registering with this code, you can benefit from extra advantages.'**
-  String get referralCodeDescription;
 
   /// No description provided for @authErrorUserNotFound.
   ///
