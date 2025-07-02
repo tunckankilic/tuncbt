@@ -42,14 +42,23 @@ class TeamCache extends GetxService {
 
   void _cleanExpiredCache() {
     final now = DateTime.now();
+    final expiredKeys = <String>[];
+
     _lastUpdated.forEach((key, timestamp) {
       if (now.difference(timestamp) > _cacheExpiration) {
-        _teamCache.remove(key);
-        _membersCache.remove(key);
-        _lastUpdated.remove(key);
+        expiredKeys.add(key);
       }
     });
-    _saveCachedData();
+
+    for (final key in expiredKeys) {
+      _teamCache.remove(key);
+      _membersCache.remove(key);
+      _lastUpdated.remove(key);
+    }
+
+    if (expiredKeys.isNotEmpty) {
+      _saveCachedData();
+    }
   }
 
   Future<void> _saveCachedData() async {
@@ -68,13 +77,43 @@ class TeamCache extends GetxService {
     final membersData = _prefs.getString(_membersCacheKey);
 
     if (teamData != null) {
-      // JSON'dan Team nesnelerine dönüştür
-      // _teamCache.value = ...
+      try {
+        final Map<String, dynamic> teamMap = Map<String, dynamic>.from(
+          Map.from(teamData as Map<String, dynamic>),
+        );
+        _teamCache.value = Map.fromEntries(
+          teamMap.entries.map(
+            (entry) => MapEntry(
+              entry.key,
+              Team.fromJson(entry.value as Map<String, dynamic>),
+            ),
+          ),
+        );
+      } catch (e) {
+        print('Takım verilerini yüklerken hata: $e');
+        _teamCache.value = {};
+      }
     }
 
     if (membersData != null) {
-      // JSON'dan TeamMember nesnelerine dönüştür
-      // _membersCache.value = ...
+      try {
+        final Map<String, dynamic> membersMap = Map<String, dynamic>.from(
+          Map.from(membersData as Map<String, dynamic>),
+        );
+        _membersCache.value = Map.fromEntries(
+          membersMap.entries.map(
+            (entry) => MapEntry(
+              entry.key,
+              (entry.value as List)
+                  .map((m) => TeamMember.fromJson(m as Map<String, dynamic>))
+                  .toList(),
+            ),
+          ),
+        );
+      } catch (e) {
+        print('Takım üyesi verilerini yüklerken hata: $e');
+        _membersCache.value = {};
+      }
     }
   }
 

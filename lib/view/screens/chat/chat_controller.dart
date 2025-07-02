@@ -14,6 +14,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tuncbt/core/models/chat_group.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 
 class ChatController extends GetxController {
   // Firebase instances
@@ -32,6 +36,10 @@ class ChatController extends GetxController {
   final groups = <Group>[].obs;
   final RxBool isReceiverOnline = false.obs;
   final Rx<UserModel?> receiver = Rx<UserModel?>(null);
+  final RxBool isSending = false.obs;
+  final RxString recordDuration = '00:00'.obs;
+  final RxBool isRecordingPulsing = false.obs;
+  final RxBool isPickingFile = false.obs;
 
   // Stream subscription for user status
   StreamSubscription? _userStatusSubscription;
@@ -40,29 +48,38 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   late FlutterSoundRecorder soundRecorder;
+  Timer? _recordingTimer;
+  DateTime? _recordingStartTime;
 
   @override
   void onInit() {
     super.onInit();
     soundRecorder = FlutterSoundRecorder();
+    _initAudio();
     updateUserStatus(true);
+
+    // Receiver değiştiğinde mesajları okundu olarak işaretle
+    ever(receiver, (UserModel? user) {
+      if (user != null) {
+        markAllMessagesAsRead(user.id);
+      }
+    });
   }
 
   Future<bool> showPermissionRationale() async {
+    final context = Get.context!;
     final result = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Mikrofon İzni'),
-        content: const Text(
-            'Sesli mesaj göndermek için mikrofon iznine ihtiyacımız var. '
-            'İzin vermek ister misiniz?'),
+        title: Text(AppLocalizations.of(context)!.micPermissionTitle),
+        content: Text(AppLocalizations.of(context)!.micPermissionMessage),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('ŞIMDI DEĞIL'),
+            child: Text(AppLocalizations.of(context)!.notNow),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('DEVAM ET'),
+            child: Text(AppLocalizations.of(context)!.continueAction),
           ),
         ],
       ),
@@ -72,26 +89,50 @@ class ChatController extends GetxController {
   }
 
   void _showOpenSettingsDialog() {
+    final context = Get.context!;
     Get.dialog(
       AlertDialog(
-        title: const Text('İzin Gerekli'),
-        content: const Text('Sesli mesaj göndermek için mikrofon izni gerekli. '
-            'Lütfen ayarlardan izin verin.'),
+        title: Text(AppLocalizations.of(context)!.permissionRequired),
+        content:
+            Text(AppLocalizations.of(context)!.micPermissionSettingsMessage),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('İPTAL'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
               Get.back();
               await openAppSettings();
             },
-            child: const Text('AYARLARI AÇ'),
+            child: Text(AppLocalizations.of(context)!.openSettings),
           ),
         ],
       ),
     );
+  }
+
+  void _startRecordingTimer() {
+    _recordingStartTime = DateTime.now();
+    _recordingTimer?.cancel();
+    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_recordingStartTime != null) {
+        final duration = DateTime.now().difference(_recordingStartTime!);
+        final minutes = (duration.inSeconds ~/ 60).toString().padLeft(2, '0');
+        final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+        recordDuration.value = '$minutes:$seconds';
+      }
+    });
+    // Başlat pulsing animasyonu
+    isRecordingPulsing.value = true;
+  }
+
+  void _stopRecordingTimer() {
+    _recordingTimer?.cancel();
+    _recordingTimer = null;
+    _recordingStartTime = null;
+    recordDuration.value = '00:00';
+    isRecordingPulsing.value = false;
   }
 
   // Ses kaydını başlat
@@ -134,11 +175,12 @@ class ChatController extends GetxController {
       // Kaydı başlat
       await soundRecorder.startRecorder(toFile: filePath);
       isRecording.value = true;
+      _startRecordingTimer();
     } catch (e) {
       print('Recording error: $e');
       Get.snackbar(
-        'Hata',
-        'Kayıt başlatılamadı',
+        AppLocalizations.of(Get.context!)!.recordingError,
+        AppLocalizations.of(Get.context!)!.recordingStartError,
         backgroundColor: Colors.red.withOpacity(0.1),
       );
     }
@@ -149,14 +191,15 @@ class ChatController extends GetxController {
     if (!isRecording.value) return null;
 
     try {
+      _stopRecordingTimer();
       final filePath = await soundRecorder.stopRecorder();
       isRecording.value = false;
       return filePath;
     } catch (e) {
       print('Stop recording error: $e');
       Get.snackbar(
-        'Hata',
-        'Kayıt durdurulamadı',
+        AppLocalizations.of(Get.context!)!.recordingError,
+        AppLocalizations.of(Get.context!)!.recordingStopError,
         backgroundColor: Colors.red.withOpacity(0.1),
       );
       return null;
@@ -165,44 +208,13 @@ class ChatController extends GetxController {
 
   Future<void> _initAudio() async {
     try {
-      // Önce izin durumunu kontrol et
       final status = await Permission.microphone.status;
-
-      if (status.isDenied) {
-        // İzin henüz istenmemiş, kullanıcıya açıklama göster
-        final showRationale = await showPermissionRationale();
-        if (!showRationale) return;
-      }
-
-      // İzni iste
-      final result = await Permission.microphone.request();
-
-      if (result.isGranted) {
-        // İzin verildi, kaydediciyi başlat
+      if (status.isGranted) {
         await soundRecorder.openRecorder();
         isRecorderInit.value = true;
-      } else if (result.isPermanentlyDenied) {
-        // Kullanıcı kalıcı olarak reddetti, ayarlara yönlendir
-        _showOpenSettingsDialog();
-      } else {
-        // İzin reddedildi, kullanıcıya bilgi ver
-        Get.snackbar(
-          'Permission Required',
-          'Microphone permission is required for voice messages',
-          backgroundColor: Colors.red.withOpacity(0.1),
-          duration: const Duration(seconds: 3),
-          snackPosition: SnackPosition.TOP,
-        );
       }
     } catch (e) {
       print('Audio initialization error: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to initialize audio recorder',
-        backgroundColor: Colors.red.withOpacity(0.1),
-        duration: const Duration(seconds: 3),
-        snackPosition: SnackPosition.TOP,
-      );
     }
   }
 
@@ -289,7 +301,10 @@ class ChatController extends GetxController {
   // Kullanıcı durumunu güncelle
   Future<void> updateUserStatus(bool isOnline) async {
     try {
-      await _firestore.collection('users').doc(receiver.value?.id).update({
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return;
+
+      await _firestore.collection('users').doc(currentUser.uid).update({
         'isOnline': isOnline,
         'lastSeen': FieldValue.serverTimestamp(),
       });
@@ -313,7 +328,7 @@ class ChatController extends GetxController {
       return snapshot.docs.map((doc) {
         final data = doc.data();
         print('Message data: $data'); // Debug için
-        return Message.fromJson(data);
+        return Message.fromMap(data);
       }).toList();
     });
   }
@@ -342,7 +357,7 @@ class ChatController extends GetxController {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
+      return snapshot.docs.map((doc) => Message.fromMap(doc.data())).toList();
     });
   }
 
@@ -363,7 +378,7 @@ class ChatController extends GetxController {
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
         print('Current user is null');
-        throw Exception('User not authenticated');
+        throw Exception(AppLocalizations.of(context)!.sessionExpired);
       }
 
       // 3. Chat ID oluşturma
@@ -386,11 +401,10 @@ class ChatController extends GetxController {
         timestamp: timestamp,
         type: MessageType.text,
         isRead: false,
-        // MessageReply ile ilgili alanları nullable yap ve null kontrolü ekle
-        replyTo: null, // messageReply.value?.message yerine direkt null
-        repliedTo: null, // Yanıtlama özelliğini şimdilik devre dışı bırak
-        repliedMessageType: null, // Reply type'ı da null bırak
-        mediaUrl: null,
+        replyTo: messageReply.value?.message,
+        repliedTo: messageReply.value?.repliedTo,
+        repliedMessageType: messageReply.value?.messageEnum,
+        mediaUrl: messageReply.value?.mediaUrl,
       );
 
       // 5. Mesajı gönderme
@@ -408,22 +422,40 @@ class ChatController extends GetxController {
         await _updateLastMessage(chatRoomId, message);
       }
 
-      // 7. Input temizleme
+      // 7. Input temizleme ve reply sıfırlama
       messageController.clear();
+      messageReply.value = null;
 
       print('Message sent successfully');
     } catch (e, stackTrace) {
-      print('Error sending message:');
-      print('Error: $e');
+      print('Error sending message: $e');
       print('Stack trace: $stackTrace');
 
+      String errorMessage = AppLocalizations.of(context)!.failedToSendMessage;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(context, e.code);
+      }
+
       Get.snackbar(
-        'Error',
-        'Failed to send message: $e',
+        AppLocalizations.of(context)!.errorTitleChat,
+        errorMessage,
         backgroundColor: Colors.red.withOpacity(0.1),
         duration: const Duration(seconds: 3),
         snackPosition: SnackPosition.TOP,
       );
+    }
+  }
+
+  String _getFirebaseErrorMessage(BuildContext context, String code) {
+    switch (code) {
+      case 'permission-denied':
+        return AppLocalizations.of(context)!.noPermissionToSendMessage;
+      case 'not-found':
+        return AppLocalizations.of(context)!.chatRoomNotFound;
+      case 'network-request-failed':
+        return AppLocalizations.of(context)!.networkError;
+      default:
+        return AppLocalizations.of(context)!.failedToSendMessage;
     }
   }
 
@@ -531,6 +563,44 @@ class ChatController extends GetxController {
     }
   }
 
+  Future<void> markAllMessagesAsRead(String receiverUserId) async {
+    try {
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) return;
+
+      // Okunmamış mesaj sayısını sıfırla
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('chats')
+          .doc(receiverUserId)
+          .set({
+        'unreadCount': 0,
+        'lastMessageRead': DateTime.now(),
+      }, SetOptions(merge: true));
+
+      // Tüm mesajları okundu olarak işaretle
+      final chatRoomId = getChatRoomId(receiverUserId);
+      final messages = await _firestore
+          .collection('chats')
+          .doc(chatRoomId)
+          .collection('messages')
+          .where('isRead', isEqualTo: false)
+          .where('receiverId', isEqualTo: currentUserId)
+          .get();
+
+      final batch = _firestore.batch();
+      for (var doc in messages.docs) {
+        batch.update(doc.reference, {'isRead': true});
+      }
+      await batch.commit();
+
+      print('All messages marked as read');
+    } catch (e) {
+      print('Error marking all messages as read: $e');
+    }
+  }
+
   Future<void> sendFileMessage(
     BuildContext context,
     File file,
@@ -576,8 +646,8 @@ class ChatController extends GetxController {
     } catch (e) {
       print('Error sending file message: $e');
       Get.snackbar(
-        'Error',
-        'Failed to send file: $e',
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.failedToSendFile,
         backgroundColor: Colors.red.withOpacity(0.1),
         duration: const Duration(seconds: 3),
       );
@@ -678,8 +748,8 @@ class ChatController extends GetxController {
 
       // Başarılı gönderim bildirimi (isteğe bağlı)
       Get.snackbar(
-        'Success',
-        'GIF sent successfully',
+        AppLocalizations.of(context)!.success,
+        AppLocalizations.of(context)!.gifSentSuccessfully,
         backgroundColor: Colors.green.withOpacity(0.1),
         duration: const Duration(seconds: 2),
         snackPosition: SnackPosition.BOTTOM,
@@ -687,8 +757,8 @@ class ChatController extends GetxController {
     } catch (e) {
       print('Error sending GIF: $e'); // Hata ayıklama için
       Get.snackbar(
-        'Error',
-        'Failed to send GIF: $e',
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.failedToSendGIF,
         backgroundColor: Colors.red.withOpacity(0.1),
         duration: const Duration(seconds: 3),
         snackPosition: SnackPosition.TOP,
@@ -715,8 +785,13 @@ class ChatController extends GetxController {
     String? repliedTo,
     MessageType? repliedMessageType,
   }) {
+    print(
+        'onMessageSwipe - Message: $message, MediaUrl: $mediaUrl, Type: $messageEnum');
+    final replyMessage =
+        messageEnum == MessageType.text ? message : (mediaUrl ?? message);
+
     messageReply.value = MessageReply(
-      message,
+      replyMessage,
       isMe,
       messageEnum,
       mediaUrl: mediaUrl,
@@ -741,7 +816,9 @@ class ChatController extends GetxController {
   void hideKeyboard() => Get.focusScope?.unfocus();
 
   void onMessageChanged(String value) {
-    isShowSendButton.value = value.isNotEmpty;
+    if (value.isNotEmpty != isShowSendButton.value) {
+      isShowSendButton.value = value.isNotEmpty;
+    }
   }
 
   Future<void> markMessageAsRead(String messageId, String chatRoomId) async {
@@ -757,6 +834,516 @@ class ChatController extends GetxController {
     }
   }
 
+  Future<void> handleSendMessage(
+      BuildContext context, String receiverUserId, bool isGroupChat) async {
+    if (isSending.value) return;
+
+    try {
+      isSending.value = true;
+      await sendTextMessage(context, receiverUserId, isGroupChat);
+      messageController.clear();
+      isShowSendButton.value = false;
+    } finally {
+      isSending.value = false;
+    }
+  }
+
+  Future<void> handleRecordingStart() async {
+    if (!isRecording.value) {
+      await startRecording();
+    }
+  }
+
+  Future<void> handleRecordingStop(
+      BuildContext context, String receiverUserId, bool isGroupChat) async {
+    if (isRecording.value) {
+      final audioPath = await stopRecording();
+      if (audioPath != null) {
+        await sendFileMessage(
+          context,
+          File(audioPath),
+          receiverUserId,
+          MessageType.audio,
+          isGroupChat,
+        );
+      }
+    }
+  }
+
+  Future<void> handleRecordingCancel() async {
+    if (isRecording.value) {
+      await stopRecording();
+    }
+  }
+
+  Future<void> pickAndSendFile(BuildContext context, String receiverUserId,
+      bool isGroupChat, MessageType type) async {
+    if (isPickingFile.value) return;
+
+    try {
+      isPickingFile.value = true;
+      FilePickerResult? result;
+      File? file;
+
+      switch (type) {
+        case MessageType.image:
+          final ImagePicker picker = ImagePicker();
+          final XFile? image = await picker.pickImage(
+            source: ImageSource.gallery,
+            imageQuality: 70,
+          );
+          if (image != null) {
+            file = File(image.path);
+          }
+          break;
+
+        case MessageType.video:
+          final ImagePicker picker = ImagePicker();
+          final XFile? video = await picker.pickVideo(
+            source: ImageSource.gallery,
+          );
+          if (video != null) {
+            file = File(video.path);
+          }
+          break;
+
+        case MessageType.audio:
+          result = await FilePicker.platform.pickFiles(
+            type: FileType.audio,
+          );
+          if (result != null && result.files.single.path != null) {
+            file = File(result.files.single.path!);
+          }
+          break;
+
+        default:
+          break;
+      }
+
+      if (file != null) {
+        await sendFileMessage(
+          context,
+          file,
+          receiverUserId,
+          type,
+          isGroupChat,
+        );
+      }
+    } catch (e) {
+      print('Dosya seçme hatası: $e');
+      Get.snackbar(
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.filePickingError,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    } finally {
+      isPickingFile.value = false;
+    }
+  }
+
+  void showAttachmentOptions(
+      BuildContext context, String receiverUserId, bool isGroupChat) {
+    if (isPickingFile.value) return;
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo, color: Color(0xFF128C7E)),
+              title: Text(AppLocalizations.of(context)!.photo),
+              onTap: () {
+                Get.back();
+                pickAndSendFile(
+                    context, receiverUserId, isGroupChat, MessageType.image);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam, color: Color(0xFF128C7E)),
+              title: Text(AppLocalizations.of(context)!.video),
+              onTap: () {
+                Get.back();
+                pickAndSendFile(
+                    context, receiverUserId, isGroupChat, MessageType.video);
+              },
+            ),
+          ],
+        ),
+      ),
+      isDismissible: true,
+      enableDrag: true,
+    );
+  }
+
+  Future<void> deleteMessage(String messageId, String receiverUserId) async {
+    try {
+      final chatRoomId = getChatRoomId(receiverUserId);
+      await _firestore
+          .collection('chats')
+          .doc(chatRoomId)
+          .collection('messages')
+          .doc(messageId)
+          .delete();
+
+      // Son mesajı güncelle
+      final messages = await _firestore
+          .collection('chats')
+          .doc(chatRoomId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
+
+      if (messages.docs.isNotEmpty) {
+        final lastMessage = Message.fromMap(messages.docs.first.data());
+        await _updateLastMessage(chatRoomId, lastMessage);
+      }
+    } catch (e) {
+      print('Error deleting message: $e');
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.error,
+        AppLocalizations.of(Get.context!)!.messageDeletionError,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    }
+  }
+
+  Future<void> blockUser(String userId) async {
+    try {
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) return;
+
+      // Engellenen kullanıcıyı kaydet
+      await _firestore.collection('users').doc(currentUserId).update({
+        'blockedUsers': FieldValue.arrayUnion([userId]),
+      });
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.success,
+        AppLocalizations.of(Get.context!)!.userBlocked,
+        backgroundColor: Colors.green.withOpacity(0.1),
+      );
+    } catch (e) {
+      print('Error blocking user: $e');
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.error,
+        AppLocalizations.of(Get.context!)!.userBlockError,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    }
+  }
+
+  Future<void> unblockUser(String userId) async {
+    try {
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) return;
+
+      await _firestore.collection('users').doc(currentUserId).update({
+        'blockedUsers': FieldValue.arrayRemove([userId]),
+      });
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.success,
+        AppLocalizations.of(Get.context!)!.userUnblocked,
+        backgroundColor: Colors.green.withOpacity(0.1),
+      );
+    } catch (e) {
+      print('Error unblocking user: $e');
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.error,
+        AppLocalizations.of(Get.context!)!.userUnblockError,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    }
+  }
+
+  Future<bool> isUserBlocked(String userId) async {
+    try {
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) return false;
+
+      final userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      final blockedUsers =
+          List<String>.from(userDoc.data()?['blockedUsers'] ?? []);
+      return blockedUsers.contains(userId);
+    } catch (e) {
+      print('Error checking blocked status: $e');
+      return false;
+    }
+  }
+
+  Future<List<UserModel>> getTeamMembers() async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return [];
+
+      final userDoc =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+      if (!userDoc.exists) return [];
+
+      final userData = UserModel.fromFirestore(userDoc);
+      if (userData.teamId == null) return [];
+
+      final teamMembers = await _firestore
+          .collection('users')
+          .where('teamId', isEqualTo: userData.teamId)
+          .where(FieldPath.documentId, isNotEqualTo: currentUser.uid)
+          .get();
+
+      return teamMembers.docs
+          .map((doc) => UserModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error getting team members: $e');
+      return [];
+    }
+  }
+
+  Future<void> createGroup({
+    required String name,
+    required String description,
+    required List<String> members,
+    File? imageFile,
+  }) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return;
+
+      String imageUrl = '';
+      if (imageFile != null) {
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final ref = _storage.ref().child('group_images').child(fileName);
+        await ref.putFile(imageFile);
+        imageUrl = await ref.getDownloadURL();
+      }
+
+      // Grup oluştur
+      final groupRef = await _firestore.collection('chat_groups').add({
+        'name': name,
+        'description': description,
+        'imageUrl': imageUrl,
+        'createdBy': currentUser.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+        'members': [...members, currentUser.uid],
+        'admins': [currentUser.uid],
+        'unreadCounts': {},
+      });
+
+      // Grup sohbeti koleksiyonunu oluştur
+      await _firestore.collection('group_chats').doc(groupRef.id).set({
+        'lastMessage': 'Grup oluşturuldu',
+        'lastMessageTime': FieldValue.serverTimestamp(),
+        'lastMessageType': 'system',
+      });
+
+      print('Group created successfully');
+    } catch (e) {
+      print('Error creating group: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> addMembersToGroup(
+      String groupId, List<String> newMembers) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return;
+
+      final groupDoc =
+          await _firestore.collection('chat_groups').doc(groupId).get();
+      if (!groupDoc.exists) return;
+
+      final group = ChatGroup.fromFirestore(groupDoc);
+      if (!group.isAdmin(currentUser.uid)) {
+        throw Exception(AppLocalizations.of(Get.context!)!.onlyAdminsCanAdd);
+      }
+
+      await _firestore.collection('chat_groups').doc(groupId).update({
+        'members': FieldValue.arrayUnion(newMembers),
+      });
+
+      // Sistem mesajı ekle
+      await _firestore
+          .collection('group_chats')
+          .doc(groupId)
+          .collection('messages')
+          .add({
+        'type': 'system',
+        'content': 'Yeni üyeler eklendi',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('Members added to group successfully');
+    } catch (e) {
+      print('Error adding members to group: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> removeMemberFromGroup(String groupId, String memberId) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw Exception(AppLocalizations.of(Get.context!)!.sessionExpired);
+      }
+
+      final groupDoc =
+          await _firestore.collection('chat_groups').doc(groupId).get();
+      if (!groupDoc.exists) return;
+
+      final group = ChatGroup.fromFirestore(groupDoc);
+      if (!group.isAdmin(currentUser.uid)) {
+        throw Exception(AppLocalizations.of(Get.context!)!.onlyAdminsCanRemove);
+      }
+
+      await _firestore.collection('chat_groups').doc(groupId).update({
+        'members': FieldValue.arrayRemove([memberId]),
+        'admins': FieldValue.arrayRemove([memberId]),
+      });
+
+      // Sistem mesajı ekle
+      await _firestore
+          .collection('group_chats')
+          .doc(groupId)
+          .collection('messages')
+          .add({
+        'type': 'system',
+        'content': 'Bir üye gruptan çıkarıldı',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('Member removed from group successfully');
+    } catch (e, stackTrace) {
+      print('Error removing member from group: $e');
+      print('Stack trace: $stackTrace');
+
+      String errorMessage =
+          AppLocalizations.of(Get.context!)!.failedToRemoveMember;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(Get.context!, e.code);
+      }
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.errorTitleGroup,
+        errorMessage,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    }
+  }
+
+  Future<void> makeGroupAdmin(String groupId, String userId) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw Exception(AppLocalizations.of(Get.context!)!.sessionExpired);
+      }
+
+      final groupDoc =
+          await _firestore.collection('chat_groups').doc(groupId).get();
+      if (!groupDoc.exists) return;
+
+      final group = ChatGroup.fromFirestore(groupDoc);
+      if (!group.isAdmin(currentUser.uid)) {
+        throw Exception(
+            AppLocalizations.of(Get.context!)!.onlyAdminsCanPromote);
+      }
+
+      await _firestore.collection('chat_groups').doc(groupId).update({
+        'admins': FieldValue.arrayUnion([userId]),
+      });
+
+      // Sistem mesajı ekle
+      await _firestore
+          .collection('group_chats')
+          .doc(groupId)
+          .collection('messages')
+          .add({
+        'type': 'system',
+        'content': 'Yeni grup admini atandı',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('User made group admin successfully');
+    } catch (e, stackTrace) {
+      print('Error making user group admin: $e');
+      print('Stack trace: $stackTrace');
+
+      String errorMessage =
+          AppLocalizations.of(Get.context!)!.failedToPromoteAdmin;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(Get.context!, e.code);
+      }
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.errorTitleGroup,
+        errorMessage,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
+    }
+  }
+
+  Stream<List<ChatGroup>> getMyGroups() {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return Stream.value([]);
+
+    return _firestore
+        .collection('chat_groups')
+        .where('members', arrayContains: currentUser.uid)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => ChatGroup.fromFirestore(doc)).toList());
+  }
+
+  Stream<List<Message>> getGroupMessages(String groupId) {
+    return _firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((event) {
+      return event.docs.map((e) => Message.fromMap(e.data())).toList();
+    });
+  }
+
+  Future<void> sendGroupMessage(
+    String groupId,
+    String message,
+    MessageType type,
+  ) async {
+    try {
+      final timeSent = DateTime.now();
+      final messageDoc = Message(
+        messageId: _uuid.v4(),
+        senderId: _auth.currentUser!.uid,
+        content: message,
+        timestamp: timeSent,
+        type: type,
+        isRead: false,
+      );
+
+      await _firestore
+          .collection('groups')
+          .doc(groupId)
+          .collection('messages')
+          .add(messageDoc.toMap());
+
+      await _firestore.collection('groups').doc(groupId).update({
+        'lastMessage': message,
+        'lastMessageTime': timeSent,
+      });
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
+  }
+
   @override
   void onClose() {
     messageController.dispose();
@@ -766,7 +1353,7 @@ class ChatController extends GetxController {
     if (isRecorderInit.value) {
       soundRecorder.closeRecorder();
     }
-
+    _recordingTimer?.cancel();
     super.onClose();
   }
 }

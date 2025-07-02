@@ -69,7 +69,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
         if (user == null) {
           return Center(
             child: Text(
-              'Kullanıcı bilgileri bulunamadı',
+              AppLocalizations.of(context)!.userNotFound,
               style: TextStyle(color: Colors.red, fontSize: 16.sp),
             ),
           );

@@ -23,7 +23,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Gizlilik Politikası',
+              AppLocalizations.of(context)!.privacyPolicy,
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
@@ -32,7 +32,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Son güncelleme: ${DateTime.now().toString().split(' ')[0]}',
+              AppLocalizations.of(context)!
+                  .lastUpdated(DateTime.now().toString().split(' ')[0]),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: AppTheme.lightTextColor,
@@ -40,33 +41,28 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
             SizedBox(height: 24.h),
             _buildSection(
-              'Veri Toplama ve Kullanım',
-              'Uygulamamız, size daha iyi hizmet verebilmek için bazı kişisel verilerinizi toplar ve işler. Bu veriler şunları içerir:\n\n'
-                  '• İsim ve e-posta adresi\n'
-                  '• Profil fotoğrafı\n'
-                  '• Telefon numarası\n'
-                  '• Takım ve görev bilgileri\n'
-                  '• Kullanım istatistikleri',
+              AppLocalizations.of(context)!.dataCollection,
+              AppLocalizations.of(context)!.dataCollectionDesc,
             ),
             _buildSection(
-              'Veri Güvenliği',
-              'Verileriniz Firebase altyapısı kullanılarak güvenli bir şekilde saklanır ve şifrelenir. Verilerinize sadece yetkili kişiler erişebilir.',
+              AppLocalizations.of(context)!.dataSecurity,
+              AppLocalizations.of(context)!.dataSecurityDesc,
             ),
             _buildSection(
-              'Veri Paylaşımı',
-              'Verileriniz üçüncü taraflarla paylaşılmaz. Sadece takım üyeleri arasında gerekli bilgiler paylaşılır.',
+              AppLocalizations.of(context)!.dataSharing,
+              AppLocalizations.of(context)!.dataSharingDesc,
             ),
             _buildSection(
-              'Veri Silme',
-              'Hesabınızı sildiğinizde, tüm kişisel verileriniz ve ilgili içerikler (mesajlar, yorumlar, görevler) kalıcı olarak silinir.',
+              AppLocalizations.of(context)!.dataDeletion,
+              AppLocalizations.of(context)!.dataDeletionDesc,
             ),
             _buildSection(
-              'Çerezler',
-              'Uygulamamız, daha iyi bir kullanıcı deneyimi sağlamak için çerezler kullanabilir.',
+              AppLocalizations.of(context)!.cookies,
+              AppLocalizations.of(context)!.cookiesDesc,
             ),
             _buildSection(
-              'İletişim',
-              'Gizlilik politikamız hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.',
+              AppLocalizations.of(context)!.contactInfo,
+              AppLocalizations.of(context)!.contactInfoDesc,
             ),
           ],
         ),

@@ -766,11 +766,41 @@ abstract class AppLocalizations {
   /// **'Error'**
   String get error;
 
+  /// No description provided for @success.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get success;
+
   /// No description provided for @retry.
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @failedToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send message. Please try again'**
+  String get failedToSendMessage;
+
+  /// No description provided for @failedToSendFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send file'**
+  String get failedToSendFile;
+
+  /// No description provided for @gifSentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'GIF sent successfully'**
+  String get gifSentSuccessfully;
+
+  /// No description provided for @failedToSendGIF.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send GIF'**
+  String get failedToSendGIF;
 
   /// No description provided for @maximumRetryExceeded.
   ///
@@ -975,6 +1005,708 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last Updated: {date}'**
   String lastUpdated(String date);
+
+  /// No description provided for @chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get chats;
+
+  /// No description provided for @groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get groups;
+
+  /// No description provided for @newChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New Chat'**
+  String get newChat;
+
+  /// No description provided for @newGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get newGroup;
+
+  /// No description provided for @createGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get createGroup;
+
+  /// No description provided for @groupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get groupName;
+
+  /// No description provided for @groupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Optional)'**
+  String get groupDescription;
+
+  /// No description provided for @groupMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get groupMembers;
+
+  /// No description provided for @noMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No members available to add'**
+  String get noMembers;
+
+  /// No description provided for @selectMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one member'**
+  String get selectMembers;
+
+  /// No description provided for @groupCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created'**
+  String get groupCreated;
+
+  /// No description provided for @groupCreationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating group'**
+  String get groupCreationError;
+
+  /// No description provided for @noChats.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get noChats;
+
+  /// No description provided for @noGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not a member of any group yet'**
+  String get noGroups;
+
+  /// No description provided for @memberCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String memberCount(int count);
+
+  /// No description provided for @groupChatComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Group chat feature coming soon'**
+  String get groupChatComingSoon;
+
+  /// No description provided for @deleteChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chat'**
+  String get deleteChat;
+
+  /// No description provided for @deleteChatConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this chat?'**
+  String get deleteChatConfirm;
+
+  /// No description provided for @block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get block;
+
+  /// No description provided for @unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblock;
+
+  /// No description provided for @onlyAdminsCanMakeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Only group admins can assign new admins'**
+  String get onlyAdminsCanMakeAdmin;
+
+  /// No description provided for @newMembersAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get newMembersAdded;
+
+  /// No description provided for @newAdminAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get newAdminAssigned;
+
+  /// No description provided for @groupCreatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created'**
+  String get groupCreatedMessage;
+
+  /// No description provided for @micPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone Permission'**
+  String get micPermissionTitle;
+
+  /// No description provided for @micPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We need microphone permission to send voice messages. Would you like to grant permission?'**
+  String get micPermissionMessage;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'NOT NOW'**
+  String get notNow;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUE'**
+  String get continueAction;
+
+  /// No description provided for @permissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Required'**
+  String get permissionRequired;
+
+  /// No description provided for @micPermissionSettingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission is required to send voice messages. Please grant permission in settings.'**
+  String get micPermissionSettingsMessage;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN SETTINGS'**
+  String get openSettings;
+
+  /// No description provided for @recordingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get recordingError;
+
+  /// No description provided for @recordingStartError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start recording'**
+  String get recordingStartError;
+
+  /// No description provided for @recordingStopError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not stop recording'**
+  String get recordingStopError;
+
+  /// No description provided for @filePickingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking file'**
+  String get filePickingError;
+
+  /// No description provided for @attachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachments;
+
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @messageDeletionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting message'**
+  String get messageDeletionError;
+
+  /// No description provided for @userBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User blocked'**
+  String get userBlocked;
+
+  /// No description provided for @userBlockError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error blocking user'**
+  String get userBlockError;
+
+  /// No description provided for @userUnblocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User unblocked'**
+  String get userUnblocked;
+
+  /// No description provided for @userUnblockError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error unblocking user'**
+  String get userUnblockError;
+
+  /// No description provided for @onlyAdminsCanAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Only group admins can add members'**
+  String get onlyAdminsCanAdd;
+
+  /// No description provided for @memberAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get memberAdded;
+
+  /// No description provided for @onlyAdminsCanRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Only group administrators can remove members'**
+  String get onlyAdminsCanRemove;
+
+  /// No description provided for @memberRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'A member was removed from the group'**
+  String get memberRemoved;
+
+  /// No description provided for @onlyAdminsCanPromote.
+  ///
+  /// In en, this message translates to:
+  /// **'Only group administrators can promote new administrators'**
+  String get onlyAdminsCanPromote;
+
+  /// No description provided for @adminAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get adminAssigned;
+
+  /// No description provided for @systemMessageNewMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get systemMessageNewMembers;
+
+  /// No description provided for @systemMessageMemberRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'A member was removed'**
+  String get systemMessageMemberRemoved;
+
+  /// No description provided for @systemMessageNewAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get systemMessageNewAdmin;
+
+  /// No description provided for @systemMessageGroupCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created'**
+  String get systemMessageGroupCreated;
+
+  /// No description provided for @teamCreationDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation Date'**
+  String get teamCreationDate;
+
+  /// No description provided for @dangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get dangerZone;
+
+  /// No description provided for @memberManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Management'**
+  String get memberManagement;
+
+  /// No description provided for @teamMemberCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String teamMemberCount(int count);
+
+  /// No description provided for @teamMembersLowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'members'**
+  String get teamMembersLowercase;
+
+  /// No description provided for @chooseYourJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your Job'**
+  String get chooseYourJob;
+
+  /// No description provided for @noTeamYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not in a team yet'**
+  String get noTeamYet;
+
+  /// No description provided for @tasksRequireTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to join a team to view tasks'**
+  String get tasksRequireTeam;
+
+  /// No description provided for @deleteComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Comment'**
+  String get deleteComment;
+
+  /// No description provided for @deleteCommentConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this comment?'**
+  String get deleteCommentConfirm;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} minutes ago'**
+  String minutesAgo(int minutes);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours ago'**
+  String hoursAgo(int hours);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String daysAgo(int days);
+
+  /// No description provided for @dataCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Collection and Usage'**
+  String get dataCollection;
+
+  /// No description provided for @dataCollectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Our app collects and processes some of your personal data to provide better service. This data includes:\n\n• Name and email address\n• Profile picture\n• Phone number\n• Team and task information\n• Usage statistics'**
+  String get dataCollectionDesc;
+
+  /// No description provided for @dataSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Security'**
+  String get dataSecurity;
+
+  /// No description provided for @dataSecurityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is stored securely and encrypted using Firebase infrastructure. Only authorized personnel can access your data.'**
+  String get dataSecurityDesc;
+
+  /// No description provided for @dataSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Sharing'**
+  String get dataSharing;
+
+  /// No description provided for @dataSharingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is not shared with third parties. Only necessary information is shared between team members.'**
+  String get dataSharingDesc;
+
+  /// No description provided for @dataDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Deletion'**
+  String get dataDeletion;
+
+  /// No description provided for @dataDeletionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When you delete your account, all your personal data and related content (messages, comments, tasks) are permanently deleted.'**
+  String get dataDeletionDesc;
+
+  /// No description provided for @cookies.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookies'**
+  String get cookies;
+
+  /// No description provided for @cookiesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Our app may use cookies to provide a better user experience.'**
+  String get cookiesDesc;
+
+  /// No description provided for @contactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contactInfo;
+
+  /// No description provided for @contactInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For questions about our privacy policy, you can reach us at support@tuncbt.com'**
+  String get contactInfoDesc;
+
+  /// No description provided for @lastUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {date}'**
+  String lastUpdatedAt(String date);
+
+  /// No description provided for @termsAgeRestriction.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Restriction'**
+  String get termsAgeRestriction;
+
+  /// No description provided for @termsAgeRestrictionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 13 years old to use this app. If you are under 13, you must use it under the supervision of a parent or legal guardian.'**
+  String get termsAgeRestrictionDesc;
+
+  /// No description provided for @accountSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Security'**
+  String get accountSecurity;
+
+  /// No description provided for @accountSecurityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for your account security. Do not share your password with anyone and keep it secure.'**
+  String get accountSecurityDesc;
+
+  /// No description provided for @unacceptableBehavior.
+  ///
+  /// In en, this message translates to:
+  /// **'Unacceptable Behavior'**
+  String get unacceptableBehavior;
+
+  /// No description provided for @unacceptableBehaviorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'• Illegal content sharing\n• Spam or unwanted content\n• Harassment or bullying\n• Sharing others\' personal data without permission\n• System abuse'**
+  String get unacceptableBehaviorDesc;
+
+  /// No description provided for @contentRights.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Rights'**
+  String get contentRights;
+
+  /// No description provided for @contentRightsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You must confirm that you own the rights to the content you share or have the right to share it.'**
+  String get contentRightsDesc;
+
+  /// No description provided for @serviceChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Changes'**
+  String get serviceChanges;
+
+  /// No description provided for @serviceChangesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We reserve the right to modify, suspend, or terminate our services without prior notice.'**
+  String get serviceChangesDesc;
+
+  /// No description provided for @disclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclaimer'**
+  String get disclaimer;
+
+  /// No description provided for @disclaimerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The application is provided \'as is\'. We do not guarantee that it will operate without interruption or errors.'**
+  String get disclaimerDesc;
+
+  /// No description provided for @termsContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get termsContact;
+
+  /// No description provided for @termsContactDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For questions about terms of service, you can reach us at support@tuncbt.com'**
+  String get termsContactDesc;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get sendEmail;
+
+  /// No description provided for @sendWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send WhatsApp Message'**
+  String get sendWhatsApp;
+
+  /// No description provided for @startChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Chat'**
+  String get startChat;
+
+  /// No description provided for @whatsAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open WhatsApp'**
+  String get whatsAppError;
+
+  /// No description provided for @emailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open email application'**
+  String get emailError;
+
+  /// No description provided for @emailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'TuncBT - Contact'**
+  String get emailSubject;
+
+  /// No description provided for @emailBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {name},\n\n'**
+  String emailBody(String name);
+
+  /// No description provided for @profile_image_size_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile image size cannot be larger than 5MB'**
+  String get profile_image_size_error;
+
+  /// No description provided for @invalid_image_format.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid file format. Only image files are allowed'**
+  String get invalid_image_format;
+
+  /// No description provided for @profile_image_upload_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload profile image. Please try again'**
+  String get profile_image_upload_failed;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please log in again'**
+  String get sessionExpired;
+
+  /// No description provided for @userNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access your user information. Please log in again'**
+  String get userNotFoundError;
+
+  /// No description provided for @unexpectedErrorWithAction.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please refresh the page and try again'**
+  String get unexpectedErrorWithAction;
+
+  /// No description provided for @errorTitleChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Error'**
+  String get errorTitleChat;
+
+  /// No description provided for @errorTitleAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Error'**
+  String get errorTitleAuth;
+
+  /// No description provided for @errorTitleGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Operation Failed'**
+  String get errorTitleGroup;
+
+  /// No description provided for @errorTitleUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Error'**
+  String get errorTitleUpload;
+
+  /// No description provided for @errorTitleNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Error'**
+  String get errorTitleNetwork;
+
+  /// No description provided for @noPermissionToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to send this message'**
+  String get noPermissionToSendMessage;
+
+  /// No description provided for @chatRoomNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room not found'**
+  String get chatRoomNotFound;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection'**
+  String get networkError;
+
+  /// No description provided for @failedToRemoveMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to remove member from group'**
+  String get failedToRemoveMember;
+
+  /// No description provided for @failedToPromoteAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to promote user to admin'**
+  String get failedToPromoteAdmin;
 }
 
 class _AppLocalizationsDelegate

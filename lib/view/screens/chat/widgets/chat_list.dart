@@ -10,17 +10,19 @@ import 'package:tuncbt/view/screens/chat/widgets/sender_message_card.dart';
 class ChatList extends GetView<ChatController> {
   final String receiverUserId;
   final bool isGroupChat;
+  final Stream<List<Message>>? messages;
 
   const ChatList({
     Key? key,
     required this.receiverUserId,
     required this.isGroupChat,
+    this.messages,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Message>>(
-      stream: controller.getChatStream(receiverUserId),
+      stream: messages ?? controller.getChatStream(receiverUserId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

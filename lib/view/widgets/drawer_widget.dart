@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer';
 import 'package:provider/provider.dart';
 import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/view/screens/chat/chat_index.dart';
 
 class DrawerController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -239,6 +240,50 @@ class DrawerWidget extends StatelessWidget {
                     onTap: () {
                       Get.back();
                       Get.toNamed(TasksScreen.routeName);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.message, color: AppTheme.primaryColor),
+                    title: const Text('Mesajlar'),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser?.uid)
+                            .collection('chats')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            int unreadCount = 0;
+                            for (var doc in snapshot.data!.docs) {
+                              unreadCount += (doc.data() as Map<String,
+                                      dynamic>)['unreadCount'] as int? ??
+                                  0;
+                            }
+                            return unreadCount > 0
+                                ? Text(
+                                    unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(ChatIndexScreen.routeName);
                     },
                   ),
                   if (isAdmin) ...[

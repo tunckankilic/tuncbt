@@ -5,6 +5,8 @@ import 'package:tuncbt/view/screens/auth/screens/auth.dart';
 import 'package:tuncbt/view/screens/auth/screens/password_renew.dart';
 import 'package:tuncbt/view/screens/bindings.dart';
 import 'package:tuncbt/view/screens/chat/chat_screen.dart';
+import 'package:tuncbt/view/screens/chat/chat_index.dart';
+import 'package:tuncbt/view/screens/chat/chat_bindings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/users/users_bindings.dart';
@@ -93,6 +95,12 @@ class RouteManager {
     GetPage(
       name: ChatScreen.routeName,
       page: () => ChatScreen(receiver: Get.arguments as UserModel),
+      binding: ChatBindings(),
+    ),
+    GetPage(
+      name: ChatIndexScreen.routeName,
+      page: () => const ChatIndexScreen(),
+      binding: ChatBindings(),
     ),
     GetPage(
       name: '/login',

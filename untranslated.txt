@@ -1,9 +1,1 @@
-{
-  "tr": [
-    "loginTitle",
-    "registerTitle",
-    "registerPassword",
-    "registerConfirmPassword",
-    "registerHasAccount"
-  ]
-}
+{}
