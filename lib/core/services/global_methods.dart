@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tuncbt/core/config/constants.dart';
 
 class GlobalMethod {
   static void showErrorDialog({
@@ -48,7 +47,7 @@ class GlobalMethod {
     return Text(
       error,
       style: TextStyle(
-        color: Constants.darkBlue,
+        color: Colors.blue[900],
         fontSize: 20,
         fontStyle: FontStyle.italic,
       ),

@@ -53,11 +53,11 @@ class UploadTask extends GetView<InnerScreenController> {
       appBar: AppBar(
         title: Text(
           '${teamProvider.currentTeam?.teamName ?? AppLocalizations.of(context)!.teamTasks} - ${AppLocalizations.of(context)!.newTask}',
-          style: const TextStyle(color: AppTheme.textColor),
+          style: TextStyle(color: AppTheme.textColor),
         ),
         backgroundColor: AppTheme.backgroundColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppTheme.primaryColor),
+        iconTheme: IconThemeData(color: AppTheme.primaryColor),
       ),
       drawer: DrawerWidget(),
       body: SafeArea(
@@ -180,23 +180,22 @@ class UploadTask extends GetView<InnerScreenController> {
               enabled: enabled,
               maxLength: maxLength,
               maxLines: maxLines,
-              style: const TextStyle(color: AppTheme.textColor),
+              style: TextStyle(color: AppTheme.textColor),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppTheme.backgroundColor,
                 prefixIcon: Icon(icon, color: AppTheme.primaryColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(color: AppTheme.primaryColor),
+                  borderSide: BorderSide(color: AppTheme.primaryColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(color: AppTheme.primaryColor),
+                  borderSide: BorderSide(color: AppTheme.primaryColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
-                  borderSide:
-                      const BorderSide(color: AppTheme.accentColor, width: 2),
+                  borderSide: BorderSide(color: AppTheme.accentColor, width: 2),
                 ),
               ),
               validator: (value) {

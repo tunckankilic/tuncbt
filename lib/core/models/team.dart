@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
 
 class Team {
   final String teamId;
@@ -21,85 +19,41 @@ class Team {
     this.isActive = true,
   });
 
-  // Generate a unique 8-character referral code
-  static String generateReferralCode(String teamName, String createdBy) {
-    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-    final input = '$teamName-$createdBy-$timestamp';
-    final bytes = utf8.encode(input);
-    final hash = sha256.convert(bytes);
-    return hash.toString().substring(0, 8).toUpperCase();
-  }
-
   Map<String, dynamic> toJson() {
     return {
       'teamId': teamId,
       'name': teamName,
       'referralCode': referralCode,
       'createdBy': createdBy,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt.toIso8601String(),
       'memberCount': memberCount,
       'isActive': isActive,
     };
   }
 
   factory Team.fromJson(Map<String, dynamic> json) {
-    try {
-      print('Team.fromJson başlatılıyor... Data: $json');
+    return Team(
+      teamId: json['teamId'] ?? '',
+      teamName: json['name'] ?? '',
+      referralCode: json['referralCode'],
+      createdBy: json['createdBy'] ?? '',
+      createdAt: DateTime.parse(json['createdAt']),
+      memberCount: json['memberCount'] ?? 1,
+      isActive: json['isActive'] ?? true,
+    );
+  }
 
-      // createdAt alanını DateTime'a çevir
-      DateTime createdAtDate;
-      final createdAtValue = json['createdAt'];
-      if (createdAtValue is Timestamp) {
-        createdAtDate = createdAtValue.toDate();
-      } else if (createdAtValue is DateTime) {
-        createdAtDate = createdAtValue;
-      } else {
-        throw FormatException('Invalid createdAt format: $createdAtValue');
-      }
-
-      // name alanını kontrol et (Firestore'da 'name' olarak saklanıyor)
-      final name = json['name'];
-      if (name == null || (name is String && name.trim().isEmpty)) {
-        throw FormatException(
-            'Team name is required. Available fields: ${json.keys.join(", ")}');
-      }
-
-      // createdBy alanını kontrol et
-      final createdBy = json['createdBy'];
-      if (createdBy == null ||
-          (createdBy is String && createdBy.trim().isEmpty)) {
-        throw FormatException('createdBy is required');
-      }
-
-      // memberCount'u kontrol et
-      final memberCount = json['memberCount'];
-      int parsedMemberCount = 1;
-      if (memberCount != null) {
-        if (memberCount is int) {
-          parsedMemberCount = memberCount;
-        } else if (memberCount is num) {
-          parsedMemberCount = memberCount.toInt();
-        }
-      }
-
-      final team = Team(
-        teamId: json['teamId'] as String? ?? '',
-        teamName: name as String,
-        referralCode: json['referralCode'] as String?,
-        createdBy: createdBy as String,
-        createdAt: createdAtDate,
-        memberCount: parsedMemberCount,
-        isActive: json['isActive'] as bool? ?? true,
-      );
-
-      print('Team.fromJson başarılı: ${team.toJson()}');
-      return team;
-    } catch (e, stackTrace) {
-      print('Team.fromJson error: $e');
-      print('Stack trace: $stackTrace');
-      print('JSON data: $json');
-      rethrow;
-    }
+  factory Team.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Team(
+      teamId: doc.id,
+      teamName: data['name'] ?? '',
+      referralCode: data['referralCode'],
+      createdBy: data['createdBy'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      memberCount: data['memberCount'] ?? 1,
+      isActive: data['isActive'] ?? true,
+    );
   }
 
   Team copyWith({

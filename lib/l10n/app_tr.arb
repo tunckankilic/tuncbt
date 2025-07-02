@@ -238,5 +238,33 @@
   "taskUploadSuccess": "Görev başarıyla yüklendi",
   "taskUploadError": "Görev yüklenirken hata oluştu",
   "teamNotFound": "Takım bulunamadı",
-  "permissionDenied": "Bu işlem için yetkiniz bulunmamaktadır"
+  "permissionDenied": "Bu işlem için yetkiniz bulunmamaktadır",
+
+  "privacyPolicy": "Gizlilik Politikası",
+  "termsOfService": "Kullanım Şartları",
+  "dataProcessing": "Veri İşleme",
+  "ageRestriction": "Yaş Sınırlaması",
+  "ageRestrictionText": "Bu uygulamayı kullanmak için en az 13 yaşında olmalısınız",
+  "legalNotice": "Yasal Bildirim",
+  "acceptTerms": "Kullanım Şartları ve Gizlilik Politikasını kabul ediyorum",
+  "acceptDataProcessing": "Kişisel verilerimin işlenmesine onay veriyorum",
+  "acceptAgeRestriction": "13 yaşından büyük olduğumu onaylıyorum",
+  "notificationPermission": "Bildirim İzni",
+  "notificationPermissionText": "Ekibinizin aktivitelerinden haberdar olmak için bildirimlere izin verin",
+  "manageNotifications": "Bildirimleri Yönet",
+  "exportData": "Verilerimi İndir",
+  "exportDataDescription": "Kişisel verilerinizin bir kopyasını indirin",
+  "deleteData": "Verilerimi Sil",
+  "deleteDataDescription": "Tüm verilerinizi sunucularımızdan kalıcı olarak silin",
+  "cookiePolicy": "Çerez Politikası",
+  "cookiePolicyDescription": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz",
+  "contactSupport": "Destek İle İletişime Geç",
+  "lastUpdated": "Son güncelleme: {date}",
+  "@lastUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 } 

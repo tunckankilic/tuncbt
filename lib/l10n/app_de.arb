@@ -316,5 +316,33 @@
   "taskUploadError": "Fehler beim Hochladen der Aufgabe",
   "notInTeam": "Sie gehören noch keinem Team an",
   "teamNotFound": "Team nicht gefunden",
-  "permissionDenied": "Sie haben keine Berechtigung für diese Aktion"
+  "permissionDenied": "Sie haben keine Berechtigung für diese Aktion",
+
+  "privacyPolicy": "Datenschutzerklärung",
+  "termsOfService": "Nutzungsbedingungen",
+  "dataProcessing": "Datenverarbeitung",
+  "ageRestriction": "Altersbeschränkung",
+  "ageRestrictionText": "Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen",
+  "legalNotice": "Rechtliche Hinweise",
+  "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen und Datenschutzerklärung",
+  "acceptDataProcessing": "Ich stimme der Verarbeitung meiner personenbezogenen Daten zu",
+  "acceptAgeRestriction": "Ich bestätige, dass ich mindestens 13 Jahre alt bin",
+  "notificationPermission": "Benachrichtigungserlaubnis",
+  "notificationPermissionText": "Erlauben Sie Benachrichtigungen, um über die Aktivitäten Ihres Teams informiert zu bleiben",
+  "manageNotifications": "Benachrichtigungen verwalten",
+  "exportData": "Meine Daten exportieren",
+  "exportDataDescription": "Laden Sie eine Kopie Ihrer persönlichen Daten herunter",
+  "deleteData": "Meine Daten löschen",
+  "deleteDataDescription": "Löschen Sie alle Ihre Daten dauerhaft von unseren Servern",
+  "cookiePolicy": "Cookie-Richtlinie",
+  "cookiePolicyDescription": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern",
+  "contactSupport": "Support kontaktieren",
+  "lastUpdated": "Zuletzt aktualisiert: {date}",
+  "@lastUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 } 

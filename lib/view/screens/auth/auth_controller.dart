@@ -5,21 +5,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/enums/team_role.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tuncbt/core/config/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/screens.dart';
-import 'package:tuncbt/core/constants/constants.dart' as app_constants;
-import 'package:tuncbt/core/constants/firebase_constants.dart';
+import 'package:tuncbt/core/config/constants.dart' as app_constants;
+import 'package:tuncbt/core/config/firebase_constants.dart';
 import 'package:tuncbt/utils/team_errors.dart';
 import 'package:mime/mime.dart';
 import 'package:tuncbt/view/widgets/loading_screen.dart';
+import 'package:tuncbt/core/services/referral_service.dart';
+import 'package:tuncbt/core/models/team.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -56,6 +58,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   String? _referralCode;
   String? _teamId;
   String? _invitedBy;
+
+  // Legal checks
+  final acceptedTerms = false.obs;
+  final acceptedDataProcessing = false.obs;
+  final acceptedAgeRestriction = false.obs;
+  final acceptedNotifications = false.obs;
 
   @override
   void onInit() {
@@ -247,22 +255,30 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
     isTeamLoading.value = true;
     try {
-      final referralDoc = await _firestore
-          .collection('referral_codes')
-          .doc(_referralCode)
-          .get();
+      final referralService = ReferralService();
+      final validationResult =
+          await referralService.validateCode(_referralCode!);
 
-      if (referralDoc.exists && !referralDoc.data()?['isUsed']) {
-        _teamId = referralDoc.data()?['teamId'];
-        _invitedBy = referralDoc.data()?['createdBy'];
+      if (validationResult.isValid && validationResult.teamId != null) {
+        _teamId = validationResult.teamId;
+        _invitedBy = validationResult.createdBy;
 
-        if (_teamId != null) {
-          final teamDoc =
-              await _firestore.collection('teams').doc(_teamId).get();
+        final teamDoc = await _firestore.collection('teams').doc(_teamId).get();
+        if (teamDoc.exists) {
+          teamName.value = teamDoc.data()?['name'] ?? '';
+        }
+      } else {
+        teamName.value = '';
+        _teamId = null;
+        _invitedBy = null;
 
-          if (teamDoc.exists) {
-            teamName.value = teamDoc.data()?['name'] ?? '';
-          }
+        if (validationResult.error != null) {
+          Get.snackbar(
+            'Hata',
+            validationResult.error!.message,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       }
     } catch (e) {

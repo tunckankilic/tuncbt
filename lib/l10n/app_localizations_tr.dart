@@ -408,4 +408,73 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get permissionDenied => 'Bu işlem için yetkiniz bulunmamaktadır';
+
+  @override
+  String get privacyPolicy => 'Gizlilik Politikası';
+
+  @override
+  String get termsOfService => 'Kullanım Şartları';
+
+  @override
+  String get dataProcessing => 'Veri İşleme';
+
+  @override
+  String get ageRestriction => 'Yaş Sınırlaması';
+
+  @override
+  String get ageRestrictionText =>
+      'Bu uygulamayı kullanmak için en az 13 yaşında olmalısınız';
+
+  @override
+  String get legalNotice => 'Yasal Bildirim';
+
+  @override
+  String get acceptTerms =>
+      'Kullanım Şartları ve Gizlilik Politikasını kabul ediyorum';
+
+  @override
+  String get acceptDataProcessing =>
+      'Kişisel verilerimin işlenmesine onay veriyorum';
+
+  @override
+  String get acceptAgeRestriction => '13 yaşından büyük olduğumu onaylıyorum';
+
+  @override
+  String get notificationPermission => 'Bildirim İzni';
+
+  @override
+  String get notificationPermissionText =>
+      'Ekibinizin aktivitelerinden haberdar olmak için bildirimlere izin verin';
+
+  @override
+  String get manageNotifications => 'Bildirimleri Yönet';
+
+  @override
+  String get exportData => 'Verilerimi İndir';
+
+  @override
+  String get exportDataDescription =>
+      'Kişisel verilerinizin bir kopyasını indirin';
+
+  @override
+  String get deleteData => 'Verilerimi Sil';
+
+  @override
+  String get deleteDataDescription =>
+      'Tüm verilerinizi sunucularımızdan kalıcı olarak silin';
+
+  @override
+  String get cookiePolicy => 'Çerez Politikası';
+
+  @override
+  String get cookiePolicyDescription =>
+      'Deneyiminizi iyileştirmek için çerezler kullanıyoruz';
+
+  @override
+  String get contactSupport => 'Destek İle İletişime Geç';
+
+  @override
+  String lastUpdated(String date) {
+    return 'Son güncelleme: $date';
+  }
 }

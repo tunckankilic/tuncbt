@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
@@ -43,6 +44,10 @@ class SignUp extends GetView<AuthController> {
                   ],
                   _buildForm(size, context),
                   SizedBox(height: 40.h),
+                  _buildLegalChecks(context),
+                  SizedBox(height: 20.h),
+                  _buildNotificationPermission(context),
+                  SizedBox(height: 20.h),
                   _buildSignUpButton(context),
                 ],
               ),
@@ -511,37 +516,102 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildSignUpButton(BuildContext context) {
-    return Obx(() => controller.isLoading.value
-        ? const Center(child: CircularProgressIndicator())
-        : MaterialButton(
-            onPressed: () {
-              if (_signUpFormKey.currentState!.validate()) {
-                controller.signUp(isSocial: controller.isSocialSignIn.value);
-              }
-            },
-            color: Colors.blue[900],
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(13.r)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 14.r),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.createTeam,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.sp),
-                  ),
-                  SizedBox(width: 16.r),
-                  Icon(Icons.add_moderator, color: Colors.white, size: 30.r),
-                ],
+  Widget _buildLegalChecks(BuildContext context) {
+    return Column(
+      children: [
+        CheckboxListTile(
+          value: controller.acceptedTerms.value,
+          onChanged: (value) => controller.acceptedTerms.value = value ?? false,
+          title: Text(
+            AppLocalizations.of(context)!.acceptTerms,
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          subtitle: Row(
+            children: [
+              TextButton(
+                onPressed: () => Get.toNamed('/terms-of-service'),
+                child: Text(
+                  AppLocalizations.of(context)!.termsOfService,
+                  style: TextStyle(fontSize: 12.sp),
+                ),
               ),
-            ),
-          ));
+              Text(' & ', style: TextStyle(fontSize: 12.sp)),
+              TextButton(
+                onPressed: () => Get.toNamed('/privacy-policy'),
+                child: Text(
+                  AppLocalizations.of(context)!.privacyPolicy,
+                  style: TextStyle(fontSize: 12.sp),
+                ),
+              ),
+            ],
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+        CheckboxListTile(
+          value: controller.acceptedDataProcessing.value,
+          onChanged: (value) =>
+              controller.acceptedDataProcessing.value = value ?? false,
+          title: Text(
+            AppLocalizations.of(context)!.acceptDataProcessing,
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+        CheckboxListTile(
+          value: controller.acceptedAgeRestriction.value,
+          onChanged: (value) =>
+              controller.acceptedAgeRestriction.value = value ?? false,
+          title: Text(
+            AppLocalizations.of(context)!.acceptAgeRestriction,
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationPermission(BuildContext context) {
+    return CheckboxListTile(
+      value: controller.acceptedNotifications.value,
+      onChanged: (value) =>
+          controller.acceptedNotifications.value = value ?? false,
+      title: Text(
+        AppLocalizations.of(context)!.notificationPermissionText,
+        style: TextStyle(fontSize: 14.sp),
+      ),
+      controlAffinity: ListTileControlAffinity.leading,
+    );
+  }
+
+  Widget _buildSignUpButton(BuildContext context) {
+    return Obx(() {
+      final canSignUp = controller.acceptedTerms.value &&
+          controller.acceptedDataProcessing.value &&
+          controller.acceptedAgeRestriction.value;
+
+      return ElevatedButton(
+        onPressed: canSignUp
+            ? () async {
+                if (_signUpFormKey.currentState!.validate()) {
+                  controller.signUp(isSocial: controller.isSocialSignIn.value);
+                }
+              }
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: canSignUp ? AppTheme.primaryColor : Colors.grey,
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+        ),
+        child: Text(
+          AppLocalizations.of(context)!.register,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    });
   }
 }
 

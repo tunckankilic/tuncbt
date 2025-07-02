@@ -87,7 +87,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
         background: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -289,7 +289,7 @@ class TaskDetailsScreen extends GetView<InnerScreenController> {
       children: [
         TextField(
           controller: controller.commentController,
-          style: const TextStyle(color: AppTheme.textColor),
+          style: TextStyle(color: AppTheme.textColor),
           maxLength: 200,
           maxLines: 3,
           decoration: InputDecoration(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
@@ -13,10 +14,8 @@ import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
-import 'package:tuncbt/view/widgets/language_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:tuncbt/providers/team_provider.dart';
-import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 
 enum UserType { commenter, worker, currentUser }
@@ -126,6 +125,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
                   ),
                 ],
               ),
+              const Divider(height: 32),
+              _buildDeleteAccountButton(context),
             ],
           ),
         );
@@ -189,7 +190,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
               ),
             ),
             SizedBox(height: 16.h),
-            ...items.map((item) => _buildInfoItem(item)).toList(),
+            ...items.map((item) => _buildInfoItem(item)),
           ],
         ),
       ),
@@ -221,6 +222,67 @@ class ProfileScreen extends GetView<InnerScreenController> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteAccountButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: ElevatedButton(
+        onPressed: () => _showDeleteAccountDialog(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_forever, size: 24.sp),
+            SizedBox(width: 8.w),
+            Text(
+              AppLocalizations.of(context)!.deleteAccount,
+              style: TextStyle(fontSize: 16.sp),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)!.deleteAccount,
+          style: TextStyle(color: Colors.red),
+        ),
+        content: Text(AppLocalizations.of(context)!.deleteAccountConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: TextStyle(color: AppTheme.textColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final accountDeletionService = AccountDeletionService();
+              await accountDeletionService.deleteAccount(LoginType.email);
+            },
+            child: Text(
+              AppLocalizations.of(context)!.delete,
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
