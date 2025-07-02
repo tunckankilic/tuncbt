@@ -281,7 +281,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get loginRequired => 'Giriş yapmanız gerekiyor';
 
   @override
-  String get userNotFound => 'Kullanıcı bilgileri bulunamadı';
+  String get userNotFound => 'Kullanıcı bulunamadı';
 
   @override
   String get authErrorUserNotFound =>
@@ -370,7 +370,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get retry => 'Tekrar Dene';
 
   @override
-  String get failedToSendMessage => 'Mesaj gönderilemedi';
+  String get failedToSendMessage =>
+      'Mesaj gönderilemedi. Lütfen tekrar deneyin';
 
   @override
   String get failedToSendFile => 'Dosya gönderilemedi';
@@ -637,14 +638,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get onlyAdminsCanRemove =>
-      'Yalnızca grup yöneticileri üye çıkarabilir';
+      'Üyeleri yalnızca grup yöneticileri çıkarabilir';
 
   @override
   String get memberRemoved => 'Bir üye gruptan çıkarıldı';
 
   @override
   String get onlyAdminsCanPromote =>
-      'Yalnızca grup yöneticileri yeni yönetici atayabilir';
+      'Yeni yönetici atamasını yalnızca grup yöneticileri yapabilir';
 
   @override
   String get adminAssigned => 'Yeni grup yöneticisi atandı';
@@ -699,17 +700,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String get justNow => 'Az önce';
 
   @override
-  String minutesAgo(Object minutes) {
+  String minutesAgo(int minutes) {
     return '$minutes dakika önce';
   }
 
   @override
-  String hoursAgo(Object hours) {
+  String hoursAgo(int hours) {
     return '$hours saat önce';
   }
 
   @override
-  String daysAgo(Object days) {
+  String daysAgo(int days) {
     return '$days gün önce';
   }
 
@@ -756,7 +757,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Gizlilik politikamız hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz';
 
   @override
-  String lastUpdatedAt(Object date) {
+  String lastUpdatedAt(String date) {
     return 'Son güncelleme: $date';
   }
 
@@ -808,4 +809,81 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get termsContactDesc =>
       'Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.';
+
+  @override
+  String get sendEmail => 'E-posta Gönder';
+
+  @override
+  String get sendWhatsApp => 'WhatsApp\'ta Mesaj Gönder';
+
+  @override
+  String get startChat => 'Sohbet Başlat';
+
+  @override
+  String get whatsAppError => 'WhatsApp açılamadı';
+
+  @override
+  String get emailError => 'E-posta uygulaması açılamadı';
+
+  @override
+  String get emailSubject => 'TuncBT - İletişim';
+
+  @override
+  String emailBody(String name) {
+    return 'Merhaba $name,\n\n';
+  }
+
+  @override
+  String get profile_image_size_error =>
+      'Profil resmi boyutu 5MB\'dan büyük olamaz';
+
+  @override
+  String get invalid_image_format =>
+      'Geçersiz dosya formatı. Sadece resim dosyaları yüklenebilir';
+
+  @override
+  String get profile_image_upload_failed =>
+      'Profil resmi yüklenirken bir hata oluştu. Lütfen tekrar deneyin';
+
+  @override
+  String get sessionExpired =>
+      'Oturumunuz sona erdi. Lütfen tekrar giriş yapın';
+
+  @override
+  String get userNotFoundError =>
+      'Kullanıcı bilgilerinize ulaşılamadı. Lütfen tekrar giriş yapın';
+
+  @override
+  String get unexpectedErrorWithAction =>
+      'Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin';
+
+  @override
+  String get errorTitleChat => 'Mesaj Hatası';
+
+  @override
+  String get errorTitleAuth => 'Giriş Hatası';
+
+  @override
+  String get errorTitleGroup => 'Grup İşlemi Başarısız';
+
+  @override
+  String get errorTitleUpload => 'Yükleme Hatası';
+
+  @override
+  String get errorTitleNetwork => 'Bağlantı Hatası';
+
+  @override
+  String get noPermissionToSendMessage => 'Bu mesajı gönderme yetkiniz yok';
+
+  @override
+  String get chatRoomNotFound => 'Sohbet odası bulunamadı';
+
+  @override
+  String get networkError => 'İnternet bağlantınızı kontrol edin';
+
+  @override
+  String get failedToRemoveMember => 'Üye gruptan çıkarılamadı';
+
+  @override
+  String get failedToPromoteAdmin => 'Yönetici ataması yapılamadı';
 }

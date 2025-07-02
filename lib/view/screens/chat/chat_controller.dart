@@ -378,7 +378,7 @@ class ChatController extends GetxController {
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
         print('Current user is null');
-        throw Exception('User not authenticated');
+        throw Exception(AppLocalizations.of(context)!.sessionExpired);
       }
 
       // 3. Chat ID oluşturma
@@ -428,17 +428,34 @@ class ChatController extends GetxController {
 
       print('Message sent successfully');
     } catch (e, stackTrace) {
-      print('Error sending message:');
-      print('Error: $e');
+      print('Error sending message: $e');
       print('Stack trace: $stackTrace');
 
+      String errorMessage = AppLocalizations.of(context)!.failedToSendMessage;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(context, e.code);
+      }
+
       Get.snackbar(
-        AppLocalizations.of(context)!.error,
-        AppLocalizations.of(context)!.failedToSendMessage,
+        AppLocalizations.of(context)!.errorTitleChat,
+        errorMessage,
         backgroundColor: Colors.red.withOpacity(0.1),
         duration: const Duration(seconds: 3),
         snackPosition: SnackPosition.TOP,
       );
+    }
+  }
+
+  String _getFirebaseErrorMessage(BuildContext context, String code) {
+    switch (code) {
+      case 'permission-denied':
+        return AppLocalizations.of(context)!.noPermissionToSendMessage;
+      case 'not-found':
+        return AppLocalizations.of(context)!.chatRoomNotFound;
+      case 'network-request-failed':
+        return AppLocalizations.of(context)!.networkError;
+      default:
+        return AppLocalizations.of(context)!.failedToSendMessage;
     }
   }
 
@@ -1173,7 +1190,9 @@ class ChatController extends GetxController {
   Future<void> removeMemberFromGroup(String groupId, String memberId) async {
     try {
       final currentUser = _auth.currentUser;
-      if (currentUser == null) return;
+      if (currentUser == null) {
+        throw Exception(AppLocalizations.of(Get.context!)!.sessionExpired);
+      }
 
       final groupDoc =
           await _firestore.collection('chat_groups').doc(groupId).get();
@@ -1181,7 +1200,7 @@ class ChatController extends GetxController {
 
       final group = ChatGroup.fromFirestore(groupDoc);
       if (!group.isAdmin(currentUser.uid)) {
-        throw Exception('Yalnızca grup adminleri üye çıkarabilir');
+        throw Exception(AppLocalizations.of(Get.context!)!.onlyAdminsCanRemove);
       }
 
       await _firestore.collection('chat_groups').doc(groupId).update({
@@ -1201,16 +1220,30 @@ class ChatController extends GetxController {
       });
 
       print('Member removed from group successfully');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error removing member from group: $e');
-      rethrow;
+      print('Stack trace: $stackTrace');
+
+      String errorMessage =
+          AppLocalizations.of(Get.context!)!.failedToRemoveMember;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(Get.context!, e.code);
+      }
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.errorTitleGroup,
+        errorMessage,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
     }
   }
 
   Future<void> makeGroupAdmin(String groupId, String userId) async {
     try {
       final currentUser = _auth.currentUser;
-      if (currentUser == null) return;
+      if (currentUser == null) {
+        throw Exception(AppLocalizations.of(Get.context!)!.sessionExpired);
+      }
 
       final groupDoc =
           await _firestore.collection('chat_groups').doc(groupId).get();
@@ -1218,7 +1251,8 @@ class ChatController extends GetxController {
 
       final group = ChatGroup.fromFirestore(groupDoc);
       if (!group.isAdmin(currentUser.uid)) {
-        throw Exception('Yalnızca grup adminleri yeni admin atayabilir');
+        throw Exception(
+            AppLocalizations.of(Get.context!)!.onlyAdminsCanPromote);
       }
 
       await _firestore.collection('chat_groups').doc(groupId).update({
@@ -1237,9 +1271,21 @@ class ChatController extends GetxController {
       });
 
       print('User made group admin successfully');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error making user group admin: $e');
-      rethrow;
+      print('Stack trace: $stackTrace');
+
+      String errorMessage =
+          AppLocalizations.of(Get.context!)!.failedToPromoteAdmin;
+      if (e is FirebaseException) {
+        errorMessage = _getFirebaseErrorMessage(Get.context!, e.code);
+      }
+
+      Get.snackbar(
+        AppLocalizations.of(Get.context!)!.errorTitleGroup,
+        errorMessage,
+        backgroundColor: Colors.red.withOpacity(0.1),
+      );
     }
   }
 

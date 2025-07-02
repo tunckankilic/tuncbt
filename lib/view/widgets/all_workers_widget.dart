@@ -8,6 +8,8 @@ import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/profile.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 
 class AllWorkersWidget extends StatelessWidget {
   final String userID;
@@ -221,6 +223,7 @@ class AllWorkersWidget extends StatelessWidget {
   }
 
   Widget _buildTrailingButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -231,6 +234,16 @@ class AllWorkersWidget extends StatelessWidget {
             color: AppTheme.accentColor,
           ),
           onPressed: () => _mailTo(context),
+          tooltip: l10n.sendEmail,
+        ),
+        IconButton(
+          icon: Icon(
+            FontAwesomeIcons.whatsapp,
+            size: 24.sp,
+            color: Colors.green,
+          ),
+          onPressed: () => _openWhatsApp(context),
+          tooltip: l10n.sendWhatsApp,
         ),
         IconButton(
           icon: Icon(
@@ -239,6 +252,7 @@ class AllWorkersWidget extends StatelessWidget {
             color: AppTheme.accentColor,
           ),
           onPressed: () => _openChat(context),
+          tooltip: l10n.startChat,
         ),
       ],
     );
@@ -260,17 +274,57 @@ class AllWorkersWidget extends StatelessWidget {
     );
   }
 
-  void _mailTo(BuildContext context) async {
-    final mailUrl = 'mailto:$userEmail';
-    if (await canLaunchUrl(Uri.parse(mailUrl))) {
-      await launchUrl(Uri.parse(mailUrl));
+  void _openWhatsApp(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    // Telefon numarasından tüm boşlukları ve özel karakterleri kaldır
+    final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+    // Eğer numara + ile başlamıyorsa ve 0 ile başlıyorsa, 0'ı kaldır ve 90 ekle
+    final formattedNumber = cleanNumber.startsWith('+')
+        ? cleanNumber.substring(1)
+        : cleanNumber.startsWith('0')
+            ? '90${cleanNumber.substring(1)}'
+            : '90$cleanNumber';
+
+    final whatsappUrl = 'https://wa.me/$formattedNumber';
+
+    if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+      await launchUrl(Uri.parse(whatsappUrl),
+          mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('E-posta uygulaması açılamadı'),
-          backgroundColor: AppTheme.errorColor,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.whatsAppError),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
+    }
+  }
+
+  void _mailTo(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final mailUrl = Uri(
+      scheme: 'mailto',
+      path: userEmail,
+      queryParameters: {
+        'subject': l10n.emailSubject,
+        'body': l10n.emailBody(userName),
+      },
+    ).toString();
+
+    if (await canLaunchUrl(Uri.parse(mailUrl))) {
+      await launchUrl(Uri.parse(mailUrl), mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.emailError),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
     }
   }
 }

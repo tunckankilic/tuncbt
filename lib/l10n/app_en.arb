@@ -265,7 +265,7 @@
   "error": "Error",
   "success": "Success",
   "retry": "Retry",
-  "failedToSendMessage": "Failed to send message",
+  "failedToSendMessage": "Failed to send message. Please try again",
   "failedToSendFile": "Failed to send file",
   "gifSentSuccessfully": "GIF sent successfully",
   "failedToSendGIF": "Failed to send GIF",
@@ -420,8 +420,29 @@
   "deleteCommentConfirm": "Are you sure you want to delete this comment?",
   "justNow": "Just now",
   "minutesAgo": "{minutes} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "hoursAgo": "{hours} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "dataCollection": "Data Collection and Usage",
   "dataCollectionDesc": "Our app collects and processes some of your personal data to provide better service. This data includes:\n\n• Name and email address\n• Profile picture\n• Phone number\n• Team and task information\n• Usage statistics",
   "dataSecurity": "Data Security",
@@ -435,6 +456,13 @@
   "contactInfo": "Contact",
   "contactInfoDesc": "For questions about our privacy policy, you can reach us at support@tuncbt.com",
   "lastUpdatedAt": "Last updated: {date}",
+  "@lastUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "termsAgeRestriction": "Age Restriction",
   "termsAgeRestrictionDesc": "You must be at least 13 years old to use this app. If you are under 13, you must use it under the supervision of a parent or legal guardian.",
   "accountSecurity": "Account Security",
@@ -448,5 +476,37 @@
   "disclaimer": "Disclaimer",
   "disclaimerDesc": "The application is provided 'as is'. We do not guarantee that it will operate without interruption or errors.",
   "termsContact": "Contact",
-  "termsContactDesc": "For questions about terms of service, you can reach us at support@tuncbt.com"
+  "termsContactDesc": "For questions about terms of service, you can reach us at support@tuncbt.com",
+  "sendEmail": "Send Email",
+  "sendWhatsApp": "Send WhatsApp Message",
+  "startChat": "Start Chat",
+  "whatsAppError": "Could not open WhatsApp",
+  "emailError": "Could not open email application",
+  "emailSubject": "TuncBT - Contact",
+  "emailBody": "Hello {name},\n\n",
+  "@emailBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profile_image_size_error": "Profile image size cannot be larger than 5MB",
+  "invalid_image_format": "Invalid file format. Only image files are allowed",
+  "profile_image_upload_failed": "Failed to upload profile image. Please try again",
+  "sessionExpired": "Your session has expired. Please log in again",
+  "userNotFoundError": "Unable to access your user information. Please log in again",
+  "onlyAdminsCanRemove": "Only group administrators can remove members",
+  "onlyAdminsCanPromote": "Only group administrators can promote new administrators",
+  "unexpectedErrorWithAction": "An unexpected error occurred. Please refresh the page and try again",
+  "errorTitleChat": "Message Error",
+  "errorTitleAuth": "Login Error",
+  "errorTitleGroup": "Group Operation Failed",
+  "errorTitleUpload": "Upload Error",
+  "errorTitleNetwork": "Connection Error",
+  "noPermissionToSendMessage": "You don't have permission to send this message",
+  "chatRoomNotFound": "Chat room not found",
+  "networkError": "Please check your internet connection",
+  "failedToRemoveMember": "Failed to remove member from group",
+  "failedToPromoteAdmin": "Failed to promote user to admin"
 } 

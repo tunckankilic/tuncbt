@@ -307,15 +307,17 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
       // Resim boyutunu kontrol et
       final fileSize = await imageFile.length();
-      if (fileSize > 10 * 1024 * 1024) {
-        throw Exception('Resim boyutu 10MB\'dan büyük olamaz');
+      final maxSize = 5 * 1024 * 1024; // 5MB
+      if (fileSize > maxSize) {
+        final context = Get.context!;
+        throw Exception(AppLocalizations.of(context)!.profile_image_size_error);
       }
 
       // Resim formatını kontrol et
       final fileType = lookupMimeType(imageFile.path);
       if (fileType == null || !fileType.startsWith('image/')) {
-        throw Exception(
-            'Geçersiz dosya formatı. Sadece resim dosyaları yüklenebilir.');
+        final context = Get.context!;
+        throw Exception(AppLocalizations.of(context)!.invalid_image_format);
       }
 
       // Storage referansını oluştur
@@ -342,7 +344,9 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         print('Profil resmi başarıyla yüklendi: $downloadUrl');
         return downloadUrl;
       } else {
-        throw Exception('Resim yükleme başarısız oldu');
+        final context = Get.context!;
+        throw Exception(
+            AppLocalizations.of(context)!.profile_image_upload_failed);
       }
     } catch (e) {
       print('Profil resmi yükleme hatası: $e');
@@ -395,6 +399,20 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           'isActive': true,
         });
         print('Takım oluşturuldu. Team ID: ${teamRef.id}');
+
+        // Referans kodu oluştur
+        final referralService = ReferralService();
+        final referralCode = await referralService.generateUniqueCode(
+          teamId: teamRef.id,
+          userId: uid,
+          validity: const Duration(days: 365), // 1 yıl geçerli
+        );
+        print('Referans kodu oluşturuldu: $referralCode');
+
+        // Takım bilgilerini güncelle
+        await teamRef.update({
+          'referralCode': referralCode,
+        });
 
         // Kullanıcıyı admin olarak kaydet
         UserModel newUser = UserModel(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class TasksScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late final TeamProvider _teamProvider;
+  StreamSubscription? _tasksSubscription;
 
   TasksScreenController() {
     _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
@@ -40,12 +42,13 @@ class TasksScreenController extends GetxController {
     if (_teamProvider.isInitialized && _teamProvider.teamId != null) {
       print(
           'TasksScreenController: Takım değişikliği algılandı - TeamID: ${_teamProvider.teamId}');
-      fetchTasks();
+      _setupTasksStream();
     }
   }
 
   @override
   void onClose() {
+    _tasksSubscription?.cancel();
     _teamProvider.removeListener(_onTeamProviderChanged);
     super.onClose();
   }
@@ -63,7 +66,7 @@ class TasksScreenController extends GetxController {
           if (currentUser.value?.teamId != null) {
             print(
                 'TasksScreenController: Kullanıcı takımı bulundu - TeamID: ${currentUser.value?.teamId}');
-            fetchTasks();
+            _setupTasksStream();
           } else {
             print('TasksScreenController: Kullanıcının takımı yok');
             errorMessage.value = 'Henüz bir takıma ait değilsiniz';
@@ -82,7 +85,7 @@ class TasksScreenController extends GetxController {
     }
   }
 
-  void fetchTasks() {
+  void _setupTasksStream() {
     try {
       if (_teamProvider.teamId == null) {
         errorMessage.value = 'Henüz bir takıma ait değilsiniz';
@@ -101,7 +104,12 @@ class TasksScreenController extends GetxController {
 
       print('TasksScreenController: Görev koleksiyonu yolu: ${tasksRef.path}');
 
-      tasksRef.orderBy('createdAt', descending: true).snapshots().listen(
+      // Önceki subscription'ı iptal et
+      _tasksSubscription?.cancel();
+
+      // Yeni subscription oluştur
+      _tasksSubscription =
+          tasksRef.orderBy('createdAt', descending: true).snapshots().listen(
         (snapshot) {
           print(
               'TasksScreenController: Görev snapshot alındı - Doküman sayısı: ${snapshot.docs.length}');
@@ -109,6 +117,15 @@ class TasksScreenController extends GetxController {
           tasks.value = snapshot.docs.map((doc) {
             final data = doc.data();
             data['taskId'] = doc.id;
+            // Eksik alanlar için varsayılan değerler ekle
+            data['teamId'] = data['teamId'] ?? _teamProvider.teamId;
+            data['taskTitle'] = data['taskTitle'] ?? '';
+            data['taskDescription'] = data['taskDescription'] ?? '';
+            data['taskCategory'] = data['taskCategory'] ?? 'Genel';
+            data['uploadedBy'] = data['uploadedBy'] ?? '';
+            data['isDone'] = data['isDone'] ?? false;
+            data['createdAt'] = data['createdAt'] ?? Timestamp.now();
+            data['taskComments'] = data['taskComments'] ?? [];
             print('TasksScreenController: Görev verisi: $data');
             return data;
           }).toList();
@@ -126,7 +143,7 @@ class TasksScreenController extends GetxController {
         },
       );
     } catch (e) {
-      log("Error in fetchTasks: $e");
+      log("Error in setupTasksStream: $e");
       print('TasksScreenController: Beklenmeyen hata: $e');
       errorMessage.value = 'Görevler yüklenirken beklenmeyen bir hata oluştu';
       isLoading.value = false;

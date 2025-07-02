@@ -422,9 +422,29 @@
   "deleteCommentConfirm": "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?",
   "justNow": "Gerade eben",
   "minutesAgo": "vor {minutes} Minuten",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "hoursAgo": "vor {hours} Stunden",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "vor {days} Tagen",
-  "userNotFound": "Benutzerinformationen nicht gefunden",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "dataCollection": "Datenerfassung und -nutzung",
   "dataCollectionDesc": "Unsere App sammelt und verarbeitet einige Ihrer persönlichen Daten, um einen besseren Service zu bieten. Diese Daten umfassen:\n\n• Name und E-Mail-Adresse\n• Profilbild\n• Telefonnummer\n• Team- und Aufgabeninformationen\n• Nutzungsstatistiken",
   "dataSecurity": "Datensicherheit",
@@ -450,5 +470,46 @@
   "disclaimer": "Haftungsausschluss",
   "disclaimerDesc": "Die Anwendung wird 'wie sie ist' zur Verfügung gestellt. Wir garantieren nicht, dass sie unterbrechungs- oder fehlerfrei funktioniert.",
   "termsContact": "Kontakt",
-  "termsContactDesc": "Bei Fragen zu den Nutzungsbedingungen können Sie uns unter support@tuncbt.com erreichen."
+  "termsContactDesc": "Bei Fragen zu den Nutzungsbedingungen können Sie uns unter support@tuncbt.com erreichen.",
+  "sendEmail": "E-Mail senden",
+  "sendWhatsApp": "WhatsApp-Nachricht senden",
+  "startChat": "Chat starten",
+  "whatsAppError": "WhatsApp konnte nicht geöffnet werden",
+  "emailError": "E-Mail-Anwendung konnte nicht geöffnet werden",
+  "emailSubject": "TuncBT - Kontakt",
+  "emailBody": "Hallo {name},\n\n",
+  "@emailBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdatedAt": "Zuletzt aktualisiert: {date}",
+  "@lastUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "profile_image_size_error": "Die Profilbildgröße darf 5MB nicht überschreiten",
+  "invalid_image_format": "Ungültiges Dateiformat. Nur Bilddateien sind erlaubt",
+  "profile_image_upload_failed": "Fehler beim Hochladen des Profilbilds. Bitte versuchen Sie es erneut",
+  "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an",
+  "userNotFoundError": "Auf Ihre Benutzerinformationen konnte nicht zugegriffen werden. Bitte melden Sie sich erneut an",
+  "onlyAdminsCanRemove": "Nur Gruppenadministratoren können Mitglieder entfernen",
+  "onlyAdminsCanPromote": "Nur Gruppenadministratoren können neue Administratoren ernennen",
+  "unexpectedErrorWithAction": "Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut",
+  "errorTitleChat": "Nachrichtenfehler",
+  "errorTitleAuth": "Anmeldefehler",
+  "errorTitleGroup": "Gruppenoperation fehlgeschlagen",
+  "errorTitleUpload": "Upload-Fehler",
+  "errorTitleNetwork": "Verbindungsfehler",
+  "noPermissionToSendMessage": "Sie haben keine Berechtigung, diese Nachricht zu senden",
+  "chatRoomNotFound": "Chatroom nicht gefunden",
+  "networkError": "Bitte überprüfen Sie Ihre Internetverbindung",
+  "failedToSendMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
+  "failedToRemoveMember": "Mitglied konnte nicht aus der Gruppe entfernt werden",
+  "failedToPromoteAdmin": "Benutzer konnte nicht zum Administrator befördert werden"
 } 

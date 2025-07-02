@@ -355,10 +355,37 @@
   "deleteCommentConfirm": "Bu yorumu silmek istediğinizden emin misiniz?",
   "justNow": "Az önce",
   "minutesAgo": "{minutes} dakika önce",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "hoursAgo": "{hours} saat önce",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "{days} gün önce",
-  "userNotFound": "Kullanıcı bilgileri bulunamadı",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "lastUpdatedAt": "Son güncelleme: {date}",
+  "@lastUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "dataCollection": "Veri Toplama ve Kullanım",
   "dataCollectionDesc": "Uygulamamız, size daha iyi hizmet verebilmek için bazı kişisel verilerinizi toplar ve işler. Bu veriler şunları içerir:\n\n• İsim ve e-posta adresi\n• Profil fotoğrafı\n• Telefon numarası\n• Takım ve görev bilgileri\n• Kullanım istatistikleri",
   "dataSecurity": "Veri Güvenliği",
@@ -384,5 +411,38 @@
   "disclaimer": "Sorumluluk Reddi",
   "disclaimerDesc": "Uygulama 'olduğu gibi' sunulmaktadır. Kesintisiz veya hatasız çalışacağına dair garanti vermiyoruz.",
   "termsContact": "İletişim",
-  "termsContactDesc": "Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz."
+  "termsContactDesc": "Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.",
+  "sendEmail": "E-posta Gönder",
+  "sendWhatsApp": "WhatsApp'ta Mesaj Gönder",
+  "startChat": "Sohbet Başlat",
+  "whatsAppError": "WhatsApp açılamadı",
+  "emailError": "E-posta uygulaması açılamadı",
+  "emailSubject": "TuncBT - İletişim",
+  "emailBody": "Merhaba {name},\n\n",
+  "@emailBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profile_image_size_error": "Profil resmi boyutu 5MB'dan büyük olamaz",
+  "invalid_image_format": "Geçersiz dosya formatı. Sadece resim dosyaları yüklenebilir",
+  "profile_image_upload_failed": "Profil resmi yüklenirken bir hata oluştu. Lütfen tekrar deneyin",
+  "sessionExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın",
+  "userNotFoundError": "Kullanıcı bilgilerinize ulaşılamadı. Lütfen tekrar giriş yapın",
+  "onlyAdminsCanRemove": "Üyeleri yalnızca grup yöneticileri çıkarabilir",
+  "onlyAdminsCanPromote": "Yeni yönetici atamasını yalnızca grup yöneticileri yapabilir",
+  "unexpectedErrorWithAction": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin",
+  "errorTitleChat": "Mesaj Hatası",
+  "errorTitleAuth": "Giriş Hatası",
+  "errorTitleGroup": "Grup İşlemi Başarısız",
+  "errorTitleUpload": "Yükleme Hatası",
+  "errorTitleNetwork": "Bağlantı Hatası",
+  "noPermissionToSendMessage": "Bu mesajı gönderme yetkiniz yok",
+  "chatRoomNotFound": "Sohbet odası bulunamadı",
+  "networkError": "İnternet bağlantınızı kontrol edin",
+  "failedToSendMessage": "Mesaj gönderilemedi. Lütfen tekrar deneyin",
+  "failedToRemoveMember": "Üye gruptan çıkarılamadı",
+  "failedToPromoteAdmin": "Yönetici ataması yapılamadı"
 } 

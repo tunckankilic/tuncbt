@@ -781,7 +781,7 @@ abstract class AppLocalizations {
   /// No description provided for @failedToSendMessage.
   ///
   /// In en, this message translates to:
-  /// **'Failed to send message'**
+  /// **'Failed to send message. Please try again'**
   String get failedToSendMessage;
 
   /// No description provided for @failedToSendFile.
@@ -1279,7 +1279,7 @@ abstract class AppLocalizations {
   /// No description provided for @onlyAdminsCanRemove.
   ///
   /// In en, this message translates to:
-  /// **'Only group admins can remove members'**
+  /// **'Only group administrators can remove members'**
   String get onlyAdminsCanRemove;
 
   /// No description provided for @memberRemoved.
@@ -1291,7 +1291,7 @@ abstract class AppLocalizations {
   /// No description provided for @onlyAdminsCanPromote.
   ///
   /// In en, this message translates to:
-  /// **'Only group admins can assign new admins'**
+  /// **'Only group administrators can promote new administrators'**
   String get onlyAdminsCanPromote;
 
   /// No description provided for @adminAssigned.
@@ -1394,19 +1394,19 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{minutes} minutes ago'**
-  String minutesAgo(Object minutes);
+  String minutesAgo(int minutes);
 
   /// No description provided for @hoursAgo.
   ///
   /// In en, this message translates to:
   /// **'{hours} hours ago'**
-  String hoursAgo(Object hours);
+  String hoursAgo(int hours);
 
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:
   /// **'{days} days ago'**
-  String daysAgo(Object days);
+  String daysAgo(int days);
 
   /// No description provided for @dataCollection.
   ///
@@ -1484,7 +1484,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Last updated: {date}'**
-  String lastUpdatedAt(Object date);
+  String lastUpdatedAt(String date);
 
   /// No description provided for @termsAgeRestriction.
   ///
@@ -1569,6 +1569,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For questions about terms of service, you can reach us at support@tuncbt.com'**
   String get termsContactDesc;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get sendEmail;
+
+  /// No description provided for @sendWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send WhatsApp Message'**
+  String get sendWhatsApp;
+
+  /// No description provided for @startChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Chat'**
+  String get startChat;
+
+  /// No description provided for @whatsAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open WhatsApp'**
+  String get whatsAppError;
+
+  /// No description provided for @emailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open email application'**
+  String get emailError;
+
+  /// No description provided for @emailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'TuncBT - Contact'**
+  String get emailSubject;
+
+  /// No description provided for @emailBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {name},\n\n'**
+  String emailBody(String name);
+
+  /// No description provided for @profile_image_size_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile image size cannot be larger than 5MB'**
+  String get profile_image_size_error;
+
+  /// No description provided for @invalid_image_format.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid file format. Only image files are allowed'**
+  String get invalid_image_format;
+
+  /// No description provided for @profile_image_upload_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload profile image. Please try again'**
+  String get profile_image_upload_failed;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please log in again'**
+  String get sessionExpired;
+
+  /// No description provided for @userNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access your user information. Please log in again'**
+  String get userNotFoundError;
+
+  /// No description provided for @unexpectedErrorWithAction.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please refresh the page and try again'**
+  String get unexpectedErrorWithAction;
+
+  /// No description provided for @errorTitleChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Error'**
+  String get errorTitleChat;
+
+  /// No description provided for @errorTitleAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Error'**
+  String get errorTitleAuth;
+
+  /// No description provided for @errorTitleGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Operation Failed'**
+  String get errorTitleGroup;
+
+  /// No description provided for @errorTitleUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Error'**
+  String get errorTitleUpload;
+
+  /// No description provided for @errorTitleNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Error'**
+  String get errorTitleNetwork;
+
+  /// No description provided for @noPermissionToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to send this message'**
+  String get noPermissionToSendMessage;
+
+  /// No description provided for @chatRoomNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room not found'**
+  String get chatRoomNotFound;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection'**
+  String get networkError;
+
+  /// No description provided for @failedToRemoveMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to remove member from group'**
+  String get failedToRemoveMember;
+
+  /// No description provided for @failedToPromoteAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to promote user to admin'**
+  String get failedToPromoteAdmin;
 }
 
 class _AppLocalizationsDelegate

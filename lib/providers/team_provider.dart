@@ -296,7 +296,7 @@ class TeamProvider with ChangeNotifier {
 
       // Update team document
       await _firestore.collection('teams').doc(_currentTeam!.teamId).update({
-        if (teamName != null) 'teamName': teamName,
+        if (teamName != null) 'name': teamName,
         if (description != null) 'description': description,
         if (settings != null) 'settings': settings,
         'updatedAt': FieldValue.serverTimestamp(),
@@ -309,6 +309,7 @@ class TeamProvider with ChangeNotifier {
       log('Error updating team info: $e');
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 

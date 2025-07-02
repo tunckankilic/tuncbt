@@ -281,7 +281,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginRequired => 'Anmeldung erforderlich';
 
   @override
-  String get userNotFound => 'Benutzerinformationen nicht gefunden';
+  String get userNotFound => 'Benutzer nicht gefunden';
 
   @override
   String get authErrorUserNotFound =>
@@ -375,7 +375,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get retry => 'Wiederholen';
 
   @override
-  String get failedToSendMessage => 'Nachricht konnte nicht gesendet werden';
+  String get failedToSendMessage =>
+      'Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut';
 
   @override
   String get failedToSendFile => 'Datei konnte nicht gesendet werden';
@@ -651,7 +652,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onlyAdminsCanPromote =>
-      'Nur Gruppenadministratoren können neue Administratoren zuweisen';
+      'Nur Gruppenadministratoren können neue Administratoren ernennen';
 
   @override
   String get adminAssigned => 'Neuer Gruppenadministrator zugewiesen';
@@ -706,17 +707,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get justNow => 'Gerade eben';
 
   @override
-  String minutesAgo(Object minutes) {
+  String minutesAgo(int minutes) {
     return 'vor $minutes Minuten';
   }
 
   @override
-  String hoursAgo(Object hours) {
+  String hoursAgo(int hours) {
     return 'vor $hours Stunden';
   }
 
   @override
-  String daysAgo(Object days) {
+  String daysAgo(int days) {
     return 'vor $days Tagen';
   }
 
@@ -763,8 +764,8 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bei Fragen zu unserer Datenschutzrichtlinie können Sie uns unter support@tuncbt.com erreichen';
 
   @override
-  String lastUpdatedAt(Object date) {
-    return 'Last updated: $date';
+  String lastUpdatedAt(String date) {
+    return 'Zuletzt aktualisiert: $date';
   }
 
   @override
@@ -815,4 +816,84 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get termsContactDesc =>
       'Bei Fragen zu den Nutzungsbedingungen können Sie uns unter support@tuncbt.com erreichen.';
+
+  @override
+  String get sendEmail => 'E-Mail senden';
+
+  @override
+  String get sendWhatsApp => 'WhatsApp-Nachricht senden';
+
+  @override
+  String get startChat => 'Chat starten';
+
+  @override
+  String get whatsAppError => 'WhatsApp konnte nicht geöffnet werden';
+
+  @override
+  String get emailError => 'E-Mail-Anwendung konnte nicht geöffnet werden';
+
+  @override
+  String get emailSubject => 'TuncBT - Kontakt';
+
+  @override
+  String emailBody(String name) {
+    return 'Hallo $name,\n\n';
+  }
+
+  @override
+  String get profile_image_size_error =>
+      'Die Profilbildgröße darf 5MB nicht überschreiten';
+
+  @override
+  String get invalid_image_format =>
+      'Ungültiges Dateiformat. Nur Bilddateien sind erlaubt';
+
+  @override
+  String get profile_image_upload_failed =>
+      'Fehler beim Hochladen des Profilbilds. Bitte versuchen Sie es erneut';
+
+  @override
+  String get sessionExpired =>
+      'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an';
+
+  @override
+  String get userNotFoundError =>
+      'Auf Ihre Benutzerinformationen konnte nicht zugegriffen werden. Bitte melden Sie sich erneut an';
+
+  @override
+  String get unexpectedErrorWithAction =>
+      'Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut';
+
+  @override
+  String get errorTitleChat => 'Nachrichtenfehler';
+
+  @override
+  String get errorTitleAuth => 'Anmeldefehler';
+
+  @override
+  String get errorTitleGroup => 'Gruppenoperation fehlgeschlagen';
+
+  @override
+  String get errorTitleUpload => 'Upload-Fehler';
+
+  @override
+  String get errorTitleNetwork => 'Verbindungsfehler';
+
+  @override
+  String get noPermissionToSendMessage =>
+      'Sie haben keine Berechtigung, diese Nachricht zu senden';
+
+  @override
+  String get chatRoomNotFound => 'Chatroom nicht gefunden';
+
+  @override
+  String get networkError => 'Bitte überprüfen Sie Ihre Internetverbindung';
+
+  @override
+  String get failedToRemoveMember =>
+      'Mitglied konnte nicht aus der Gruppe entfernt werden';
+
+  @override
+  String get failedToPromoteAdmin =>
+      'Benutzer konnte nicht zum Administrator befördert werden';
 }
