@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
@@ -13,10 +14,8 @@ import 'package:tuncbt/user_state.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
-import 'package:tuncbt/view/widgets/language_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:tuncbt/providers/team_provider.dart';
-import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 
 enum UserType { commenter, worker, currentUser }
@@ -189,7 +188,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
               ),
             ),
             SizedBox(height: 16.h),
-            ...items.map((item) => _buildInfoItem(item)).toList(),
+            ...items.map((item) => _buildInfoItem(item)),
           ],
         ),
       ),

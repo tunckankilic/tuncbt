@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:tuncbt/core/constants/firebase_constants.dart';
+import 'package:tuncbt/core/config/firebase_constants.dart';
 
 void main() {
   late FakeFirebaseFirestore firestore;
