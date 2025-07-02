@@ -855,6 +855,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You don\'t have permission for this action'**
   String get permissionDenied;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @dataProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Processing'**
+  String get dataProcessing;
+
+  /// No description provided for @ageRestriction.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Restriction'**
+  String get ageRestriction;
+
+  /// No description provided for @ageRestrictionText.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 13 years old to use this app'**
+  String get ageRestrictionText;
+
+  /// No description provided for @legalNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Notice'**
+  String get legalNotice;
+
+  /// No description provided for @acceptTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the Terms of Service and Privacy Policy'**
+  String get acceptTerms;
+
+  /// No description provided for @acceptDataProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'I consent to the processing of my personal data'**
+  String get acceptDataProcessing;
+
+  /// No description provided for @acceptAgeRestriction.
+  ///
+  /// In en, this message translates to:
+  /// **'I confirm that I am at least 13 years old'**
+  String get acceptAgeRestriction;
+
+  /// No description provided for @notificationPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission'**
+  String get notificationPermission;
+
+  /// No description provided for @notificationPermissionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications to stay updated with your team\'s activities'**
+  String get notificationPermissionText;
+
+  /// No description provided for @manageNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Notifications'**
+  String get manageNotifications;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export My Data'**
+  String get exportData;
+
+  /// No description provided for @exportDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy of your personal data'**
+  String get exportDataDescription;
+
+  /// No description provided for @deleteData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My Data'**
+  String get deleteData;
+
+  /// No description provided for @deleteDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete all your data from our servers'**
+  String get deleteDataDescription;
+
+  /// No description provided for @cookiePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookie Policy'**
+  String get cookiePolicy;
+
+  /// No description provided for @cookiePolicyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We use cookies to improve your experience'**
+  String get cookiePolicyDescription;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated: {date}'**
+  String lastUpdated(String date);
 }
 
 class _AppLocalizationsDelegate

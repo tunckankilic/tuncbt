@@ -93,32 +93,72 @@ class AccountDeletionService extends GetxController {
 
   Future<void> _deleteUserData(String uid) async {
     try {
-      // Delete user doc
-      await _firestore.collection('users').doc(uid).delete();
+      // Batch işlemi başlat
+      final batch = _firestore.batch();
 
-      // Delete user related stuff
-      await _firestore
-          .collection('tasks')
-          .where('uploadedBy', isEqualTo: uid)
-          .get()
-          .then((snapshot) {
-        for (DocumentSnapshot doc in snapshot.docs) {
-          doc.reference.delete();
-        }
-      });
+      // Kullanıcının takım üyeliğini bul
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      final teamId = userDoc.data()?['teamId'];
 
-      await _firestore
+      // Kullanıcının mesajlarını sil
+      final messagesQuery = await _firestore
+          .collection('messages')
+          .where('senderId', isEqualTo: uid)
+          .get();
+      for (var doc in messagesQuery.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Kullanıcının yorumlarını sil
+      final commentsQuery = await _firestore
           .collection('comments')
           .where('userId', isEqualTo: uid)
-          .get()
-          .then((snapshot) {
-        for (DocumentSnapshot doc in snapshot.docs) {
-          doc.reference.delete();
-        }
-      });
+          .get();
+      for (var doc in commentsQuery.docs) {
+        batch.delete(doc.reference);
+      }
 
-      // Diğer ilişkili koleksiyonlar için benzer işlemleri yapın
+      // Kullanıcının görevlerini sil
+      if (teamId != null) {
+        final tasksQuery = await _firestore
+            .collection('teams')
+            .doc(teamId)
+            .collection('tasks')
+            .where('uploadedBy', isEqualTo: uid)
+            .get();
+        for (var doc in tasksQuery.docs) {
+          batch.delete(doc.reference);
+        }
+      }
+
+      // Kullanıcının bildirimlerini sil
+      final notificationsQuery = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: uid)
+          .get();
+      for (var doc in notificationsQuery.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Kullanıcının takım üyeliğini sil
+      if (teamId != null) {
+        final memberDoc =
+            _firestore.collection('team_members').doc('${teamId}_$uid');
+        batch.delete(memberDoc);
+
+        // Takımın üye sayısını güncelle
+        batch.update(_firestore.collection('teams').doc(teamId), {
+          'memberCount': FieldValue.increment(-1),
+        });
+      }
+
+      // Kullanıcı dokümanını sil
+      batch.delete(_firestore.collection('users').doc(uid));
+
+      // Batch işlemini uygula
+      await batch.commit();
     } catch (e) {
+      print('Error deleting user data: $e');
       throw Exception('Failed to delete user data. Please try again.');
     }
   }

@@ -207,7 +207,7 @@ class DrawerWidget extends StatelessWidget {
         child: Column(
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppTheme.primaryColor, AppTheme.accentColor],
                   begin: Alignment.topLeft,
@@ -234,8 +234,7 @@ class DrawerWidget extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
-                    leading:
-                        const Icon(Icons.task, color: AppTheme.primaryColor),
+                    leading: Icon(Icons.task, color: AppTheme.primaryColor),
                     title: Text(AppLocalizations.of(context)!.tasks),
                     onTap: () {
                       Get.back();
@@ -244,8 +243,7 @@ class DrawerWidget extends StatelessWidget {
                   ),
                   if (isAdmin) ...[
                     ListTile(
-                      leading: const Icon(Icons.people,
-                          color: AppTheme.primaryColor),
+                      leading: Icon(Icons.people, color: AppTheme.primaryColor),
                       title: Text(AppLocalizations.of(context)!.allWorkers),
                       onTap: () {
                         Get.back();
@@ -253,8 +251,8 @@ class DrawerWidget extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.settings,
-                          color: AppTheme.primaryColor),
+                      leading:
+                          Icon(Icons.settings, color: AppTheme.primaryColor),
                       title: const Text('Takım Ayarları'),
                       onTap: () {
                         Get.back();
@@ -263,8 +261,7 @@ class DrawerWidget extends StatelessWidget {
                     ),
                   ],
                   ListTile(
-                    leading:
-                        const Icon(Icons.person, color: AppTheme.primaryColor),
+                    leading: Icon(Icons.person, color: AppTheme.primaryColor),
                     title: Text(AppLocalizations.of(context)!.profile),
                     onTap: () {
                       Get.back();

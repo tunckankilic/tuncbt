@@ -39,10 +39,13 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
 
     _debouncer.run(() async {
       try {
-        final isValid = await ReferralService().validateReferralCode(value);
+        final referralService = ReferralService();
+        final result = await referralService.validateCode(value);
         setState(() {
-          _isValid = isValid;
-          _errorMessage = isValid ? null : 'Geçersiz referans kodu';
+          _isValid = result.isValid;
+          _errorMessage = result.isValid
+              ? null
+              : (result.error?.message ?? 'Geçersiz referans kodu');
           _isLoading = false;
         });
       } catch (e) {

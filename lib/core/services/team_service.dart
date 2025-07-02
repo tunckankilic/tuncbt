@@ -14,6 +14,7 @@ import 'package:tuncbt/utils/team_errors.dart';
 import 'package:tuncbt/utils/team_cache.dart';
 import 'package:tuncbt/utils/team_security.dart';
 import 'package:tuncbt/utils/team_sync.dart';
+import 'package:tuncbt/core/services/referral_service.dart';
 
 class TeamService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -83,18 +84,11 @@ class TeamService extends GetxService {
   }
 
   /// Yeni bir takım oluşturur
-  Future<TeamOperationResult<Team>> createTeam({
-    required String name,
-    required String userId,
-  }) async {
+  Future<TeamOperationResult<Team>> createTeam(String name) async {
     try {
-      print('TeamService: Takım oluşturuluyor... Name: $name, UserID: $userId');
       isLoading.value = true;
       hasError.value = false;
       errorMessage.value = '';
-
-      // Girdi doğrulama
-      final sanitizedName = TeamSecurity.sanitizeTeamInput(name);
 
       // Kullanıcı kontrolü
       final user = _auth.currentUser;
@@ -102,44 +96,65 @@ class TeamService extends GetxService {
         throw TeamPermissionException();
       }
 
-      // UUID oluştur
-      final teamId = _uuid.v4();
-
-      final now = DateTime.now();
-      final teamData = {
-        'teamId': teamId,
-        'name': sanitizedName,
-        'createdAt': Timestamp.fromDate(now),
-        'createdBy': user.uid,
-        'memberCount': 1,
-        'isActive': true,
-      };
-
-      print('TeamService: Takım verisi hazırlandı: $teamData');
-
-      // Takım dokümanını oluştur
-      await _firestore.collection('teams').doc(teamId).set(teamData);
-
-      // Takım üyeliğini oluştur
-      final membershipResult = await ensureTeamMembership(
-        teamId: teamId,
-        userId: user.uid,
-        role: TeamRole.admin,
-      );
-
-      if (!membershipResult.success) {
-        throw membershipResult.error!;
+      // İsim doğrulama
+      final sanitizedName = name.trim();
+      final validationError = Team.validateTeamName(sanitizedName);
+      if (validationError != null) {
+        throw TeamValidationException(validationError);
       }
 
+      // Kullanıcının takım durumunu kontrol et
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (userDoc.exists && userDoc.data()?['hasTeam'] == true) {
+        throw TeamValidationException('Kullanıcı zaten bir takıma üye');
+      }
+
+      final now = DateTime.now();
+      final teamId = _firestore.collection('teams').doc().id;
+
+      // Takımı oluştur
       final team = Team(
         teamId: teamId,
         teamName: sanitizedName,
         createdBy: user.uid,
         memberCount: 1,
-        referralCode: teamId, // Takım ID'sini referans kodu olarak kullan
         createdAt: now,
         isActive: true,
       );
+
+      // Takımı kaydet
+      await _firestore.collection('teams').doc(teamId).set(team.toJson());
+
+      // Referral kodu oluştur
+      final referralService = ReferralService();
+      final referralCode = await referralService.generateUniqueCode(
+        teamId: teamId,
+        userId: user.uid,
+      );
+
+      // Takımı referral kodu ile güncelle
+      await _firestore.collection('teams').doc(teamId).update({
+        'referralCode': referralCode,
+      });
+
+      // Kullanıcıyı takım yöneticisi olarak ekle
+      await _firestore
+          .collection('team_members')
+          .doc('${teamId}_${user.uid}')
+          .set({
+        'userId': user.uid,
+        'teamId': teamId,
+        'role': TeamRole.admin.toString().split('.').last,
+        'joinedAt': FieldValue.serverTimestamp(),
+        'isActive': true,
+      });
+
+      // Kullanıcı bilgilerini güncelle
+      await _firestore.collection('users').doc(user.uid).update({
+        'hasTeam': true,
+        'teamId': teamId,
+        'teamRole': TeamRole.admin.toString().split('.').last,
+      });
 
       // Önbelleğe ekle
       _cache.cacheTeam(teamId, team);
@@ -184,49 +199,64 @@ class TeamService extends GetxService {
         throw TeamPermissionException();
       }
 
-      // Takım kontrolü - referralCode artık takım ID'si
-      final teamDoc = await _firestore
-          .collection(FirebaseCollections.teams)
-          .doc(referralCode)
-          .get();
+      // Referral kodu doğrula
+      final referralService = ReferralService();
+      final validationResult = await referralService.validateCode(referralCode);
 
+      if (!validationResult.isValid || validationResult.teamId == null) {
+        throw TeamValidationException(
+          validationResult.error?.message ?? 'Geçersiz referral kodu',
+        );
+      }
+
+      final teamId = validationResult.teamId!;
+
+      // Takım kontrolü
+      final teamDoc = await _firestore.collection('teams').doc(teamId).get();
       if (!teamDoc.exists) {
         throw TeamValidationException('Takım bulunamadı');
       }
 
       // Kapasite kontrolü
-      final memberCount = teamDoc.data()?[FirebaseFields.memberCount] ?? 0;
+      final memberCount = teamDoc.data()?['memberCount'] ?? 0;
       if (memberCount >= maxTeamSize) {
         throw TeamCapacityException();
       }
 
-      // Takım üyeliğini oluştur
-      final membershipResult = await ensureTeamMembership(
-        teamId: referralCode,
-        userId: user.uid,
-        role: TeamRole.member,
-      );
+      // Referral kodunu kullan
+      await referralService.useCode(referralCode, user.uid);
 
-      if (!membershipResult.success) {
-        throw membershipResult.error!;
-      }
+      // Takım üyeliğini oluştur
+      await _firestore
+          .collection('team_members')
+          .doc('${teamId}_${user.uid}')
+          .set({
+        'userId': user.uid,
+        'teamId': teamId,
+        'role': TeamRole.member.toString().split('.').last,
+        'joinedAt': FieldValue.serverTimestamp(),
+        'isActive': true,
+        'invitedBy': validationResult.createdBy,
+      });
+
+      // Kullanıcı bilgilerini güncelle
+      await _firestore.collection('users').doc(user.uid).update({
+        'hasTeam': true,
+        'teamId': teamId,
+        'teamRole': TeamRole.member.toString().split('.').last,
+        'invitedBy': validationResult.createdBy,
+      });
+
+      // Takım üye sayısını güncelle
+      await _firestore.collection('teams').doc(teamId).update({
+        'memberCount': FieldValue.increment(1),
+      });
 
       // Önbelleği temizle
-      _cache.invalidateCache(referralCode);
+      _cache.invalidateCache(teamId);
 
-      return TeamOperationResult.success(
-        data: Team(
-          teamId: referralCode,
-          teamName: teamDoc.data()?[FirebaseFields.name] ?? '',
-          createdBy: teamDoc.data()?[FirebaseFields.createdBy] ?? '',
-          memberCount: memberCount + 1,
-          referralCode: referralCode,
-          createdAt: (teamDoc.data()?[FirebaseFields.createdAt] as Timestamp?)
-                  ?.toDate() ??
-              DateTime.now(),
-          isActive: teamDoc.data()?[FirebaseFields.isActive] ?? true,
-        ),
-      );
+      final team = Team.fromFirestore(teamDoc);
+      return TeamOperationResult.success(data: team);
     } on FirebaseException catch (e) {
       return TeamOperationResult.failure(
         error: TeamException(
@@ -237,10 +267,12 @@ class TeamService extends GetxService {
     } catch (e) {
       return TeamOperationResult.failure(
         error: TeamException(
-          'Beklenmeyen bir hata oluştu: $e',
+          e.toString(),
           errorType: TeamErrorType.unknown,
         ),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -271,7 +303,7 @@ class TeamService extends GetxService {
       data['teamId'] = doc.id; // teamId'yi ekle
 
       try {
-        final team = Team.fromJson(data);
+        final team = Team.fromFirestore(doc);
         print('TeamService: Takım nesnesi oluşturuldu: $team');
         return TeamOperationResult.success(data: team);
       } catch (e, stackTrace) {

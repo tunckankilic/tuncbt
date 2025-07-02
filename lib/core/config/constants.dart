@@ -59,15 +59,17 @@ class Constants {
 }
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF2196F3);
-  static const Color secondaryColor = Color(0xFF1976D2);
-  static const Color accentColor = Color(0xFF64B5F6);
-  static const Color backgroundColor = Colors.white;
-  static const Color textColor = Color(0xFF333333);
-  static const Color lightTextColor = Color(0xFF757575);
-  static const Color errorColor = Colors.red;
-  static const Color successColor = Colors.green;
-  static const Color warningColor = Colors.orange;
+  static Color primaryColor = Constants.primaryColor;
+  static Color secondaryColor = Constants.secondaryColor;
+  static Color accentColor = Constants.accentColor;
+  static Color backgroundColor = Constants.backgroundColor;
+  static Color textColor = Constants.textColor;
+  static Color lightTextColor = Constants.lightTextColor;
+  static Color errorColor = Constants.errorColor;
+  static Color successColor = Constants.successColor;
+  static Color warningColor = Constants.warningColor;
+  static Color teamAdminColor = Constants.teamAdminColor;
+  static Color teamMemberColor = Constants.teamMemberColor;
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -80,14 +82,14 @@ class AppTheme {
         displayColor: primaryColor,
       ),
       appBarTheme: AppBarTheme(
-        color: primaryColor,
+        backgroundColor: primaryColor,
         elevation: 0,
         titleTextStyle: GoogleFonts.raleway(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -97,7 +99,7 @@ class AppTheme {
             fontFamily: GoogleFonts.raleway().fontFamily,
             fontWeight: FontWeight.w600,
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -125,10 +127,17 @@ class AppTheme {
       ),
       colorScheme: ColorScheme.light(
         primary: primaryColor,
-        secondary: accentColor,
+        secondary: secondaryColor,
+        tertiary: accentColor,
         surface: Colors.white,
         background: backgroundColor,
         error: errorColor,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onTertiary: Colors.white,
+        onSurface: textColor,
+        onBackground: textColor,
+        onError: Colors.white,
       ),
     );
   }

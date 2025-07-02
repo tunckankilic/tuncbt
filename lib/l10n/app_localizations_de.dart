@@ -415,4 +415,74 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get permissionDenied =>
       'Sie haben keine Berechtigung für diese Aktion';
+
+  @override
+  String get privacyPolicy => 'Datenschutzerklärung';
+
+  @override
+  String get termsOfService => 'Nutzungsbedingungen';
+
+  @override
+  String get dataProcessing => 'Datenverarbeitung';
+
+  @override
+  String get ageRestriction => 'Altersbeschränkung';
+
+  @override
+  String get ageRestrictionText =>
+      'Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen';
+
+  @override
+  String get legalNotice => 'Rechtliche Hinweise';
+
+  @override
+  String get acceptTerms =>
+      'Ich akzeptiere die Nutzungsbedingungen und Datenschutzerklärung';
+
+  @override
+  String get acceptDataProcessing =>
+      'Ich stimme der Verarbeitung meiner personenbezogenen Daten zu';
+
+  @override
+  String get acceptAgeRestriction =>
+      'Ich bestätige, dass ich mindestens 13 Jahre alt bin';
+
+  @override
+  String get notificationPermission => 'Benachrichtigungserlaubnis';
+
+  @override
+  String get notificationPermissionText =>
+      'Erlauben Sie Benachrichtigungen, um über die Aktivitäten Ihres Teams informiert zu bleiben';
+
+  @override
+  String get manageNotifications => 'Benachrichtigungen verwalten';
+
+  @override
+  String get exportData => 'Meine Daten exportieren';
+
+  @override
+  String get exportDataDescription =>
+      'Laden Sie eine Kopie Ihrer persönlichen Daten herunter';
+
+  @override
+  String get deleteData => 'Meine Daten löschen';
+
+  @override
+  String get deleteDataDescription =>
+      'Löschen Sie alle Ihre Daten dauerhaft von unseren Servern';
+
+  @override
+  String get cookiePolicy => 'Cookie-Richtlinie';
+
+  @override
+  String get cookiePolicyDescription =>
+      'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern';
+
+  @override
+  String get contactSupport => 'Support kontaktieren';
+
+  @override
+  String lastUpdated(String date) {
+    return 'Zuletzt aktualisiert: $date';
+  }
 }

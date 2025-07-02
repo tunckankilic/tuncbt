@@ -405,4 +405,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionDenied => 'You don\'t have permission for this action';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get dataProcessing => 'Data Processing';
+
+  @override
+  String get ageRestriction => 'Age Restriction';
+
+  @override
+  String get ageRestrictionText =>
+      'You must be at least 13 years old to use this app';
+
+  @override
+  String get legalNotice => 'Legal Notice';
+
+  @override
+  String get acceptTerms => 'I accept the Terms of Service and Privacy Policy';
+
+  @override
+  String get acceptDataProcessing =>
+      'I consent to the processing of my personal data';
+
+  @override
+  String get acceptAgeRestriction =>
+      'I confirm that I am at least 13 years old';
+
+  @override
+  String get notificationPermission => 'Notification Permission';
+
+  @override
+  String get notificationPermissionText =>
+      'Allow notifications to stay updated with your team\'s activities';
+
+  @override
+  String get manageNotifications => 'Manage Notifications';
+
+  @override
+  String get exportData => 'Export My Data';
+
+  @override
+  String get exportDataDescription => 'Download a copy of your personal data';
+
+  @override
+  String get deleteData => 'Delete My Data';
+
+  @override
+  String get deleteDataDescription =>
+      'Permanently delete all your data from our servers';
+
+  @override
+  String get cookiePolicy => 'Cookie Policy';
+
+  @override
+  String get cookiePolicyDescription =>
+      'We use cookies to improve your experience';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String lastUpdated(String date) {
+    return 'Last Updated: $date';
+  }
 }

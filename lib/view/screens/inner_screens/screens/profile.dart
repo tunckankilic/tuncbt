@@ -125,6 +125,8 @@ class ProfileScreen extends GetView<InnerScreenController> {
                   ),
                 ],
               ),
+              const Divider(height: 32),
+              _buildDeleteAccountButton(context),
             ],
           ),
         );
@@ -220,6 +222,67 @@ class ProfileScreen extends GetView<InnerScreenController> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteAccountButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: ElevatedButton(
+        onPressed: () => _showDeleteAccountDialog(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_forever, size: 24.sp),
+            SizedBox(width: 8.w),
+            Text(
+              AppLocalizations.of(context)!.deleteAccount,
+              style: TextStyle(fontSize: 16.sp),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)!.deleteAccount,
+          style: TextStyle(color: Colors.red),
+        ),
+        content: Text(AppLocalizations.of(context)!.deleteAccountConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: TextStyle(color: AppTheme.textColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final accountDeletionService = AccountDeletionService();
+              await accountDeletionService.deleteAccount(LoginType.email);
+            },
+            child: Text(
+              AppLocalizations.of(context)!.delete,
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

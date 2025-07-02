@@ -14,6 +14,8 @@ import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
+import 'package:tuncbt/view/screens/legal/privacy_policy.dart';
+import 'package:tuncbt/view/screens/legal/terms_of_service.dart';
 
 class RouteManager {
   static const String home = '/home';
@@ -124,6 +126,14 @@ class RouteManager {
       name: InviteMembersScreen.routeName,
       page: () => InviteMembersScreen(),
       binding: InnerScreenBindings(),
+    ),
+    GetPage(
+      name: '/privacy-policy',
+      page: () => const PrivacyPolicyScreen(),
+    ),
+    GetPage(
+      name: '/terms-of-service',
+      page: () => const TermsOfServiceScreen(),
     ),
   ];
 }
