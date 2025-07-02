@@ -19,9 +19,9 @@ class MessageReplyPreview extends GetView<ChatController> {
       return Container(
         width: 350,
         padding: const EdgeInsets.all(8),
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(12),
             topRight: Radius.circular(12),
           ),
@@ -32,7 +32,7 @@ class MessageReplyPreview extends GetView<ChatController> {
               children: [
                 Expanded(
                   child: Text(
-                    messageReply.isMe ? 'Me' : 'Opposite',
+                    messageReply.isMe ? 'Ben' : 'Karşı Taraf',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -51,6 +51,7 @@ class MessageReplyPreview extends GetView<ChatController> {
             DisplayTextImageGIF(
               message: messageReply.message,
               type: messageReply.messageEnum,
+              mediaUrl: messageReply.mediaUrl,
             ),
           ],
         ),

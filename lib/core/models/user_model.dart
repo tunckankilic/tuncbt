@@ -60,7 +60,6 @@ class UserModel {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'name': name,
       'email': email,
       'imageUrl': imageUrl,
@@ -70,9 +69,8 @@ class UserModel {
       "isOnline": isOnline,
       'teamId': teamId,
       'invitedBy': invitedBy,
-      'teamRole': teamRole?.toString().split('.').last,
-      'hasTeam':
-          hasTeam && teamId != null, // hasTeam sadece teamId varsa true olmalı
+      'teamRole': teamRole?.toString().split('.').last.toLowerCase(),
+      'hasTeam': teamId != null, // hasTeam sadece teamId varsa true olmalı
     };
   }
 

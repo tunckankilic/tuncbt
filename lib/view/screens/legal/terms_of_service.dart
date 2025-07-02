@@ -23,7 +23,7 @@ class TermsOfServiceScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Kullanım Şartları',
+              AppLocalizations.of(context)!.termsOfService,
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
@@ -32,7 +32,8 @@ class TermsOfServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Son güncelleme: ${DateTime.now().toString().split(' ')[0]}',
+              AppLocalizations.of(context)!
+                  .lastUpdated(DateTime.now().toString().split(' ')[0]),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: AppTheme.lightTextColor,
@@ -40,36 +41,32 @@ class TermsOfServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 24.h),
             _buildSection(
-              'Yaş Sınırlaması',
-              'Bu uygulamayı kullanmak için en az 13 yaşında olmanız gerekmektedir. 13 yaşından küçükseniz, ebeveyn veya yasal vasi gözetiminde kullanmanız gerekir.',
+              AppLocalizations.of(context)!.termsAgeRestriction,
+              AppLocalizations.of(context)!.termsAgeRestrictionDesc,
             ),
             _buildSection(
-              'Hesap Güvenliği',
-              'Hesap güvenliğinizden siz sorumlusunuz. Şifrenizi kimseyle paylaşmayın ve güvenli bir şekilde saklayın.',
+              AppLocalizations.of(context)!.accountSecurity,
+              AppLocalizations.of(context)!.accountSecurityDesc,
             ),
             _buildSection(
-              'Kabul Edilemez Davranışlar',
-              '• Yasadışı içerik paylaşımı\n'
-                  '• Spam veya istenmeyen içerik\n'
-                  '• Taciz veya zorbalık\n'
-                  '• Başkalarının kişisel verilerini izinsiz paylaşma\n'
-                  '• Sistemin kötüye kullanımı',
+              AppLocalizations.of(context)!.unacceptableBehavior,
+              AppLocalizations.of(context)!.unacceptableBehaviorDesc,
             ),
             _buildSection(
-              'İçerik Hakları',
-              'Paylaştığınız içeriklerin haklarının size ait olduğunu veya paylaşma hakkına sahip olduğunuzu teyit etmelisiniz.',
+              AppLocalizations.of(context)!.contentRights,
+              AppLocalizations.of(context)!.contentRightsDesc,
             ),
             _buildSection(
-              'Hizmet Değişiklikleri',
-              'Hizmetlerimizi önceden haber vermeksizin değiştirme, askıya alma veya sonlandırma hakkını saklı tutarız.',
+              AppLocalizations.of(context)!.serviceChanges,
+              AppLocalizations.of(context)!.serviceChangesDesc,
             ),
             _buildSection(
-              'Sorumluluk Reddi',
-              'Uygulama "olduğu gibi" sunulmaktadır. Kesintisiz veya hatasız çalışacağına dair garanti vermiyoruz.',
+              AppLocalizations.of(context)!.disclaimer,
+              AppLocalizations.of(context)!.disclaimerDesc,
             ),
             _buildSection(
-              'İletişim',
-              'Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.',
+              AppLocalizations.of(context)!.termsContact,
+              AppLocalizations.of(context)!.termsContactDesc,
             ),
           ],
         ),

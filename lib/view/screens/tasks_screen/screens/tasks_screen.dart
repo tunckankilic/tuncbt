@@ -156,7 +156,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       ),
                       SizedBox(height: 24.h),
                       Text(
-                        'Henüz bir takıma ait değilsiniz',
+                        AppLocalizations.of(context)!.noTeamYet,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20.sp,
@@ -166,7 +166,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       ),
                       SizedBox(height: 12.h),
                       Text(
-                        'Görevleri görüntülemek için bir takıma katılmanız gerekiyor.',
+                        AppLocalizations.of(context)!.tasksRequireTeam,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14.sp,

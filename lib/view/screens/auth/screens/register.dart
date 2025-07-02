@@ -519,69 +519,110 @@ class SignUp extends GetView<AuthController> {
   Widget _buildLegalChecks(BuildContext context) {
     return Column(
       children: [
-        CheckboxListTile(
-          value: controller.acceptedTerms.value,
-          onChanged: (value) => controller.acceptedTerms.value = value ?? false,
-          title: Text(
-            AppLocalizations.of(context)!.acceptTerms,
-            style: TextStyle(fontSize: 14.sp),
-          ),
-          subtitle: Row(
-            children: [
-              TextButton(
-                onPressed: () => Get.toNamed('/terms-of-service'),
-                child: Text(
-                  AppLocalizations.of(context)!.termsOfService,
-                  style: TextStyle(fontSize: 12.sp),
+        Obx(() => Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => controller.acceptedTerms.value =
+                    !controller.acceptedTerms.value,
+                child: CheckboxListTile(
+                  value: controller.acceptedTerms.value,
+                  onChanged: (value) =>
+                      controller.acceptedTerms.value = value ?? false,
+                  title: Text(
+                    AppLocalizations.of(context)!.acceptTerms,
+                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Get.toNamed('/terms-of-service'),
+                        child: Text(
+                          AppLocalizations.of(context)!.termsOfService,
+                          style:
+                              TextStyle(fontSize: 12.sp, color: Colors.white70),
+                        ),
+                      ),
+                      Text(' & ',
+                          style:
+                              TextStyle(fontSize: 12.sp, color: Colors.white)),
+                      TextButton(
+                        onPressed: () => Get.toNamed('/privacy-policy'),
+                        child: Text(
+                          AppLocalizations.of(context)!.privacyPolicy,
+                          style:
+                              TextStyle(fontSize: 12.sp, color: Colors.white70),
+                        ),
+                      ),
+                    ],
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.white,
+                  checkColor: Colors.black,
                 ),
               ),
-              Text(' & ', style: TextStyle(fontSize: 12.sp)),
-              TextButton(
-                onPressed: () => Get.toNamed('/privacy-policy'),
-                child: Text(
-                  AppLocalizations.of(context)!.privacyPolicy,
-                  style: TextStyle(fontSize: 12.sp),
+            )),
+        Obx(() => Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => controller.acceptedDataProcessing.value =
+                    !controller.acceptedDataProcessing.value,
+                child: CheckboxListTile(
+                  value: controller.acceptedDataProcessing.value,
+                  onChanged: (value) =>
+                      controller.acceptedDataProcessing.value = value ?? false,
+                  title: Text(
+                    AppLocalizations.of(context)!.acceptDataProcessing,
+                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.white,
+                  checkColor: Colors.black,
                 ),
               ),
-            ],
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-        ),
-        CheckboxListTile(
-          value: controller.acceptedDataProcessing.value,
-          onChanged: (value) =>
-              controller.acceptedDataProcessing.value = value ?? false,
-          title: Text(
-            AppLocalizations.of(context)!.acceptDataProcessing,
-            style: TextStyle(fontSize: 14.sp),
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-        ),
-        CheckboxListTile(
-          value: controller.acceptedAgeRestriction.value,
-          onChanged: (value) =>
-              controller.acceptedAgeRestriction.value = value ?? false,
-          title: Text(
-            AppLocalizations.of(context)!.acceptAgeRestriction,
-            style: TextStyle(fontSize: 14.sp),
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-        ),
+            )),
+        Obx(() => Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => controller.acceptedAgeRestriction.value =
+                    !controller.acceptedAgeRestriction.value,
+                child: CheckboxListTile(
+                  value: controller.acceptedAgeRestriction.value,
+                  onChanged: (value) =>
+                      controller.acceptedAgeRestriction.value = value ?? false,
+                  title: Text(
+                    AppLocalizations.of(context)!.acceptAgeRestriction,
+                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.white,
+                  checkColor: Colors.black,
+                ),
+              ),
+            )),
       ],
     );
   }
 
   Widget _buildNotificationPermission(BuildContext context) {
-    return CheckboxListTile(
-      value: controller.acceptedNotifications.value,
-      onChanged: (value) =>
-          controller.acceptedNotifications.value = value ?? false,
-      title: Text(
-        AppLocalizations.of(context)!.notificationPermissionText,
-        style: TextStyle(fontSize: 14.sp),
-      ),
-      controlAffinity: ListTileControlAffinity.leading,
-    );
+    return Obx(() => Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => controller.acceptedNotifications.value =
+                !controller.acceptedNotifications.value,
+            child: CheckboxListTile(
+              value: controller.acceptedNotifications.value,
+              onChanged: (value) =>
+                  controller.acceptedNotifications.value = value ?? false,
+              title: Text(
+                AppLocalizations.of(context)!.notificationPermissionText,
+                style: TextStyle(fontSize: 14.sp, color: Colors.white),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: Colors.white,
+              checkColor: Colors.black,
+            ),
+          ),
+        ));
   }
 
   Widget _buildSignUpButton(BuildContext context) {

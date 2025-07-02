@@ -1,11 +1,9 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/comment_model.dart';
-import 'package:tuncbt/view/screens/screens.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -118,7 +116,7 @@ class CommentWidget extends StatelessWidget {
                                     children: [
                                       Icon(Icons.edit, size: 18.sp),
                                       SizedBox(width: 8.w),
-                                      Text('Düzenle'),
+                                      Text(AppLocalizations.of(context)!.edit),
                                     ],
                                   ),
                                 ),
@@ -129,7 +127,7 @@ class CommentWidget extends StatelessWidget {
                                       Icon(Icons.delete,
                                           size: 18.sp, color: Colors.red),
                                       SizedBox(width: 8.w),
-                                      Text('Sil',
+                                      Text(AppLocalizations.of(context)!.delete,
                                           style: TextStyle(color: Colors.red)),
                                     ],
                                   ),
@@ -222,12 +220,12 @@ class CommentWidget extends StatelessWidget {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Yorumu Sil'),
-        content: Text('Bu yorumu silmek istediğinizden emin misiniz?'),
+        title: Text(AppLocalizations.of(context)!.deleteComment),
+        content: Text(AppLocalizations.of(context)!.deleteCommentConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -235,7 +233,7 @@ class CommentWidget extends StatelessWidget {
               controller.deleteComment(commentId);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Sil'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
@@ -244,16 +242,17 @@ class CommentWidget extends StatelessWidget {
 
   String _getTimeAgo(DateTime dateTime) {
     final difference = DateTime.now().difference(dateTime);
+    final context = Get.context!;
     if (difference.inDays > 7) {
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} gün önce';
+      return AppLocalizations.of(context)!.daysAgo(difference.inDays);
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} saat önce';
+      return AppLocalizations.of(context)!.hoursAgo(difference.inHours);
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} dakika önce';
+      return AppLocalizations.of(context)!.minutesAgo(difference.inMinutes);
     } else {
-      return 'Az önce';
+      return AppLocalizations.of(context)!.justNow;
     }
   }
 }

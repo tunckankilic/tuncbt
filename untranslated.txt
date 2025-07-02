@@ -1,9 +1,5 @@
 {
-  "tr": [
-    "loginTitle",
-    "registerTitle",
-    "registerPassword",
-    "registerConfirmPassword",
-    "registerHasAccount"
+  "de": [
+    "lastUpdatedAt"
   ]
 }

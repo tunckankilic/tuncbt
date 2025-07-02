@@ -21,7 +21,6 @@
     "description": "Text für Registrierungs-Button und Bildschirmtitel"
   },
 
-  "cancel": "Abbrechen",
   "@cancel": {
     "description": "Allgemeiner Abbrechen-Button Text"
   },
@@ -156,10 +155,6 @@
     "description": "Text für Zurück-zur-Anmeldung-Button"
   },
 
-  "taskTitle": "Aufgabentitel",
-  "taskDescription": "Aufgabenbeschreibung",
-  "taskDeadline": "Fälligkeitsdatum",
-  "taskCategory": "Aufgabenkategorie",
   "uploadTask": "Aufgabe hochladen",
   "addComment": "Kommentar hinzufügen",
   "taskDone": "Aufgabe abgeschlossen",
@@ -168,13 +163,8 @@
   "deleteTaskConfirm": "Möchten Sie diese Aufgabe wirklich löschen?",
   "taskDeleted": "Aufgabe erfolgreich gelöscht",
   "taskDeleteError": "Beim Löschen der Aufgabe ist ein Fehler aufgetreten",
-  "taskUploadSuccess": "Aufgabe hochgeladen und Benachrichtigung erstellt",
-  "taskUploadError": "Beim Hochladen der Aufgabe ist ein Fehler aufgetreten",
-  "noTasks": "Noch keine Teamaufgaben",
-  "addTaskHint": "Klicken Sie auf den +-Button, um eine neue Aufgabe hinzuzufügen",
-  "allFieldsRequired": "Alle Felder sind erforderlich",
+
   "fieldRequired": "Dieses Feld ist erforderlich",
-  "teamTasks": "Teamaufgaben",
   "newTask": "Neue Aufgabe",
 
   "teamMembers": "Teammitglieder",
@@ -262,9 +252,41 @@
   "noPermissionToDelete": "Sie haben keine Berechtigung für diese Aktion",
 
   "error": "Fehler",
-  "retry": "Wiederholen",
-  "maximumRetryExceeded": "Maximale Anzahl der Wiederholungsversuche überschritten",
   "success": "Erfolg",
+  "retry": "Wiederholen",
+  "failedToSendMessage": "Nachricht konnte nicht gesendet werden",
+  "failedToSendFile": "Datei konnte nicht gesendet werden",
+  "gifSentSuccessfully": "GIF erfolgreich gesendet",
+  "failedToSendGIF": "GIF konnte nicht gesendet werden",
+  "micPermissionTitle": "Mikrofonberechtigung",
+  "micPermissionMessage": "Wir benötigen die Mikrofonberechtigung, um Sprachnachrichten zu senden. Möchten Sie die Berechtigung erteilen?",
+  "notNow": "NICHT JETZT",
+  "continueAction": "FORTFAHREN",
+  "permissionRequired": "Berechtigung erforderlich",
+  "micPermissionSettingsMessage": "Mikrofonberechtigung ist erforderlich, um Sprachnachrichten zu senden. Bitte erteilen Sie die Berechtigung in den Einstellungen.",
+  "cancel": "ABBRECHEN",
+  "openSettings": "EINSTELLUNGEN ÖFFNEN",
+  "recordingError": "Fehler",
+  "recordingStartError": "Aufnahme konnte nicht gestartet werden",
+  "recordingStopError": "Aufnahme konnte nicht gestoppt werden",
+  "filePickingError": "Fehler beim Auswählen der Datei",
+  "attachments": "Anhänge",
+  "photo": "Foto",
+  "video": "Video",
+  "messageDeletionError": "Fehler beim Löschen der Nachricht",
+  "userBlocked": "Benutzer blockiert",
+  "userBlockError": "Fehler beim Blockieren des Benutzers",
+  "userUnblocked": "Benutzer entsperrt",
+  "userUnblockError": "Fehler beim Entsperren des Benutzers",
+  "memberAdded": "Neue Mitglieder hinzugefügt",
+  "onlyAdminsCanPromote": "Nur Gruppenadministratoren können neue Administratoren zuweisen",
+  "adminAssigned": "Neuer Gruppenadministrator zugewiesen",
+  "systemMessageNewMembers": "Neue Mitglieder hinzugefügt",
+  "systemMessageMemberRemoved": "Ein Mitglied wurde entfernt",
+  "systemMessageNewAdmin": "Neuer Gruppenadministrator zugewiesen",
+  "systemMessageGroupCreated": "Gruppe erstellt",
+
+  "maximumRetryExceeded": "Maximale Anzahl der Wiederholungsversuche überschritten",
   "operationSuccess": "Vorgang erfolgreich abgeschlossen",
 
   "joinTeam": "Team beitreten",
@@ -314,7 +336,6 @@
   "allFieldsRequired": "Alle Felder sind erforderlich",
   "taskUploadSuccess": "Aufgabe erfolgreich hochgeladen",
   "taskUploadError": "Fehler beim Hochladen der Aufgabe",
-  "notInTeam": "Sie gehören noch keinem Team an",
   "teamNotFound": "Team nicht gefunden",
   "permissionDenied": "Sie haben keine Berechtigung für diese Aktion",
 
@@ -344,5 +365,90 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "chats": "Chats",
+  "groups": "Gruppen",
+  "newChat": "Neuer Chat",
+  "newGroup": "Neue Gruppe",
+  "createGroup": "Gruppe erstellen",
+  "groupName": "Gruppenname",
+  "groupDescription": "Beschreibung (Optional)",
+  "groupMembers": "Mitglieder",
+  "noMembers": "Keine Mitglieder zum Hinzufügen verfügbar",
+  "selectMembers": "Bitte wählen Sie mindestens ein Mitglied aus",
+  "groupCreated": "Gruppe erstellt",
+  "groupCreationError": "Fehler beim Erstellen der Gruppe",
+  "noChats": "Noch keine Nachrichten",
+  "noGroups": "Sie sind noch kein Mitglied einer Gruppe",
+  "memberCount": "{count} Mitglieder",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupChatComingSoon": "Gruppenchat-Funktion kommt bald",
+  "deleteChat": "Chat löschen",
+  "deleteChatConfirm": "Möchten Sie diesen Chat wirklich löschen?",
+  "block": "Blockieren",
+  "unblock": "Entsperren",
+  "onlyAdminsCanAdd": "Nur Gruppenadministratoren können Mitglieder hinzufügen",
+  "onlyAdminsCanRemove": "Nur Gruppenadministratoren können Mitglieder entfernen",
+  "onlyAdminsCanMakeAdmin": "Nur Gruppenadministratoren können neue Administratoren zuweisen",
+  "newMembersAdded": "Neue Mitglieder hinzugefügt",
+  "memberRemoved": "Mitglied aus der Gruppe entfernt",
+  "newAdminAssigned": "Neuer Gruppenadministrator zugewiesen",
+  "groupCreatedMessage": "Gruppe erstellt",
+
+  "teamCreationDate": "Erstellungsdatum",
+  "dangerZone": "Gefahrenbereich",
+  "memberManagement": "Mitgliederverwaltung",
+  "teamMemberCount": "{count} Mitglieder",
+  "@teamMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "teamMembersLowercase": "mitglieder",
+
+  "chooseYourJob": "Wählen Sie Ihren Beruf",
+  "noTeamYet": "Sie gehören noch keinem Team an",
+  "tasksRequireTeam": "Sie müssen einem Team beitreten, um Aufgaben anzuzeigen",
+  "deleteComment": "Kommentar löschen",
+  "deleteCommentConfirm": "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?",
+  "justNow": "Gerade eben",
+  "minutesAgo": "vor {minutes} Minuten",
+  "hoursAgo": "vor {hours} Stunden",
+  "daysAgo": "vor {days} Tagen",
+  "userNotFound": "Benutzerinformationen nicht gefunden",
+  "dataCollection": "Datenerfassung und -nutzung",
+  "dataCollectionDesc": "Unsere App sammelt und verarbeitet einige Ihrer persönlichen Daten, um einen besseren Service zu bieten. Diese Daten umfassen:\n\n• Name und E-Mail-Adresse\n• Profilbild\n• Telefonnummer\n• Team- und Aufgabeninformationen\n• Nutzungsstatistiken",
+  "dataSecurity": "Datensicherheit",
+  "dataSecurityDesc": "Ihre Daten werden sicher gespeichert und mit Firebase-Infrastruktur verschlüsselt. Nur autorisiertes Personal hat Zugriff auf Ihre Daten.",
+  "dataSharing": "Datenaustausch",
+  "dataSharingDesc": "Ihre Daten werden nicht an Dritte weitergegeben. Nur notwendige Informationen werden zwischen Teammitgliedern geteilt.",
+  "dataDeletion": "Datenlöschung",
+  "dataDeletionDesc": "Wenn Sie Ihr Konto löschen, werden alle Ihre persönlichen Daten und zugehörigen Inhalte (Nachrichten, Kommentare, Aufgaben) dauerhaft gelöscht.",
+  "cookies": "Cookies",
+  "cookiesDesc": "Unsere App verwendet möglicherweise Cookies, um eine bessere Benutzererfahrung zu bieten.",
+  "contactInfo": "Kontakt",
+  "contactInfoDesc": "Bei Fragen zu unserer Datenschutzrichtlinie können Sie uns unter support@tuncbt.com erreichen",
+  "termsAgeRestriction": "Altersbeschränkung",
+  "termsAgeRestrictionDesc": "Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen. Wenn Sie unter 13 Jahre alt sind, müssen Sie sie unter Aufsicht eines Elternteils oder Erziehungsberechtigten nutzen.",
+  "accountSecurity": "Kontosicherheit",
+  "accountSecurityDesc": "Sie sind für die Sicherheit Ihres Kontos verantwortlich. Teilen Sie Ihr Passwort mit niemandem und bewahren Sie es sicher auf.",
+  "unacceptableBehavior": "Inakzeptables Verhalten",
+  "unacceptableBehaviorDesc": "• Teilen illegaler Inhalte\n• Spam oder unerwünschte Inhalte\n• Belästigung oder Mobbing\n• Teilen persönlicher Daten anderer ohne Erlaubnis\n• Systemmissbrauch",
+  "contentRights": "Inhaltsrechte",
+  "contentRightsDesc": "Sie müssen bestätigen, dass Sie die Rechte an den von Ihnen geteilten Inhalten besitzen oder das Recht haben, sie zu teilen.",
+  "serviceChanges": "Serviceänderungen",
+  "serviceChangesDesc": "Wir behalten uns das Recht vor, unsere Dienste ohne vorherige Ankündigung zu ändern, auszusetzen oder zu beenden.",
+  "disclaimer": "Haftungsausschluss",
+  "disclaimerDesc": "Die Anwendung wird 'wie sie ist' zur Verfügung gestellt. Wir garantieren nicht, dass sie unterbrechungs- oder fehlerfrei funktioniert.",
+  "termsContact": "Kontakt",
+  "termsContactDesc": "Bei Fragen zu den Nutzungsbedingungen können Sie uns unter support@tuncbt.com erreichen."
 } 

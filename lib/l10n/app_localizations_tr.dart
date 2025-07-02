@@ -48,7 +48,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get create => 'Oluştur';
 
   @override
-  String get loginTitle => 'Login';
+  String get loginTitle => 'Giriş Yap';
 
   @override
   String get loginEmail => 'E-posta';
@@ -63,7 +63,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get loginResetPassword => 'Şifremi Unuttum';
 
   @override
-  String get registerTitle => 'Register';
+  String get registerTitle => 'Kayıt Ol';
 
   @override
   String get registerName => 'Ad Soyad';
@@ -72,10 +72,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get registerEmail => 'E-posta Adresi';
 
   @override
-  String get registerPassword => 'Password';
+  String get registerPassword => 'Şifre';
 
   @override
-  String get registerConfirmPassword => 'Confirm Password';
+  String get registerConfirmPassword => 'Şifre Tekrar';
 
   @override
   String get registerPhone => 'Telefon Numarası';
@@ -84,7 +84,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get registerPosition => 'Şirketteki Pozisyon';
 
   @override
-  String get registerHasAccount => 'Already have an account?';
+  String get registerHasAccount => 'Zaten hesabınız var mı?';
 
   @override
   String get forgotPasswordTitle => 'Şifremi Unuttum';
@@ -109,7 +109,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get taskDescription => 'Görev Açıklaması';
 
   @override
-  String get taskDeadline => 'Görev Son Tarihi';
+  String get taskDeadline => 'Son Tarih';
 
   @override
   String get taskCategory => 'Görev Kategorisi';
@@ -140,10 +140,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get taskDeleteError => 'Görev silinirken bir hata oluştu';
 
   @override
-  String get taskUploadSuccess => 'Görev başarıyla yüklendi';
+  String get taskUploadSuccess => 'Görev yüklendi ve bildirim oluşturuldu';
 
   @override
-  String get taskUploadError => 'Görev yüklenirken hata oluştu';
+  String get taskUploadError => 'Görev yüklenirken bir hata oluştu';
 
   @override
   String get noTasks => 'Henüz ekip görevi yok';
@@ -158,7 +158,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get fieldRequired => 'Bu alan zorunludur';
 
   @override
-  String get teamTasks => 'Takım Görevleri';
+  String get teamTasks => 'Ekip Görevleri';
 
   @override
   String get newTask => 'Yeni Görev';
@@ -281,7 +281,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get loginRequired => 'Giriş yapmanız gerekiyor';
 
   @override
-  String get userNotFound => 'Kullanıcı bulunamadı';
+  String get userNotFound => 'Kullanıcı bilgileri bulunamadı';
 
   @override
   String get authErrorUserNotFound =>
@@ -364,7 +364,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get error => 'Hata';
 
   @override
+  String get success => 'Başarılı';
+
+  @override
   String get retry => 'Tekrar Dene';
+
+  @override
+  String get failedToSendMessage => 'Mesaj gönderilemedi';
+
+  @override
+  String get failedToSendFile => 'Dosya gönderilemedi';
+
+  @override
+  String get gifSentSuccessfully => 'GIF başarıyla gönderildi';
+
+  @override
+  String get failedToSendGIF => 'GIF gönderilemedi';
 
   @override
   String get maximumRetryExceeded => 'Maksimum yeniden deneme sayısı aşıldı';
@@ -477,4 +492,320 @@ class AppLocalizationsTr extends AppLocalizations {
   String lastUpdated(String date) {
     return 'Son güncelleme: $date';
   }
+
+  @override
+  String get chats => 'Sohbetler';
+
+  @override
+  String get groups => 'Gruplar';
+
+  @override
+  String get newChat => 'Yeni Sohbet';
+
+  @override
+  String get newGroup => 'Yeni Grup';
+
+  @override
+  String get createGroup => 'Grup Oluştur';
+
+  @override
+  String get groupName => 'Grup Adı';
+
+  @override
+  String get groupDescription => 'Açıklama (İsteğe bağlı)';
+
+  @override
+  String get groupMembers => 'Üyeler';
+
+  @override
+  String get noMembers => 'Eklenebilecek üye bulunamadı';
+
+  @override
+  String get selectMembers => 'En az bir üye seçmelisiniz';
+
+  @override
+  String get groupCreated => 'Grup başarıyla oluşturuldu';
+
+  @override
+  String get groupCreationError => 'Grup oluşturulurken bir hata oluştu';
+
+  @override
+  String get noChats => 'Henüz mesajınız yok';
+
+  @override
+  String get noGroups => 'Henüz bir gruba üye değilsiniz';
+
+  @override
+  String memberCount(int count) {
+    return '$count üye';
+  }
+
+  @override
+  String get groupChatComingSoon => 'Grup sohbeti özelliği yakında eklenecek';
+
+  @override
+  String get deleteChat => 'Sohbeti Sil';
+
+  @override
+  String get deleteChatConfirm =>
+      'Bu sohbeti silmek istediğinizden emin misiniz?';
+
+  @override
+  String get block => 'Engelle';
+
+  @override
+  String get unblock => 'Engeli Kaldır';
+
+  @override
+  String get onlyAdminsCanMakeAdmin =>
+      'Yalnızca grup adminleri yeni admin atayabilir';
+
+  @override
+  String get newMembersAdded => 'Yeni üyeler eklendi';
+
+  @override
+  String get newAdminAssigned => 'Yeni grup admini atandı';
+
+  @override
+  String get groupCreatedMessage => 'Grup oluşturuldu';
+
+  @override
+  String get micPermissionTitle => 'Mikrofon İzni';
+
+  @override
+  String get micPermissionMessage =>
+      'Sesli mesaj göndermek için mikrofon iznine ihtiyacımız var. İzin vermek ister misiniz?';
+
+  @override
+  String get notNow => 'ŞİMDİ DEĞİL';
+
+  @override
+  String get continueAction => 'DEVAM ET';
+
+  @override
+  String get permissionRequired => 'İzin Gerekli';
+
+  @override
+  String get micPermissionSettingsMessage =>
+      'Sesli mesaj göndermek için mikrofon izni gerekli. Lütfen ayarlardan izin verin.';
+
+  @override
+  String get openSettings => 'AYARLARI AÇ';
+
+  @override
+  String get recordingError => 'Hata';
+
+  @override
+  String get recordingStartError => 'Kayıt başlatılamadı';
+
+  @override
+  String get recordingStopError => 'Kayıt durdurulamadı';
+
+  @override
+  String get filePickingError => 'Dosya seçilirken bir hata oluştu';
+
+  @override
+  String get attachments => 'Ekler';
+
+  @override
+  String get photo => 'Fotoğraf';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get messageDeletionError => 'Mesaj silinirken bir hata oluştu';
+
+  @override
+  String get userBlocked => 'Kullanıcı engellendi';
+
+  @override
+  String get userBlockError => 'Kullanıcı engellenirken bir hata oluştu';
+
+  @override
+  String get userUnblocked => 'Kullanıcının engeli kaldırıldı';
+
+  @override
+  String get userUnblockError =>
+      'Kullanıcının engeli kaldırılırken bir hata oluştu';
+
+  @override
+  String get onlyAdminsCanAdd => 'Yalnızca grup yöneticileri üye ekleyebilir';
+
+  @override
+  String get memberAdded => 'Yeni üyeler eklendi';
+
+  @override
+  String get onlyAdminsCanRemove =>
+      'Yalnızca grup yöneticileri üye çıkarabilir';
+
+  @override
+  String get memberRemoved => 'Bir üye gruptan çıkarıldı';
+
+  @override
+  String get onlyAdminsCanPromote =>
+      'Yalnızca grup yöneticileri yeni yönetici atayabilir';
+
+  @override
+  String get adminAssigned => 'Yeni grup yöneticisi atandı';
+
+  @override
+  String get systemMessageNewMembers => 'Yeni üyeler eklendi';
+
+  @override
+  String get systemMessageMemberRemoved => 'Bir üye çıkarıldı';
+
+  @override
+  String get systemMessageNewAdmin => 'Yeni grup yöneticisi atandı';
+
+  @override
+  String get systemMessageGroupCreated => 'Grup oluşturuldu';
+
+  @override
+  String get teamCreationDate => 'Oluşturulma Tarihi';
+
+  @override
+  String get dangerZone => 'Tehlikeli Bölge';
+
+  @override
+  String get memberManagement => 'Üye Yönetimi';
+
+  @override
+  String teamMemberCount(int count) {
+    return '$count üye';
+  }
+
+  @override
+  String get teamMembersLowercase => 'üye';
+
+  @override
+  String get chooseYourJob => 'İş Pozisyonunuzu Seçin';
+
+  @override
+  String get noTeamYet => 'Henüz bir takıma ait değilsiniz';
+
+  @override
+  String get tasksRequireTeam =>
+      'Görevleri görüntülemek için bir takıma katılmanız gerekiyor';
+
+  @override
+  String get deleteComment => 'Yorumu Sil';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Bu yorumu silmek istediğinizden emin misiniz?';
+
+  @override
+  String get justNow => 'Az önce';
+
+  @override
+  String minutesAgo(Object minutes) {
+    return '$minutes dakika önce';
+  }
+
+  @override
+  String hoursAgo(Object hours) {
+    return '$hours saat önce';
+  }
+
+  @override
+  String daysAgo(Object days) {
+    return '$days gün önce';
+  }
+
+  @override
+  String get dataCollection => 'Veri Toplama ve Kullanım';
+
+  @override
+  String get dataCollectionDesc =>
+      'Uygulamamız, size daha iyi hizmet verebilmek için bazı kişisel verilerinizi toplar ve işler. Bu veriler şunları içerir:\n\n• İsim ve e-posta adresi\n• Profil fotoğrafı\n• Telefon numarası\n• Takım ve görev bilgileri\n• Kullanım istatistikleri';
+
+  @override
+  String get dataSecurity => 'Veri Güvenliği';
+
+  @override
+  String get dataSecurityDesc =>
+      'Verileriniz Firebase altyapısı kullanılarak güvenli bir şekilde saklanır ve şifrelenir. Verilerinize sadece yetkili kişiler erişebilir.';
+
+  @override
+  String get dataSharing => 'Veri Paylaşımı';
+
+  @override
+  String get dataSharingDesc =>
+      'Verileriniz üçüncü taraflarla paylaşılmaz. Sadece takım üyeleri arasında gerekli bilgiler paylaşılır.';
+
+  @override
+  String get dataDeletion => 'Veri Silme';
+
+  @override
+  String get dataDeletionDesc =>
+      'Hesabınızı sildiğinizde, tüm kişisel verileriniz ve ilgili içerikler (mesajlar, yorumlar, görevler) kalıcı olarak silinir.';
+
+  @override
+  String get cookies => 'Çerezler';
+
+  @override
+  String get cookiesDesc =>
+      'Uygulamamız, daha iyi bir kullanıcı deneyimi sağlamak için çerezler kullanabilir.';
+
+  @override
+  String get contactInfo => 'İletişim';
+
+  @override
+  String get contactInfoDesc =>
+      'Gizlilik politikamız hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz';
+
+  @override
+  String lastUpdatedAt(Object date) {
+    return 'Son güncelleme: $date';
+  }
+
+  @override
+  String get termsAgeRestriction => 'Yaş Sınırlaması';
+
+  @override
+  String get termsAgeRestrictionDesc =>
+      'Bu uygulamayı kullanmak için en az 13 yaşında olmanız gerekmektedir. 13 yaşından küçükseniz, ebeveyn veya yasal vasi gözetiminde kullanmanız gerekir.';
+
+  @override
+  String get accountSecurity => 'Hesap Güvenliği';
+
+  @override
+  String get accountSecurityDesc =>
+      'Hesap güvenliğinizden siz sorumlusunuz. Şifrenizi kimseyle paylaşmayın ve güvenli bir şekilde saklayın.';
+
+  @override
+  String get unacceptableBehavior => 'Kabul Edilemez Davranışlar';
+
+  @override
+  String get unacceptableBehaviorDesc =>
+      '• Yasadışı içerik paylaşımı\n• Spam veya istenmeyen içerik\n• Taciz veya zorbalık\n• Başkalarının kişisel verilerini izinsiz paylaşma\n• Sistemin kötüye kullanımı';
+
+  @override
+  String get contentRights => 'İçerik Hakları';
+
+  @override
+  String get contentRightsDesc =>
+      'Paylaştığınız içeriklerin haklarının size ait olduğunu veya paylaşma hakkına sahip olduğunuzu teyit etmelisiniz.';
+
+  @override
+  String get serviceChanges => 'Hizmet Değişiklikleri';
+
+  @override
+  String get serviceChangesDesc =>
+      'Hizmetlerimizi önceden haber vermeksizin değiştirme, askıya alma veya sonlandırma hakkını saklı tutarız.';
+
+  @override
+  String get disclaimer => 'Sorumluluk Reddi';
+
+  @override
+  String get disclaimerDesc =>
+      'Uygulama \'olduğu gibi\' sunulmaktadır. Kesintisiz veya hatasız çalışacağına dair garanti vermiyoruz.';
+
+  @override
+  String get termsContact => 'İletişim';
+
+  @override
+  String get termsContactDesc =>
+      'Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.';
 }

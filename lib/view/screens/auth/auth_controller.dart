@@ -82,6 +82,13 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
             }
           });
     _animationController.forward();
+
+    // Mevcut kullanıcıları migrate et
+    UserModel.migrateExistingUsers().then((_) {
+      print('Kullanıcı migrasyonu tamamlandı');
+    }).catchError((error) {
+      print('Kullanıcı migrasyonu sırasında hata: $error');
+    });
   }
 
   @override
@@ -682,9 +689,10 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void showJobCategoriesDialog() {
+    final context = Get.context!;
     Get.dialog(
       AlertDialog(
-        title: Text('Choose your Job',
+        title: Text(AppLocalizations.of(context)!.chooseYourJob,
             style: TextStyle(fontSize: 20, color: Colors.pink.shade800)),
         content: SizedBox(
           width: Get.width * 0.9,

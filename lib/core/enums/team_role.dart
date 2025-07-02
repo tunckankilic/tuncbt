@@ -6,11 +6,11 @@ enum TeamRole {
   String get name {
     switch (this) {
       case TeamRole.admin:
-        return 'Admin';
+        return 'admin';
       case TeamRole.manager:
-        return 'Manager';
+        return 'manager';
       case TeamRole.member:
-        return 'Member';
+        return 'member';
     }
   }
 
@@ -32,6 +32,6 @@ enum TeamRole {
 
   @override
   String toString() {
-    return name;
+    return name.toLowerCase();
   }
 }

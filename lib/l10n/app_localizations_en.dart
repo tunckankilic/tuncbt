@@ -361,7 +361,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
+  String get success => 'Success';
+
+  @override
   String get retry => 'Retry';
+
+  @override
+  String get failedToSendMessage => 'Failed to send message';
+
+  @override
+  String get failedToSendFile => 'Failed to send file';
+
+  @override
+  String get gifSentSuccessfully => 'GIF sent successfully';
+
+  @override
+  String get failedToSendGIF => 'Failed to send GIF';
 
   @override
   String get maximumRetryExceeded => 'Maximum retry attempts exceeded';
@@ -473,4 +488,315 @@ class AppLocalizationsEn extends AppLocalizations {
   String lastUpdated(String date) {
     return 'Last Updated: $date';
   }
+
+  @override
+  String get chats => 'Chats';
+
+  @override
+  String get groups => 'Groups';
+
+  @override
+  String get newChat => 'New Chat';
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get createGroup => 'Create Group';
+
+  @override
+  String get groupName => 'Group Name';
+
+  @override
+  String get groupDescription => 'Description (Optional)';
+
+  @override
+  String get groupMembers => 'Members';
+
+  @override
+  String get noMembers => 'No members available to add';
+
+  @override
+  String get selectMembers => 'Please select at least one member';
+
+  @override
+  String get groupCreated => 'Group created';
+
+  @override
+  String get groupCreationError => 'Error creating group';
+
+  @override
+  String get noChats => 'No messages yet';
+
+  @override
+  String get noGroups => 'You are not a member of any group yet';
+
+  @override
+  String memberCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get groupChatComingSoon => 'Group chat feature coming soon';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get deleteChatConfirm => 'Are you sure you want to delete this chat?';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get unblock => 'Unblock';
+
+  @override
+  String get onlyAdminsCanMakeAdmin =>
+      'Only group admins can assign new admins';
+
+  @override
+  String get newMembersAdded => 'New members added';
+
+  @override
+  String get newAdminAssigned => 'New group admin assigned';
+
+  @override
+  String get groupCreatedMessage => 'Group created';
+
+  @override
+  String get micPermissionTitle => 'Microphone Permission';
+
+  @override
+  String get micPermissionMessage =>
+      'We need microphone permission to send voice messages. Would you like to grant permission?';
+
+  @override
+  String get notNow => 'NOT NOW';
+
+  @override
+  String get continueAction => 'CONTINUE';
+
+  @override
+  String get permissionRequired => 'Permission Required';
+
+  @override
+  String get micPermissionSettingsMessage =>
+      'Microphone permission is required to send voice messages. Please grant permission in settings.';
+
+  @override
+  String get openSettings => 'OPEN SETTINGS';
+
+  @override
+  String get recordingError => 'Error';
+
+  @override
+  String get recordingStartError => 'Could not start recording';
+
+  @override
+  String get recordingStopError => 'Could not stop recording';
+
+  @override
+  String get filePickingError => 'Error picking file';
+
+  @override
+  String get attachments => 'Attachments';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get messageDeletionError => 'Error deleting message';
+
+  @override
+  String get userBlocked => 'User blocked';
+
+  @override
+  String get userBlockError => 'Error blocking user';
+
+  @override
+  String get userUnblocked => 'User unblocked';
+
+  @override
+  String get userUnblockError => 'Error unblocking user';
+
+  @override
+  String get onlyAdminsCanAdd => 'Only group admins can add members';
+
+  @override
+  String get memberAdded => 'New members added';
+
+  @override
+  String get onlyAdminsCanRemove => 'Only group admins can remove members';
+
+  @override
+  String get memberRemoved => 'A member was removed from the group';
+
+  @override
+  String get onlyAdminsCanPromote => 'Only group admins can assign new admins';
+
+  @override
+  String get adminAssigned => 'New group admin assigned';
+
+  @override
+  String get systemMessageNewMembers => 'New members added';
+
+  @override
+  String get systemMessageMemberRemoved => 'A member was removed';
+
+  @override
+  String get systemMessageNewAdmin => 'New group admin assigned';
+
+  @override
+  String get systemMessageGroupCreated => 'Group created';
+
+  @override
+  String get teamCreationDate => 'Creation Date';
+
+  @override
+  String get dangerZone => 'Danger Zone';
+
+  @override
+  String get memberManagement => 'Member Management';
+
+  @override
+  String teamMemberCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get teamMembersLowercase => 'members';
+
+  @override
+  String get chooseYourJob => 'Choose your Job';
+
+  @override
+  String get noTeamYet => 'You are not in a team yet';
+
+  @override
+  String get tasksRequireTeam => 'You need to join a team to view tasks';
+
+  @override
+  String get deleteComment => 'Delete Comment';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Are you sure you want to delete this comment?';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String minutesAgo(Object minutes) {
+    return '$minutes minutes ago';
+  }
+
+  @override
+  String hoursAgo(Object hours) {
+    return '$hours hours ago';
+  }
+
+  @override
+  String daysAgo(Object days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get dataCollection => 'Data Collection and Usage';
+
+  @override
+  String get dataCollectionDesc =>
+      'Our app collects and processes some of your personal data to provide better service. This data includes:\n\n• Name and email address\n• Profile picture\n• Phone number\n• Team and task information\n• Usage statistics';
+
+  @override
+  String get dataSecurity => 'Data Security';
+
+  @override
+  String get dataSecurityDesc =>
+      'Your data is stored securely and encrypted using Firebase infrastructure. Only authorized personnel can access your data.';
+
+  @override
+  String get dataSharing => 'Data Sharing';
+
+  @override
+  String get dataSharingDesc =>
+      'Your data is not shared with third parties. Only necessary information is shared between team members.';
+
+  @override
+  String get dataDeletion => 'Data Deletion';
+
+  @override
+  String get dataDeletionDesc =>
+      'When you delete your account, all your personal data and related content (messages, comments, tasks) are permanently deleted.';
+
+  @override
+  String get cookies => 'Cookies';
+
+  @override
+  String get cookiesDesc =>
+      'Our app may use cookies to provide a better user experience.';
+
+  @override
+  String get contactInfo => 'Contact';
+
+  @override
+  String get contactInfoDesc =>
+      'For questions about our privacy policy, you can reach us at support@tuncbt.com';
+
+  @override
+  String lastUpdatedAt(Object date) {
+    return 'Last updated: $date';
+  }
+
+  @override
+  String get termsAgeRestriction => 'Age Restriction';
+
+  @override
+  String get termsAgeRestrictionDesc =>
+      'You must be at least 13 years old to use this app. If you are under 13, you must use it under the supervision of a parent or legal guardian.';
+
+  @override
+  String get accountSecurity => 'Account Security';
+
+  @override
+  String get accountSecurityDesc =>
+      'You are responsible for your account security. Do not share your password with anyone and keep it secure.';
+
+  @override
+  String get unacceptableBehavior => 'Unacceptable Behavior';
+
+  @override
+  String get unacceptableBehaviorDesc =>
+      '• Illegal content sharing\n• Spam or unwanted content\n• Harassment or bullying\n• Sharing others\' personal data without permission\n• System abuse';
+
+  @override
+  String get contentRights => 'Content Rights';
+
+  @override
+  String get contentRightsDesc =>
+      'You must confirm that you own the rights to the content you share or have the right to share it.';
+
+  @override
+  String get serviceChanges => 'Service Changes';
+
+  @override
+  String get serviceChangesDesc =>
+      'We reserve the right to modify, suspend, or terminate our services without prior notice.';
+
+  @override
+  String get disclaimer => 'Disclaimer';
+
+  @override
+  String get disclaimerDesc =>
+      'The application is provided "as is". We do not guarantee that it will operate without interruption or errors.';
+
+  @override
+  String get termsContact => 'Contact';
+
+  @override
+  String get termsContactDesc =>
+      'For questions about terms of service, you can reach us at support@tuncbt.com';
 }

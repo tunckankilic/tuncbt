@@ -6,14 +6,14 @@ import 'package:tuncbt/view/screens/chat/widgets/video_player_item.dart';
 
 class DisplayTextImageGIF extends StatelessWidget {
   final String message;
-  final String? mediaUrl; // mediaUrl parametresi ekle
+  final String? mediaUrl;
   final MessageType type;
 
   const DisplayTextImageGIF({
     Key? key,
     required this.message,
     required this.type,
-    this.mediaUrl, // Opsiyonel mediaUrl
+    this.mediaUrl,
   }) : super(key: key);
 
   @override
@@ -25,7 +25,7 @@ class DisplayTextImageGIF extends StatelessWidget {
       return Container(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.7,
-          maxHeight: 200,
+          maxHeight: 150, // Reply preview için daha küçük
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
@@ -42,24 +42,27 @@ class DisplayTextImageGIF extends StatelessWidget {
                 child: CircularProgressIndicator(),
               ),
             ),
-            errorWidget: (context, url, error) => Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.error, color: Colors.red[400]),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Image not available',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
+            errorWidget: (context, url, error) {
+              print('Image error: $error for URL: $url');
+              return Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error, color: Colors.red[400]),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Image not available',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       );
@@ -73,7 +76,9 @@ class DisplayTextImageGIF extends StatelessWidget {
         );
 
       case MessageType.image:
-        return _buildImageWidget(mediaUrl ?? message);
+        final imageUrl = mediaUrl ?? message;
+        print('Displaying image with URL: $imageUrl');
+        return _buildImageWidget(imageUrl);
 
       case MessageType.gif:
         return _buildImageWidget(message);
