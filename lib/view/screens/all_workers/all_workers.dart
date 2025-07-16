@@ -67,7 +67,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
             ),
             Text(
               AppLocalizations.of(context)!
-                  .teamMembersCount(teamProvider.teamMembers.length),
+                  .teamMemberCount(teamProvider.teamMembers.length),
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 14.sp,

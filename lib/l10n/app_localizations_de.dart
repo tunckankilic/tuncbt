@@ -9,67 +9,31 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appTitle => 'TuncBT';
-
-  @override
-  String get language => 'Sprache';
-
-  @override
   String get login => 'Anmelden';
 
   @override
   String get register => 'Registrieren';
 
   @override
-  String get cancel => 'ABBRECHEN';
+  String get email => 'E-Mail';
 
   @override
-  String get ok => 'OK';
+  String get password => 'Passwort';
 
   @override
-  String get tasks => 'Aufgaben';
+  String get forgotPassword => 'Passwort vergessen';
 
   @override
-  String get profile => 'Profil';
-
-  @override
-  String get settings => 'Einstellungen';
-
-  @override
-  String get save => 'Speichern';
-
-  @override
-  String get delete => 'Löschen';
-
-  @override
-  String get edit => 'Bearbeiten';
-
-  @override
-  String get create => 'Erstellen';
-
-  @override
-  String get loginTitle => 'Anmelden';
-
-  @override
-  String get loginEmail => 'E-Mail';
-
-  @override
-  String get loginPassword => 'Passwort';
+  String get registerHasAccount => 'Haben Sie bereits ein Konto?';
 
   @override
   String get loginNoAccount => 'Noch kein Konto?';
 
   @override
-  String get loginResetPassword => 'Passwort vergessen';
-
-  @override
-  String get registerTitle => 'Registrieren';
-
-  @override
   String get registerName => 'Vollständiger Name';
 
   @override
-  String get registerEmail => 'E-Mail-Adresse';
+  String get registerEmail => 'E-Mail';
 
   @override
   String get registerPassword => 'Passwort';
@@ -78,53 +42,70 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerConfirmPassword => 'Passwort bestätigen';
 
   @override
-  String get registerPhone => 'Telefonnummer';
+  String get registerPhone => 'Telefon';
 
   @override
-  String get registerPosition => 'Position im Unternehmen';
+  String get registerPosition => 'Position';
 
   @override
-  String get registerHasAccount => 'Haben Sie bereits ein Konto?';
+  String get createTeam => 'Team erstellen';
 
   @override
-  String get forgotPasswordTitle => 'Passwort vergessen';
+  String get joinTeam => 'Team beitreten';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen';
+  String get referralCode => 'Einladungscode';
 
   @override
-  String get forgotPasswordEmail => 'E-Mail-Adresse';
+  String get referralCodeOptional => 'Optional';
 
   @override
-  String get forgotPasswordReset => 'Passwort zurücksetzen';
+  String get referralCodeTitle => 'Was ist ein Einladungscode?';
 
   @override
-  String get forgotPasswordBackToLogin => 'Zurück zur Anmeldung';
+  String get referralCodeDescription =>
+      'Mit einem Einladungscode können Sie einem bestehenden Team beitreten. Wenn Sie keinen Einladungscode haben, können Sie ein neues Team erstellen.';
 
   @override
-  String get taskTitle => 'Aufgabentitel';
+  String get acceptTerms =>
+      'Ich akzeptiere die Nutzungsbedingungen und Datenschutzerklärung';
 
   @override
-  String get taskDescription => 'Aufgabenbeschreibung';
+  String get acceptDataProcessing =>
+      'Ich akzeptiere die Verarbeitung meiner persönlichen Daten';
 
   @override
-  String get taskDeadline => 'Aufgabenfrist';
+  String get acceptAgeRestriction =>
+      'Ich bestätige, dass ich über 18 Jahre alt bin';
 
   @override
-  String get taskCategory => 'Aufgabenkategorie';
+  String get notificationPermissionText =>
+      'Ich möchte Benachrichtigungen erhalten';
 
   @override
-  String get uploadTask => 'Aufgabe hochladen';
+  String get termsOfService => 'Nutzungsbedingungen';
 
   @override
-  String get addComment => 'Kommentar hinzufügen';
+  String get privacyPolicy => 'Datenschutzerklärung';
 
   @override
-  String get taskDone => 'Aufgabe abgeschlossen';
+  String get ok => 'OK';
 
   @override
-  String get taskNotDone => 'Aufgabe in Bearbeitung';
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get fieldMissing => 'Dieses Feld darf nicht leer sein';
+
+  @override
+  String get invalidPassword =>
+      'Das Passwort muss mindestens 7 Zeichen lang sein';
+
+  @override
+  String get passwordsDoNotMatch => 'Die Passwörter stimmen nicht überein';
+
+  @override
+  String get delete => 'Löschen';
 
   @override
   String get deleteTask => 'Aufgabe löschen';
@@ -140,23 +121,230 @@ class AppLocalizationsDe extends AppLocalizations {
       'Beim Löschen der Aufgabe ist ein Fehler aufgetreten';
 
   @override
-  String get taskUploadSuccess => 'Aufgabe erfolgreich hochgeladen';
+  String get loginRequired => 'Anmeldung erforderlich';
 
   @override
-  String get taskUploadError => 'Fehler beim Hochladen der Aufgabe';
+  String get userNotFound => 'Benutzer nicht gefunden';
+
+  @override
+  String get noPermissionToDelete =>
+      'Sie haben keine Berechtigung für diese Aktion';
+
+  @override
+  String get teamMembers => 'Teammitglieder';
+
+  @override
+  String get noTeamMembers => 'Keine Teammitglieder gefunden';
+
+  @override
+  String get inviteMembersHint =>
+      'Laden Sie Teammitglieder ein, um zu beginnen';
+
+  @override
+  String get error => 'Fehler';
+
+  @override
+  String get retry => 'Wiederholen';
+
+  @override
+  String get appTitle => 'TuncBT';
+
+  @override
+  String get loginButton => 'Anmelden';
+
+  @override
+  String get registerButton => 'Registrieren';
+
+  @override
+  String get loginResetPassword => 'Passwort zurücksetzen';
+
+  @override
+  String get noTeamYet => 'Noch kein Team';
+
+  @override
+  String get tasksRequireTeam =>
+      'Sie müssen Teil eines Teams sein, um Aufgaben zu verwalten';
+
+  @override
+  String get totalTasks => 'Gesamtaufgaben';
+
+  @override
+  String get completedTasks => 'Erledigte Aufgaben';
+
+  @override
+  String get pendingTasks => 'Ausstehende Aufgaben';
 
   @override
   String get noTasks => 'Keine Aufgaben gefunden';
 
   @override
-  String get addTaskHint =>
-      'Klicken Sie auf +, um eine neue Aufgabe hinzuzufügen';
+  String get addTaskHint => 'Fügen Sie Ihre erste Aufgabe hinzu';
 
   @override
-  String get allFieldsRequired => 'Alle Felder sind erforderlich';
+  String get noTitle => 'Kein Titel';
+
+  @override
+  String get noDescription => 'Keine Beschreibung';
+
+  @override
+  String get termsAgeRestriction => 'Altersbeschränkung';
+
+  @override
+  String get termsAgeRestrictionDesc =>
+      'Benutzer müssen 18 Jahre oder älter sein.';
+
+  @override
+  String get accountSecurity => 'Kontosicherheit';
+
+  @override
+  String get accountSecurityDesc =>
+      'Benutzer sind für die Sicherheit ihrer Konten verantwortlich.';
+
+  @override
+  String get unacceptableBehavior => 'Inakzeptables Verhalten';
+
+  @override
+  String get unacceptableBehaviorDesc =>
+      'Jede Form von Belästigung, Missbrauch oder illegalen Aktivitäten ist streng verboten.';
+
+  @override
+  String get contentRights => 'Inhaltsrechte';
+
+  @override
+  String get contentRightsDesc =>
+      'Benutzer behalten ihre Rechte an Inhalten, während sie uns eine Nutzungslizenz gewähren.';
+
+  @override
+  String get serviceChanges => 'Serviceänderungen';
+
+  @override
+  String get serviceChangesDesc =>
+      'Wir behalten uns das Recht vor, Dienste zu ändern oder einzustellen.';
+
+  @override
+  String get disclaimer => 'Haftungsausschluss';
+
+  @override
+  String get disclaimerDesc =>
+      'Der Service wird \'wie besehen\' ohne Garantien bereitgestellt.';
+
+  @override
+  String get termsContact => 'Kontakt';
+
+  @override
+  String get termsContactDesc =>
+      'Bei Fragen zu diesen Bedingungen kontaktieren Sie uns bitte.';
+
+  @override
+  String get dataCollection => 'Datenerfassung';
+
+  @override
+  String get dataCollectionDesc =>
+      'Wir sammeln notwendige Informationen für unsere Dienste.';
+
+  @override
+  String get dataSecurity => 'Datensicherheit';
+
+  @override
+  String get dataSecurityDesc =>
+      'Wir implementieren Sicherheitsmaßnahmen zum Schutz Ihrer Daten.';
+
+  @override
+  String get dataSharing => 'Datenweitergabe';
+
+  @override
+  String get dataSharingDesc =>
+      'Wir teilen Daten nur mit Ihrer Zustimmung oder wenn gesetzlich erforderlich.';
+
+  @override
+  String get dataDeletion => 'Datenlöschung';
+
+  @override
+  String get dataDeletionDesc =>
+      'Sie können die Löschung Ihrer persönlichen Daten beantragen.';
+
+  @override
+  String get cookies => 'Cookies';
+
+  @override
+  String get cookiesDesc =>
+      'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.';
+
+  @override
+  String get contactInfo => 'Kontaktinformationen';
+
+  @override
+  String get contactInfoDesc =>
+      'Bei Datenschutzbedenken kontaktieren Sie uns bitte.';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get enterName => 'Namen eingeben';
+
+  @override
+  String get save => 'Speichern';
+
+  @override
+  String get newGroup => 'Neue Gruppe';
+
+  @override
+  String get create => 'Erstellen';
+
+  @override
+  String get groupName => 'Gruppenname';
+
+  @override
+  String get groupDescription => 'Gruppenbeschreibung';
 
   @override
   String get fieldRequired => 'Dieses Feld ist erforderlich';
+
+  @override
+  String get chats => 'Chats';
+
+  @override
+  String get groups => 'Gruppen';
+
+  @override
+  String get deleteComment => 'Kommentar löschen';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Möchten Sie diesen Kommentar wirklich löschen?';
+
+  @override
+  String get edit => 'Bearbeiten';
+
+  @override
+  String get micPermissionTitle => 'Mikrofonberechtigung';
+
+  @override
+  String get micPermissionMessage =>
+      'Wir benötigen Mikrofonzugriff für Sprachnachrichten';
+
+  @override
+  String get notNow => 'Nicht jetzt';
+
+  @override
+  String get continueAction => 'Fortfahren';
+
+  @override
+  String get permissionRequired => 'Berechtigung erforderlich';
+
+  @override
+  String get micPermissionSettingsMessage =>
+      'Bitte aktivieren Sie den Mikrofonzugriff in den Einstellungen';
+
+  @override
+  String get openSettings => 'Einstellungen öffnen';
+
+  @override
+  String get photo => 'Foto';
+
+  @override
+  String get video => 'Video';
 
   @override
   String get teamTasks => 'Team-Aufgaben';
@@ -165,131 +353,55 @@ class AppLocalizationsDe extends AppLocalizations {
   String get newTask => 'Neue Aufgabe';
 
   @override
-  String get teamMembers => 'Teammitglieder';
+  String get allFieldsRequired =>
+      'Alle mit * markierten Felder sind erforderlich';
 
   @override
-  String teamMembersCount(int count) {
-    return '$count Mitglieder';
-  }
+  String get taskCategory => 'Aufgabenkategorie';
 
   @override
-  String get noTeamMembers => 'Noch keine Teammitglieder';
+  String get taskTitle => 'Aufgabentitel';
 
   @override
-  String get inviteMembersHint =>
-      'Teilen Sie Ihren Empfehlungscode, um neue Mitglieder zu Ihrem Team hinzuzufügen';
+  String get taskDescription => 'Aufgabenbeschreibung';
 
   @override
-  String get myAccount => 'Mein Konto';
+  String get taskDeadline => 'Aufgabenfrist';
 
   @override
-  String get logout => 'Abmelden';
+  String get uploadTask => 'Aufgabe hochladen';
 
   @override
-  String get logoutConfirm => 'Möchten Sie sich wirklich abmelden?';
+  String get forgotPasswordTitle => 'Passwort vergessen';
 
   @override
-  String get teamName => 'Teamname';
+  String get forgotPasswordSubtitle =>
+      'Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen';
 
   @override
-  String get referralCode => 'Empfehlungscode';
+  String get forgotPasswordEmail => 'E-Mail-Adresse';
 
   @override
-  String get referralCodeTitle => 'Was ist ein Empfehlungscode?';
+  String get forgotPasswordReset => 'Passwort zurücksetzen';
 
   @override
-  String get referralCodeDescription =>
-      'Ein Empfehlungscode ist ein einzigartiger 8-stelliger Code, der verwendet wird, um einem Team beizutreten. Wenn Sie einem bestehenden Team beitreten möchten, geben Sie den Empfehlungscode ein, den Sie vom Team-Administrator erhalten haben. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie dieses Feld leer lassen.';
+  String get forgotPasswordBackToLogin => 'Zurück zum Login';
 
   @override
-  String get referralCodeOptional =>
-      'Der Empfehlungscode ist optional. Wenn Sie Ihr eigenes Team erstellen möchten, können Sie ihn leer lassen.';
+  String get loginEmail => 'E-Mail';
 
   @override
-  String get inviteMembers => 'Mitglieder einladen';
+  String get loginPassword => 'Passwort';
 
   @override
-  String get shareReferralCode => 'Empfehlungscode teilen';
-
-  @override
-  String get teamSettings => 'Teameinstellungen';
-
-  @override
-  String get leaveTeam => 'Team verlassen';
-
-  @override
-  String get leaveTeamConfirm => 'Möchten Sie das Team wirklich verlassen?';
-
-  @override
-  String get deleteAccount => 'Konto löschen';
-
-  @override
-  String get deleteAccountConfirm =>
-      'Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.';
-
-  @override
-  String get jobInformation => 'Berufsinformationen';
-
-  @override
-  String get contactInformation => 'Kontaktinformationen';
-
-  @override
-  String get teamInformation => 'Teaminformationen';
-
-  @override
-  String get position => 'Position';
-
-  @override
-  String joinedDate(String date) {
-    return 'Beigetreten: $date';
-  }
-
-  @override
-  String get noName => 'Kein Name';
-
-  @override
-  String get editName => 'Name bearbeiten';
-
-  @override
-  String get enterName => 'Geben Sie Ihren Namen ein';
-
-  @override
-  String get quickActions => 'Schnellaktionen';
-
-  @override
-  String get messages => 'Nachrichten';
-
-  @override
-  String get notifications => 'Benachrichtigungen';
-
-  @override
-  String get contact => 'Kontakt';
-
-  @override
-  String get commentActions => 'Kommentaraktionen';
-
-  @override
-  String get replyToComment => 'Auf Kommentar antworten';
-
-  @override
-  String get close => 'Schließen';
-
-  @override
-  String get leave => 'Verlassen';
-
-  @override
-  String get loginRequired => 'Anmeldung erforderlich';
-
-  @override
-  String get userNotFound => 'Benutzer nicht gefunden';
+  String get loginTitle => 'Anmelden';
 
   @override
   String get authErrorUserNotFound =>
-      'Kein Benutzer mit dieser E-Mail-Adresse gefunden';
+      'Kein Benutzer mit dieser E-Mail gefunden';
 
   @override
-  String get authErrorWrongPassword =>
-      'Falsches Passwort. Bitte versuchen Sie es erneut';
+  String get authErrorWrongPassword => 'Falsches Passwort';
 
   @override
   String get authErrorInvalidEmail => 'Ungültige E-Mail-Adresse';
@@ -298,31 +410,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get authErrorUserDisabled => 'Dieses Konto wurde deaktiviert';
 
   @override
-  String get authErrorEmailInUse =>
-      'Diese E-Mail-Adresse wird bereits verwendet';
+  String get authErrorEmailInUse => 'Diese E-Mail wird bereits verwendet';
 
   @override
-  String get authErrorOperationNotAllowed =>
-      'Diese Operation ist derzeit nicht erlaubt';
+  String get authErrorOperationNotAllowed => 'Operation nicht erlaubt';
 
   @override
-  String get authErrorWeakPassword =>
-      'Das Passwort ist zu schwach. Bitte wählen Sie ein stärkeres Passwort';
+  String get authErrorWeakPassword => 'Passwort ist zu schwach';
 
   @override
-  String get authErrorNetworkFailed =>
-      'Netzwerkverbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung';
+  String get authErrorNetworkFailed => 'Netzwerkverbindung fehlgeschlagen';
 
   @override
   String get authErrorTooManyRequests =>
-      'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuchen Sie es später erneut';
+      'Zu viele Versuche. Bitte später erneut versuchen';
 
   @override
   String get authErrorInvalidCredential => 'Ungültige Anmeldedaten';
 
   @override
   String get authErrorAccountExists =>
-      'Ein Konto mit dieser E-Mail-Adresse existiert bereits mit einer anderen Anmeldemethode';
+      'Konto existiert bereits mit anderen Anmeldedaten';
 
   @override
   String get authErrorInvalidVerificationCode =>
@@ -332,51 +440,67 @@ class AppLocalizationsDe extends AppLocalizations {
   String get authErrorInvalidVerificationId => 'Ungültige Verifizierungs-ID';
 
   @override
-  String get authErrorQuotaExceeded =>
-      'Kontingent überschritten. Bitte versuchen Sie es später erneut';
+  String get authErrorQuotaExceeded => 'Quote überschritten';
 
   @override
-  String get authErrorCredentialInUse =>
-      'Diese Anmeldedaten sind bereits mit einem anderen Konto verknüpft';
+  String get authErrorCredentialInUse => 'Anmeldedaten bereits in Verwendung';
 
   @override
-  String get authErrorRequiresRecentLogin =>
-      'Diese Operation erfordert eine aktuelle Anmeldung. Bitte melden Sie sich ab und wieder an';
+  String get authErrorRequiresRecentLogin => 'Bitte melden Sie sich erneut an';
 
   @override
   String get authErrorGeneric =>
       'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut';
 
   @override
-  String get notInTeam => 'Sie sind noch kein Mitglied eines Teams';
+  String get profile_image_size_error =>
+      'Profilbild darf nicht größer als 5MB sein';
 
   @override
-  String get addMember => 'Mitglied hinzufügen';
+  String get invalid_image_format =>
+      'Ungültiges Dateiformat. Nur Bilder sind erlaubt';
 
   @override
-  String teamJoinDate(String date) {
-    return 'Beigetreten: $date';
-  }
+  String get profile_image_upload_failed =>
+      'Profilbild konnte nicht hochgeladen werden';
 
   @override
-  String get signUp => 'Registrieren';
+  String get creatingTeam => 'Team wird erstellt...\nBitte warten.';
 
   @override
-  String get noPermissionToDelete =>
-      'Sie haben keine Berechtigung für diese Aktion';
-
-  @override
-  String get error => 'Fehler';
+  String get chooseYourJob => 'Wählen Sie Ihren Job';
 
   @override
   String get success => 'Erfolg';
 
   @override
-  String get retry => 'Wiederholen';
+  String get recordingError => 'Aufnahmefehler';
 
   @override
-  String get failedToSendMessage =>
-      'Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut';
+  String get recordingStartError => 'Aufnahme konnte nicht gestartet werden';
+
+  @override
+  String get recordingStopError => 'Aufnahme konnte nicht gestoppt werden';
+
+  @override
+  String get sessionExpired =>
+      'Sitzung abgelaufen. Bitte melden Sie sich erneut an';
+
+  @override
+  String get failedToSendMessage => 'Nachricht konnte nicht gesendet werden';
+
+  @override
+  String get errorTitleChat => 'Chat-Fehler';
+
+  @override
+  String get noPermissionToSendMessage =>
+      'Keine Berechtigung zum Senden von Nachrichten';
+
+  @override
+  String get chatRoomNotFound => 'Chatroom nicht gefunden';
+
+  @override
+  String get networkError => 'Netzwerkfehler';
 
   @override
   String get failedToSendFile => 'Datei konnte nicht gesendet werden';
@@ -388,238 +512,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get failedToSendGIF => 'GIF konnte nicht gesendet werden';
 
   @override
-  String get maximumRetryExceeded =>
-      'Maximale Anzahl der Wiederholungsversuche überschritten';
-
-  @override
-  String get joinTeam => 'Team beitreten';
-
-  @override
-  String get createTeam => 'Team erstellen';
-
-  @override
-  String get fieldMissing => 'Dieses Feld ist erforderlich';
-
-  @override
-  String get invalidPassword => 'Bitte geben Sie ein gültiges Passwort ein';
-
-  @override
-  String get passwordsDoNotMatch => 'Passwörter stimmen nicht überein';
-
-  @override
-  String get teamAdminInfo =>
-      'Nach der Registrierung werden Sie der Administrator Ihres eigenen Teams sein';
-
-  @override
-  String get creatingTeam => 'Ihr Team wird erstellt...\nBitte warten.';
-
-  @override
-  String get email => 'E-Mail';
-
-  @override
-  String get name => 'Name';
-
-  @override
-  String get phoneNumber => 'Telefonnummer';
-
-  @override
-  String get allWorkers => 'Alle Mitarbeiter';
-
-  @override
-  String get teamNotFound => 'Team nicht gefunden';
-
-  @override
-  String get permissionDenied =>
-      'Sie haben keine Berechtigung für diese Aktion';
-
-  @override
-  String get privacyPolicy => 'Datenschutzerklärung';
-
-  @override
-  String get termsOfService => 'Nutzungsbedingungen';
-
-  @override
-  String get dataProcessing => 'Datenverarbeitung';
-
-  @override
-  String get ageRestriction => 'Altersbeschränkung';
-
-  @override
-  String get ageRestrictionText =>
-      'Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen';
-
-  @override
-  String get legalNotice => 'Rechtliche Hinweise';
-
-  @override
-  String get acceptTerms =>
-      'Ich akzeptiere die Nutzungsbedingungen und Datenschutzerklärung';
-
-  @override
-  String get acceptDataProcessing =>
-      'Ich stimme der Verarbeitung meiner personenbezogenen Daten zu';
-
-  @override
-  String get acceptAgeRestriction =>
-      'Ich bestätige, dass ich mindestens 13 Jahre alt bin';
-
-  @override
-  String get notificationPermission => 'Benachrichtigungserlaubnis';
-
-  @override
-  String get notificationPermissionText =>
-      'Erlauben Sie Benachrichtigungen, um über die Aktivitäten Ihres Teams informiert zu bleiben';
-
-  @override
-  String get manageNotifications => 'Benachrichtigungen verwalten';
-
-  @override
-  String get exportData => 'Meine Daten exportieren';
-
-  @override
-  String get exportDataDescription =>
-      'Laden Sie eine Kopie Ihrer persönlichen Daten herunter';
-
-  @override
-  String get deleteData => 'Meine Daten löschen';
-
-  @override
-  String get deleteDataDescription =>
-      'Löschen Sie alle Ihre Daten dauerhaft von unseren Servern';
-
-  @override
-  String get cookiePolicy => 'Cookie-Richtlinie';
-
-  @override
-  String get cookiePolicyDescription =>
-      'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern';
-
-  @override
-  String get contactSupport => 'Support kontaktieren';
-
-  @override
-  String lastUpdated(String date) {
-    return 'Zuletzt aktualisiert: $date';
-  }
-
-  @override
-  String get chats => 'Chats';
-
-  @override
-  String get groups => 'Gruppen';
-
-  @override
-  String get newChat => 'Neuer Chat';
-
-  @override
-  String get newGroup => 'Neue Gruppe';
-
-  @override
-  String get createGroup => 'Gruppe erstellen';
-
-  @override
-  String get groupName => 'Gruppenname';
-
-  @override
-  String get groupDescription => 'Beschreibung (Optional)';
-
-  @override
-  String get groupMembers => 'Mitglieder';
-
-  @override
-  String get noMembers => 'Keine Mitglieder zum Hinzufügen verfügbar';
-
-  @override
-  String get selectMembers => 'Bitte wählen Sie mindestens ein Mitglied aus';
-
-  @override
-  String get groupCreated => 'Gruppe erstellt';
-
-  @override
-  String get groupCreationError => 'Fehler beim Erstellen der Gruppe';
-
-  @override
-  String get noChats => 'Noch keine Nachrichten';
-
-  @override
-  String get noGroups => 'Sie sind noch kein Mitglied einer Gruppe';
-
-  @override
-  String memberCount(int count) {
-    return '$count Mitglieder';
-  }
-
-  @override
-  String get groupChatComingSoon => 'Gruppenchat-Funktion kommt bald';
-
-  @override
-  String get deleteChat => 'Chat löschen';
-
-  @override
-  String get deleteChatConfirm => 'Möchten Sie diesen Chat wirklich löschen?';
-
-  @override
-  String get block => 'Blockieren';
-
-  @override
-  String get unblock => 'Entsperren';
-
-  @override
-  String get onlyAdminsCanMakeAdmin =>
-      'Nur Gruppenadministratoren können neue Administratoren zuweisen';
-
-  @override
-  String get newMembersAdded => 'Neue Mitglieder hinzugefügt';
-
-  @override
-  String get newAdminAssigned => 'Neuer Gruppenadministrator zugewiesen';
-
-  @override
-  String get groupCreatedMessage => 'Gruppe erstellt';
-
-  @override
-  String get micPermissionTitle => 'Mikrofonberechtigung';
-
-  @override
-  String get micPermissionMessage =>
-      'Wir benötigen die Mikrofonberechtigung, um Sprachnachrichten zu senden. Möchten Sie die Berechtigung erteilen?';
-
-  @override
-  String get notNow => 'NICHT JETZT';
-
-  @override
-  String get continueAction => 'FORTFAHREN';
-
-  @override
-  String get permissionRequired => 'Berechtigung erforderlich';
-
-  @override
-  String get micPermissionSettingsMessage =>
-      'Mikrofonberechtigung ist erforderlich, um Sprachnachrichten zu senden. Bitte erteilen Sie die Berechtigung in den Einstellungen.';
-
-  @override
-  String get openSettings => 'EINSTELLUNGEN ÖFFNEN';
-
-  @override
-  String get recordingError => 'Fehler';
-
-  @override
-  String get recordingStartError => 'Aufnahme konnte nicht gestartet werden';
-
-  @override
-  String get recordingStopError => 'Aufnahme konnte nicht gestoppt werden';
-
-  @override
   String get filePickingError => 'Fehler beim Auswählen der Datei';
-
-  @override
-  String get attachments => 'Anhänge';
-
-  @override
-  String get photo => 'Foto';
-
-  @override
-  String get video => 'Video';
 
   @override
   String get messageDeletionError => 'Fehler beim Löschen der Nachricht';
@@ -638,70 +531,130 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get onlyAdminsCanAdd =>
-      'Nur Gruppenadministratoren können Mitglieder hinzufügen';
-
-  @override
-  String get memberAdded => 'Neue Mitglieder hinzugefügt';
+      'Nur Administratoren können Mitglieder hinzufügen';
 
   @override
   String get onlyAdminsCanRemove =>
-      'Nur Gruppenadministratoren können Mitglieder entfernen';
-
-  @override
-  String get memberRemoved => 'Mitglied aus der Gruppe entfernt';
+      'Nur Administratoren können Mitglieder entfernen';
 
   @override
   String get onlyAdminsCanPromote =>
-      'Nur Gruppenadministratoren können neue Administratoren ernennen';
+      'Nur Administratoren können Berechtigungen vergeben';
 
   @override
-  String get adminAssigned => 'Neuer Gruppenadministrator zugewiesen';
+  String get failedToRemoveMember => 'Mitglied konnte nicht entfernt werden';
 
   @override
-  String get systemMessageNewMembers => 'Neue Mitglieder hinzugefügt';
+  String get failedToPromoteAdmin =>
+      'Administrator konnte nicht ernannt werden';
 
   @override
-  String get systemMessageMemberRemoved => 'Ein Mitglied wurde entfernt';
+  String get errorTitleGroup => 'Gruppenfehler';
 
   @override
-  String get systemMessageNewAdmin => 'Neuer Gruppenadministrator zugewiesen';
+  String get deleteChat => 'Chat löschen';
 
   @override
-  String get systemMessageGroupCreated => 'Gruppe erstellt';
+  String get deleteChatConfirm => 'Möchten Sie diesen Chat wirklich löschen?';
 
   @override
-  String get teamCreationDate => 'Erstellungsdatum';
+  String get newChat => 'Neuer Chat';
 
   @override
-  String get dangerZone => 'Gefahrenbereich';
+  String get noChats => 'Noch keine Chats';
 
   @override
-  String get memberManagement => 'Mitgliederverwaltung';
+  String get noGroups => 'Sie sind noch kein Mitglied einer Gruppe';
 
   @override
-  String teamMemberCount(int count) {
-    return '$count Mitglieder';
+  String get teamSettings => 'Team-Einstellungen';
+
+  @override
+  String get teamInformation => 'Team-Informationen';
+
+  @override
+  String get teamName => 'Teamname';
+
+  @override
+  String get inviteMembers => 'Mitglieder einladen';
+
+  @override
+  String get shareReferralCode => 'Empfehlungscode teilen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String get leaveTeam => 'Team verlassen';
+
+  @override
+  String get leaveTeamConfirm => 'Möchten Sie dieses Team wirklich verlassen?';
+
+  @override
+  String get leave => 'Verlassen';
+
+  @override
+  String get deleteAccount => 'Konto löschen';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get groupCreated => 'Gruppe erfolgreich erstellt';
+
+  @override
+  String get selectMembers => 'Bitte wählen Sie mindestens ein Mitglied aus';
+
+  @override
+  String get groupCreationError => 'Fehler beim Erstellen der Gruppe';
+
+  @override
+  String get groupMembers => 'Gruppenmitglieder';
+
+  @override
+  String get noMembers => 'Keine Mitglieder zum Hinzufügen verfügbar';
+
+  @override
+  String get taskUploadSuccess => 'Aufgabe erfolgreich hochgeladen';
+
+  @override
+  String get taskUploadError => 'Fehler beim Hochladen der Aufgabe';
+
+  @override
+  String get logout => 'Abmelden';
+
+  @override
+  String get logoutConfirm => 'Möchten Sie sich wirklich abmelden?';
+
+  @override
+  String get tasks => 'Aufgaben';
+
+  @override
+  String get allWorkers => 'Alle Mitarbeiter';
+
+  @override
+  String get sendEmail => 'E-Mail senden';
+
+  @override
+  String get sendWhatsApp => 'WhatsApp-Nachricht senden';
+
+  @override
+  String get startChat => 'Chat starten';
+
+  @override
+  String get whatsAppError => 'WhatsApp konnte nicht geöffnet werden';
+
+  @override
+  String get emailError => 'E-Mail-App konnte nicht geöffnet werden';
+
+  @override
+  String get emailSubject => 'TuncBT - Kontakt';
+
+  @override
+  String emailBody(String name) {
+    return 'Hallo $name,\n\n';
   }
-
-  @override
-  String get teamMembersLowercase => 'mitglieder';
-
-  @override
-  String get chooseYourJob => 'Wählen Sie Ihren Beruf';
-
-  @override
-  String get noTeamYet => 'Sie gehören noch keinem Team an';
-
-  @override
-  String get tasksRequireTeam =>
-      'Sie müssen einem Team beitreten, um Aufgaben anzuzeigen';
-
-  @override
-  String get deleteComment => 'Kommentar löschen';
-
-  @override
-  String get deleteCommentConfirm =>
-      'Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?';
 
   @override
   String get justNow => 'Gerade eben';
@@ -722,178 +675,26 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dataCollection => 'Datenerfassung und -nutzung';
-
-  @override
-  String get dataCollectionDesc =>
-      'Unsere App sammelt und verarbeitet einige Ihrer persönlichen Daten, um einen besseren Service zu bieten. Diese Daten umfassen:\n\n• Name und E-Mail-Adresse\n• Profilbild\n• Telefonnummer\n• Team- und Aufgabeninformationen\n• Nutzungsstatistiken';
-
-  @override
-  String get dataSecurity => 'Datensicherheit';
-
-  @override
-  String get dataSecurityDesc =>
-      'Ihre Daten werden sicher gespeichert und mit Firebase-Infrastruktur verschlüsselt. Nur autorisiertes Personal hat Zugriff auf Ihre Daten.';
-
-  @override
-  String get dataSharing => 'Datenaustausch';
-
-  @override
-  String get dataSharingDesc =>
-      'Ihre Daten werden nicht an Dritte weitergegeben. Nur notwendige Informationen werden zwischen Teammitgliedern geteilt.';
-
-  @override
-  String get dataDeletion => 'Datenlöschung';
-
-  @override
-  String get dataDeletionDesc =>
-      'Wenn Sie Ihr Konto löschen, werden alle Ihre persönlichen Daten und zugehörigen Inhalte (Nachrichten, Kommentare, Aufgaben) dauerhaft gelöscht.';
-
-  @override
-  String get cookies => 'Cookies';
-
-  @override
-  String get cookiesDesc =>
-      'Unsere App verwendet möglicherweise Cookies, um eine bessere Benutzererfahrung zu bieten.';
-
-  @override
-  String get contactInfo => 'Kontakt';
-
-  @override
-  String get contactInfoDesc =>
-      'Bei Fragen zu unserer Datenschutzrichtlinie können Sie uns unter support@tuncbt.com erreichen';
-
-  @override
-  String lastUpdatedAt(String date) {
+  String lastUpdated(String date) {
     return 'Zuletzt aktualisiert: $date';
   }
 
   @override
-  String get termsAgeRestriction => 'Altersbeschränkung';
-
-  @override
-  String get termsAgeRestrictionDesc =>
-      'Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen. Wenn Sie unter 13 Jahre alt sind, müssen Sie sie unter Aufsicht eines Elternteils oder Erziehungsberechtigten nutzen.';
-
-  @override
-  String get accountSecurity => 'Kontosicherheit';
-
-  @override
-  String get accountSecurityDesc =>
-      'Sie sind für die Sicherheit Ihres Kontos verantwortlich. Teilen Sie Ihr Passwort mit niemandem und bewahren Sie es sicher auf.';
-
-  @override
-  String get unacceptableBehavior => 'Inakzeptables Verhalten';
-
-  @override
-  String get unacceptableBehaviorDesc =>
-      '• Teilen illegaler Inhalte\n• Spam oder unerwünschte Inhalte\n• Belästigung oder Mobbing\n• Teilen persönlicher Daten anderer ohne Erlaubnis\n• Systemmissbrauch';
-
-  @override
-  String get contentRights => 'Inhaltsrechte';
-
-  @override
-  String get contentRightsDesc =>
-      'Sie müssen bestätigen, dass Sie die Rechte an den von Ihnen geteilten Inhalten besitzen oder das Recht haben, sie zu teilen.';
-
-  @override
-  String get serviceChanges => 'Serviceänderungen';
-
-  @override
-  String get serviceChangesDesc =>
-      'Wir behalten uns das Recht vor, unsere Dienste ohne vorherige Ankündigung zu ändern, auszusetzen oder zu beenden.';
-
-  @override
-  String get disclaimer => 'Haftungsausschluss';
-
-  @override
-  String get disclaimerDesc =>
-      'Die Anwendung wird \'wie sie ist\' zur Verfügung gestellt. Wir garantieren nicht, dass sie unterbrechungs- oder fehlerfrei funktioniert.';
-
-  @override
-  String get termsContact => 'Kontakt';
-
-  @override
-  String get termsContactDesc =>
-      'Bei Fragen zu den Nutzungsbedingungen können Sie uns unter support@tuncbt.com erreichen.';
-
-  @override
-  String get sendEmail => 'E-Mail senden';
-
-  @override
-  String get sendWhatsApp => 'WhatsApp-Nachricht senden';
-
-  @override
-  String get startChat => 'Chat starten';
-
-  @override
-  String get whatsAppError => 'WhatsApp konnte nicht geöffnet werden';
-
-  @override
-  String get emailError => 'E-Mail-Anwendung konnte nicht geöffnet werden';
-
-  @override
-  String get emailSubject => 'TuncBT - Kontakt';
-
-  @override
-  String emailBody(String name) {
-    return 'Hallo $name,\n\n';
+  String teamMemberCount(int count) {
+    return '$count Mitglieder';
   }
 
   @override
-  String get profile_image_size_error =>
-      'Die Profilbildgröße darf 5MB nicht überschreiten';
+  String get teamMembersLowercase => 'mitglieder';
 
   @override
-  String get invalid_image_format =>
-      'Ungültiges Dateiformat. Nur Bilddateien sind erlaubt';
+  String memberCount(int count) {
+    return '$count Mitglieder';
+  }
 
   @override
-  String get profile_image_upload_failed =>
-      'Fehler beim Hochladen des Profilbilds. Bitte versuchen Sie es erneut';
+  String get leaveGroupSuccess => 'Sie haben die Gruppe verlassen';
 
   @override
-  String get sessionExpired =>
-      'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an';
-
-  @override
-  String get userNotFoundError =>
-      'Auf Ihre Benutzerinformationen konnte nicht zugegriffen werden. Bitte melden Sie sich erneut an';
-
-  @override
-  String get unexpectedErrorWithAction =>
-      'Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut';
-
-  @override
-  String get errorTitleChat => 'Nachrichtenfehler';
-
-  @override
-  String get errorTitleAuth => 'Anmeldefehler';
-
-  @override
-  String get errorTitleGroup => 'Gruppenoperation fehlgeschlagen';
-
-  @override
-  String get errorTitleUpload => 'Upload-Fehler';
-
-  @override
-  String get errorTitleNetwork => 'Verbindungsfehler';
-
-  @override
-  String get noPermissionToSendMessage =>
-      'Sie haben keine Berechtigung, diese Nachricht zu senden';
-
-  @override
-  String get chatRoomNotFound => 'Chatroom nicht gefunden';
-
-  @override
-  String get networkError => 'Bitte überprüfen Sie Ihre Internetverbindung';
-
-  @override
-  String get failedToRemoveMember =>
-      'Mitglied konnte nicht aus der Gruppe entfernt werden';
-
-  @override
-  String get failedToPromoteAdmin =>
-      'Benutzer konnte nicht zum Administrator befördert werden';
+  String get leaveGroupError => 'Fehler beim Verlassen der Gruppe';
 }

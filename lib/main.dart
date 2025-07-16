@@ -2,17 +2,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuncbt/core/config/router.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
-import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
-import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/core/services/push_notifications.dart';
+import 'package:tuncbt/core/services/auth_service.dart';
+import 'package:tuncbt/core/services/team_service_controller.dart';
+import 'package:tuncbt/core/services/navigation_service.dart';
+import 'package:tuncbt/core/services/firebase_listener_service.dart';
+import 'package:tuncbt/core/services/operation_queue_service.dart';
+import 'package:tuncbt/core/services/cache_service.dart';
+import 'package:tuncbt/core/services/logout_service.dart';
+import 'package:tuncbt/core/services/error_handling_service.dart';
 import 'package:tuncbt/user_state.dart';
-import 'package:tuncbt/core/models/user_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tuncbt/core/config/env_config.dart';
@@ -41,11 +45,42 @@ void main() async {
   timeago.setLocaleMessages('de', timeago.DeMessages());
   timeago.setDefaultLocale(savedLanguage);
 
+  // Initialize services in Get
+  Get.put(prefs); // Register SharedPreferences
+
+  // Initialize CacheService first
+  Get.put(CacheService(prefs));
+
+  // Initialize NavigationService
+  Get.put(NavigationService());
+
+  // Initialize FirebaseListenerService
+  Get.put(FirebaseListenerService());
+
+  // Initialize OperationQueueService
+  Get.put(OperationQueueService());
+
+  // Initialize LogoutService
+  Get.put(LogoutService());
+
+  // Initialize ErrorHandlingService
+  Get.put(ErrorHandlingService());
+
   final pushNotificationSystems = PushNotificationSystems();
   await pushNotificationSystems.init();
   Get.put(pushNotificationSystems);
 
-  runApp(MyApp(prefs: prefs, initialLocale: savedLanguage));
+  // Initialize AuthService
+  Get.put(AuthService());
+
+  // Initialize TeamServiceController
+  Get.put(TeamServiceController());
+
+  runApp(MyApp(
+    prefs: prefs,
+    initialLocale: savedLanguage,
+    key: MyAppState.key,
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -59,11 +94,21 @@ class MyApp extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   late String _currentLocale;
+  static final GlobalKey<MyAppState> key = GlobalKey<MyAppState>();
+
+  // Make it public by removing underscore
+  void changeLanguage(String languageCode) async {
+    setState(() {
+      _currentLocale = languageCode;
+    });
+    await widget.prefs.setString(LANGUAGE_CODE, languageCode);
+    timeago.setDefaultLocale(languageCode);
+  }
 
   @override
   void initState() {
@@ -74,79 +119,56 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _setupNotifications() async {
     final notificationSystems = Get.find<PushNotificationSystems>();
+
     String? token = await notificationSystems.getFirebaseToken();
     print('FCM Token: $token');
 
     notificationSystems.subscribeToTopic('notifications');
 
-    notificationSystems.setNotificationHandler((message) {
-      print("Received notification: ${message.notification?.title}");
-
-      final taskId = message.data['taskId'];
-      final uploadedBy = message.data['uploadedBy'];
-
-      if (taskId != null && uploadedBy != null) {
-        Get.toNamed(TaskDetailsScreen.routeName, arguments: {
-          'taskID': taskId,
-          'uploadedBy': uploadedBy,
-        });
-      }
-    });
-  }
-
-  void _changeLanguage(String languageCode) async {
-    setState(() {
-      _currentLocale = languageCode;
-    });
-    await widget.prefs.setString(LANGUAGE_CODE, languageCode);
-    timeago.setDefaultLocale(languageCode);
+    // Notification handling is now done internally by PushNotificationSystems
+    // and routing through NavigationService
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => TeamProvider(widget.prefs),
-        ),
-      ],
-      child: ScreenUtilInit(
-        designSize: const Size(375, 812),
-        child: GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'TuncBT',
-          theme: AppTheme.lightTheme,
-          initialBinding: AuthBindings(),
-          getPages: RouteManager.routes,
-          home: const UserState(),
-          locale: Locale(_currentLocale),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('tr'), // Turkish
-            Locale('en'), // English
-            Locale('de'), // German
-          ],
-          localeResolutionCallback: (locale, supportedLocales) {
-            if (locale == null) {
-              return supportedLocales.first;
-            }
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TuncBT',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        initialBinding: AuthBindings(),
+        getPages: RouteManager.routes,
+        home: const UserState(),
+        locale: Locale(_currentLocale),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('tr'), // Turkish
+          Locale('en'), // English
+          Locale('de'), // German
+        ],
+        localeResolutionCallback: (locale, supportedLocales) {
+          if (locale == null) {
+            return supportedLocales.first;
+          }
 
-            // Desteklenen dilleri kontrol et
-            for (var supportedLocale in supportedLocales) {
-              if (supportedLocale.languageCode == locale.languageCode) {
-                return supportedLocale;
-              }
+          // Desteklenen dilleri kontrol et
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale.languageCode == locale.languageCode) {
+              return supportedLocale;
             }
+          }
 
-            // Eğer desteklenmeyen bir dil ise varsayılan olarak Türkçe'ye dön
-            return const Locale('tr');
-          },
-        ),
+          // Eğer desteklenmeyen bir dil ise varsayılan olarak ingilizce'ye dön
+          return const Locale('en');
+        },
       ),
     );
   }

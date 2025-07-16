@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/core/services/navigation_service.dart';
 
 class PushNotificationSystems extends GetxController {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -134,37 +135,13 @@ class PushNotificationSystems extends GetxController {
   void _handleMessage(RemoteMessage message) {
     print('Bildirim işleniyor: ${message.messageId}');
 
-    final data = message.data;
-    final String? type = data['type'];
-    final String? taskId = data['taskId'];
-
-    if (type == null || taskId == null) {
-      print('Geçersiz bildirim verisi');
-      return;
-    }
-
-    switch (type) {
-      case 'new_task':
-        Get.toNamed('/tasks/details', arguments: {
-          'taskId': taskId,
-          'uploadedBy': data['uploadedBy'],
-        });
-        break;
-      case 'status_update':
-        Get.toNamed('/tasks/details', arguments: {
-          'taskId': taskId,
-          'uploadedBy': data['uploadedBy'],
-        });
-        break;
-      case 'new_comment':
-        Get.toNamed('/tasks/details', arguments: {
-          'taskId': taskId,
-          'uploadedBy': data['uploadedBy'],
-          'scrollToComment': data['commentId'],
-        });
-        break;
-      default:
-        print('Bilinmeyen bildirim tipi: $type');
+    try {
+      // Get NavigationService and handle navigation
+      final navigationService = Get.find<NavigationService>();
+      navigationService.handleNotificationNavigation(message.data);
+    } catch (e) {
+      print(
+          'PushNotificationSystems: Error handling notification navigation: $e');
     }
   }
 
@@ -298,10 +275,5 @@ class PushNotificationSystems extends GetxController {
     } catch (e) {
       print('Konudan çıkılırken hata: $e');
     }
-  }
-
-  void setNotificationHandler(Function(RemoteMessage) handler) {
-    FirebaseMessaging.onMessage.listen(handler);
-    FirebaseMessaging.onMessageOpenedApp.listen(handler);
   }
 }

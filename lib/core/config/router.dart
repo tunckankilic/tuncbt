@@ -18,6 +18,7 @@ import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
 import 'package:tuncbt/view/screens/legal/privacy_policy.dart';
 import 'package:tuncbt/view/screens/legal/terms_of_service.dart';
+import 'package:tuncbt/view/screens/chat/group_members_screen.dart';
 
 class RouteManager {
   static const String home = '/home';
@@ -142,6 +143,11 @@ class RouteManager {
     GetPage(
       name: '/terms-of-service',
       page: () => const TermsOfServiceScreen(),
+    ),
+    GetPage(
+      name: '/group-members',
+      page: () => GroupMembersScreen(),
+      binding: ChatBindings(),
     ),
   ];
 }

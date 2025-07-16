@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tuncbt/core/models/comment_model.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/models/task_model.dart';
@@ -338,7 +337,7 @@ class InnerScreenController extends GetxController {
           print('Yorum verisi işleniyor: $commentData');
 
           // Yorum verilerini kontrol et
-          if (commentData == null) {
+          if (commentData == {}) {
             print('Yorum verisi null, atlıyorum');
             continue;
           }
@@ -799,11 +798,7 @@ class InnerScreenController extends GetxController {
       );
 
       // Form alanlarını temizle
-      taskTitleController.clear();
-      taskDescriptionController.clear();
-      taskCategoryController.text = 'Görev kategorisi seçin';
-      deadlineDateController.text = 'Görev son tarihini seçin';
-      deadlineDateTimeStamp.value = null;
+      _resetForm();
 
       // Önceki sayfaya dön
       Get.back();

@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
+import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
 import 'package:tuncbt/view/screens/tasks_screen/screens/tasks_screen.dart';
 import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_bindings.dart';
 
@@ -11,25 +12,56 @@ class UserState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (ctx, userSnapshot) {
-        if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        } else if (userSnapshot.hasError) {
-          return const Scaffold(
-            body: Center(child: Text('An error has occurred')),
-          );
-        } else if (userSnapshot.hasData) {
-          Get.put(TasksScreenBindings());
-          return TasksScreen();
-        } else {
+    final AuthService authService = Get.find<AuthService>();
+
+    return Obx(() {
+      // Loading state
+      if (authService.isUnknown || authService.isLoading.value) {
+        return const Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Yükleniyor...'),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Unauthenticated state
+      if (authService.isUnauthenticated) {
+        // Ensure bindings are set
+        if (!Get.isRegistered<AuthBindings>()) {
           Get.put(AuthBindings());
-          return Login();
         }
-      },
-    );
+        return Login();
+      }
+
+      // Authenticated but needs team
+      if (authService.needsTeam) {
+        if (!Get.isRegistered<AuthBindings>()) {
+          Get.put(AuthBindings());
+        }
+        return ReferralInputScreen();
+      }
+
+      // Fully authenticated with team
+      if (authService.isAuthenticated) {
+        if (!Get.isRegistered<TasksScreenBindings>()) {
+          Get.put(TasksScreenBindings());
+        }
+        return TasksScreen();
+      }
+
+      // Fallback - should not reach here
+      return const Scaffold(
+        body: Center(
+          child: Text('Beklenmeyen durum'),
+        ),
+      );
+    });
   }
 }

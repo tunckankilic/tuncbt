@@ -3,7 +3,6 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'dart:math';
 import '../config/constants.dart';
-import '../config/firebase_constants.dart';
 
 class ReferralService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

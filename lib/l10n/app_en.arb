@@ -1,423 +1,213 @@
 {
   "@@locale": "en",
-  
-  "appTitle": "TuncBT",
-  "@appTitle": {
-    "description": "Application name"
-  },
-
-  "language": "Language",
-  "@language": {
-    "description": "Label for language selection"
-  },
-
   "login": "Login",
-  "@login": {
-    "description": "Login button and screen title text"
-  },
-
   "register": "Register",
-  "@register": {
-    "description": "Register button and screen title text"
-  },
-
-  "cancel": "Cancel",
-  "@cancel": {
-    "description": "General cancel button text"
-  },
-
-  "ok": "OK",
-  "@ok": {
-    "description": "General confirmation button text"
-  },
-
-  "tasks": "Tasks",
-  "@tasks": {
-    "description": "Navigation label for tasks section"
-  },
-
-  "profile": "Profile",
-  "@profile": {
-    "description": "Navigation label for user profile"
-  },
-
-  "settings": "Settings",
-  "@settings": {
-    "description": "Navigation label for settings"
-  },
-
-  "save": "Save",
-  "@save": {
-    "description": "General save operation button"
-  },
-
-  "delete": "Delete",
-  "@delete": {
-    "description": "General delete operation button"
-  },
-
-  "edit": "Edit",
-  "@edit": {
-    "description": "General edit operation button"
-  },
-
-  "create": "Create",
-  "@create": {
-    "description": "General create operation button"
-  },
-
-  "loginTitle": "Login",
-  "@loginTitle": {
-    "description": "Title shown on login screen"
-  },
-
-  "loginEmail": "Email",
-  "@loginEmail": {
-    "description": "Label for email field in login form"
-  },
-
-  "loginPassword": "Password",
-  "@loginPassword": {
-    "description": "Label for password field in login form"
-  },
-
-  "loginNoAccount": "Don't have an account?",
-  "@loginNoAccount": {
-    "description": "Text shown when user doesn't have an account"
-  },
-
-  "loginResetPassword": "Forgot Password",
-  "@loginResetPassword": {
-    "description": "Text for reset password button"
-  },
-
-  "registerTitle": "Register",
-  "@registerTitle": {
-    "description": "Title shown on register screen"
-  },
-
-  "registerName": "Full Name",
-  "@registerName": {
-    "description": "Label for name field in register form"
-  },
-
-  "registerEmail": "Email Address",
-  "@registerEmail": {
-    "description": "Label for email field in register form"
-  },
-
-  "registerPassword": "Password",
-  "@registerPassword": {
-    "description": "Label for password field in register form"
-  },
-
-  "registerConfirmPassword": "Confirm Password",
-  "@registerConfirmPassword": {
-    "description": "Label for confirm password field"
-  },
-
-  "registerPhone": "Phone Number",
-  "@registerPhone": {
-    "description": "Label for phone number field"
-  },
-
-  "registerPosition": "Position in Company",
-  "@registerPosition": {
-    "description": "Label for position field"
-  },
-
+  "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot Password",
   "registerHasAccount": "Already have an account?",
-  "@registerHasAccount": {
-    "description": "Text shown when user already has an account"
-  },
-
-  "forgotPasswordTitle": "Forgot Password",
-  "@forgotPasswordTitle": {
-    "description": "Title shown on forgot password screen"
-  },
-
-  "forgotPasswordSubtitle": "Enter your email address to reset your password",
-  "@forgotPasswordSubtitle": {
-    "description": "Subtitle shown on forgot password screen"
-  },
-
-  "forgotPasswordEmail": "Email Address",
-  "@forgotPasswordEmail": {
-    "description": "Label for email field in forgot password form"
-  },
-
-  "forgotPasswordReset": "Reset Password",
-  "@forgotPasswordReset": {
-    "description": "Text for reset password button"
-  },
-
-  "forgotPasswordBackToLogin": "Back to Login",
-  "@forgotPasswordBackToLogin": {
-    "description": "Text for back to login button"
-  },
-
-  "taskTitle": "Task Title",
-  "taskDescription": "Task Description",
-  "taskDeadline": "Deadline",
-  "taskCategory": "Task Category",
-  "uploadTask": "Upload Task",
-  "addComment": "Add Comment",
-  "taskDone": "Task Completed",
-  "taskNotDone": "Task In Progress",
+  "loginNoAccount": "Don't have an account?",
+  "registerName": "Full Name",
+  "registerEmail": "Email",
+  "registerPassword": "Password",
+  "registerConfirmPassword": "Confirm Password",
+  "registerPhone": "Phone",
+  "registerPosition": "Position",
+  "createTeam": "Create Team",
+  "joinTeam": "Join Team",
+  "referralCode": "Referral Code",
+  "referralCodeOptional": "Optional",
+  "referralCodeTitle": "What is Referral Code?",
+  "referralCodeDescription": "A referral code allows you to join an existing team. If you don't have a referral code, you can create a new team.",
+  "acceptTerms": "I accept the Terms of Service and Privacy Policy",
+  "acceptDataProcessing": "I accept the processing of my personal data",
+  "acceptAgeRestriction": "I confirm that I am over 18 years old",
+  "notificationPermissionText": "I want to receive notifications",
+  "termsOfService": "Terms of Service",
+  "privacyPolicy": "Privacy Policy",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "fieldMissing": "This field cannot be empty",
+  "invalidPassword": "Password must be at least 7 characters",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "delete": "Delete",
   "deleteTask": "Delete Task",
   "deleteTaskConfirm": "Are you sure you want to delete this task?",
-  "taskDeleted": "Task successfully deleted",
+  "taskDeleted": "Task deleted successfully",
   "taskDeleteError": "An error occurred while deleting the task",
-  "taskUploadSuccess": "Task uploaded and notification created",
-  "taskUploadError": "An error occurred while uploading the task",
-  "noTasks": "No team tasks yet",
-  "addTaskHint": "Click the + button to add a new task",
-  "allFieldsRequired": "All fields are required",
-  "fieldRequired": "This field is required",
-  "teamTasks": "Team Tasks",
-  "newTask": "New Task",
-
-  "teamMembers": "Team Members",
-  "teamMembersCount": "{count} Members",
-  "@teamMembersCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "noTeamMembers": "No team members yet",
-  "inviteMembersHint": "Share your referral code to add new members to your team",
-  "myAccount": "My Account",
-  "logout": "Logout",
-  "logoutConfirm": "Are you sure you want to logout?",
-  "teamName": "Team Name",
-  "referralCode": "Referral Code",
-  "referralCodeTitle": "What is Referral Code?",
-  "referralCodeDescription": "A referral code is a unique 8-character code used to join a team. If you want to join an existing team, enter the referral code you received from the team administrator. If you want to create your own team, you can leave this field empty.",
-  "referralCodeOptional": "Referral code is optional. If you want to create your own team, you can leave it empty.",
-  "inviteMembers": "Invite Members",
-  "shareReferralCode": "Share Referral Code",
-  "teamSettings": "Team Settings",
-  "leaveTeam": "Leave Team",
-  "leaveTeamConfirm": "Are you sure you want to leave the team?",
-  "deleteAccount": "Delete Account",
-  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
-  "jobInformation": "Job Information",
-  "contactInformation": "Contact Information",
-  "teamInformation": "Team Information",
-  "position": "Position",
-  "joinedDate": "Joined: {date}",
-  "@joinedDate": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "noName": "No Name",
-  "editName": "Edit Name",
-  "enterName": "Enter your name",
-  "quickActions": "Quick Actions",
-  "messages": "Messages",
-  "notifications": "Notifications",
-  "contact": "Contact",
-  "commentActions": "Comment Actions",
-  "replyToComment": "Reply to Comment",
-
-  "close": "Close",
-  "leave": "Leave",
   "loginRequired": "Login required",
   "userNotFound": "User not found",
-
-  "authErrorUserNotFound": "No user found with this email address",
-  "authErrorWrongPassword": "Incorrect password. Please try again",
+  "noPermissionToDelete": "You don't have permission for this action",
+  "teamMembers": "Team Members",
+  "noTeamMembers": "No team members found",
+  "inviteMembersHint": "Invite team members to get started",
+  "error": "Error",
+  "retry": "Retry",
+  "appTitle": "TuncBT",
+  "loginButton": "Login",
+  "registerButton": "Register",
+  "loginResetPassword": "Reset Password",
+  "noTeamYet": "No Team Yet",
+  "tasksRequireTeam": "You need to be part of a team to manage tasks",
+  "totalTasks": "Total Tasks",
+  "completedTasks": "Completed Tasks",
+  "pendingTasks": "Pending Tasks",
+  "noTasks": "No Tasks Found",
+  "addTaskHint": "Add your first task to get started",
+  "noTitle": "No Title",
+  "noDescription": "No Description",
+  "termsAgeRestriction": "Age Restriction",
+  "termsAgeRestrictionDesc": "Users must be 18 years or older to use this service.",
+  "accountSecurity": "Account Security",
+  "accountSecurityDesc": "Users are responsible for maintaining the security of their accounts.",
+  "unacceptableBehavior": "Unacceptable Behavior",
+  "unacceptableBehaviorDesc": "Any form of harassment, abuse, or illegal activities is strictly prohibited.",
+  "contentRights": "Content Rights",
+  "contentRightsDesc": "Users retain rights to their content while granting us license to use it.",
+  "serviceChanges": "Service Changes",
+  "serviceChangesDesc": "We reserve the right to modify or discontinue services with notice.",
+  "disclaimer": "Disclaimer",
+  "disclaimerDesc": "Service is provided 'as is' without warranties.",
+  "termsContact": "Contact",
+  "termsContactDesc": "For questions about these terms, please contact us.",
+  "dataCollection": "Data Collection",
+  "dataCollectionDesc": "We collect necessary information to provide our services.",
+  "dataSecurity": "Data Security",
+  "dataSecurityDesc": "We implement security measures to protect your data.",
+  "dataSharing": "Data Sharing",
+  "dataSharingDesc": "We only share data with your consent or as required by law.",
+  "dataDeletion": "Data Deletion",
+  "dataDeletionDesc": "You can request deletion of your personal data.",
+  "cookies": "Cookies",
+  "cookiesDesc": "We use cookies to improve your experience.",
+  "contactInfo": "Contact Information",
+  "contactInfoDesc": "For privacy concerns, please contact us.",
+  "profile": "Profile",
+  "enterName": "Enter name",
+  "save": "Save",
+  "newGroup": "New Group",
+  "create": "Create",
+  "groupName": "Group Name",
+  "groupDescription": "Group Description",
+  "fieldRequired": "This field is required",
+  "chats": "Chats",
+  "groups": "Groups",
+  "deleteComment": "Delete Comment",
+  "deleteCommentConfirm": "Are you sure you want to delete this comment?",
+  "edit": "Edit",
+  "micPermissionTitle": "Microphone Permission",
+  "micPermissionMessage": "We need microphone access to record voice messages",
+  "notNow": "Not Now",
+  "continueAction": "Continue",
+  "permissionRequired": "Permission Required",
+  "micPermissionSettingsMessage": "Please enable microphone access in settings",
+  "openSettings": "Open Settings",
+  "photo": "Photo",
+  "video": "Video",
+  "teamTasks": "Team Tasks",
+  "newTask": "New Task",
+  "allFieldsRequired": "All fields marked with * are required",
+  "taskCategory": "Task Category",
+  "taskTitle": "Task Title",
+  "taskDescription": "Task Description",
+  "taskDeadline": "Task Deadline",
+  "uploadTask": "Upload Task",
+  "forgotPasswordTitle": "Forgot Password",
+  "forgotPasswordSubtitle": "Enter your email to reset your password",
+  "forgotPasswordEmail": "Email Address",
+  "forgotPasswordReset": "Reset Password",
+  "forgotPasswordBackToLogin": "Back to Login",
+  "loginEmail": "Email",
+  "loginPassword": "Password",
+  "loginTitle": "Login",
+  "authErrorUserNotFound": "No user found with this email",
+  "authErrorWrongPassword": "Wrong password",
   "authErrorInvalidEmail": "Invalid email address",
   "authErrorUserDisabled": "This account has been disabled",
-  "authErrorEmailInUse": "This email address is already in use",
-  "authErrorOperationNotAllowed": "This operation is not allowed at the moment",
-  "authErrorWeakPassword": "The password is too weak. Please choose a stronger password",
-  "authErrorNetworkFailed": "Network connection error. Please check your internet connection",
-  "authErrorTooManyRequests": "Too many failed login attempts. Please try again later",
+  "authErrorEmailInUse": "This email is already in use",
+  "authErrorOperationNotAllowed": "Operation not allowed",
+  "authErrorWeakPassword": "Password is too weak",
+  "authErrorNetworkFailed": "Network connection failed",
+  "authErrorTooManyRequests": "Too many attempts. Please try again later",
   "authErrorInvalidCredential": "Invalid credentials",
-  "authErrorAccountExists": "An account already exists with this email using a different sign-in method",
+  "authErrorAccountExists": "Account already exists with different credentials",
   "authErrorInvalidVerificationCode": "Invalid verification code",
   "authErrorInvalidVerificationId": "Invalid verification ID",
-  "authErrorQuotaExceeded": "Quota exceeded. Please try again later",
-  "authErrorCredentialInUse": "These credentials are already associated with another account",
-  "authErrorRequiresRecentLogin": "This operation requires a recent login. Please log out and log in again",
+  "authErrorQuotaExceeded": "Quota exceeded",
+  "authErrorCredentialInUse": "Credential already in use",
+  "authErrorRequiresRecentLogin": "Please log in again to continue",
   "authErrorGeneric": "An error occurred. Please try again",
-
-  "notInTeam": "You are not a member of any team yet",
-  "addMember": "Add Member",
-  "teamJoinDate": "Joined: {date}",
-  "@teamJoinDate": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-
-  "signUp": "Sign Up",
-  "noPermissionToDelete": "You don't have permission to perform this action",
-
-  "error": "Error",
+  "profile_image_size_error": "Profile image size cannot exceed 5MB",
+  "invalid_image_format": "Invalid file format. Only images are allowed",
+  "profile_image_upload_failed": "Failed to upload profile image",
+  "creatingTeam": "Creating your team...\nPlease wait.",
+  "chooseYourJob": "Choose Your Job",
   "success": "Success",
-  "retry": "Retry",
-  "failedToSendMessage": "Failed to send message. Please try again",
+  "recordingError": "Recording Error",
+  "recordingStartError": "Failed to start recording",
+  "recordingStopError": "Failed to stop recording",
+  "sessionExpired": "Session expired. Please log in again",
+  "failedToSendMessage": "Failed to send message",
+  "errorTitleChat": "Chat Error",
+  "noPermissionToSendMessage": "No permission to send message",
+  "chatRoomNotFound": "Chat room not found",
+  "networkError": "Network error",
   "failedToSendFile": "Failed to send file",
   "gifSentSuccessfully": "GIF sent successfully",
   "failedToSendGIF": "Failed to send GIF",
-  "maximumRetryExceeded": "Maximum retry attempts exceeded",
-
-  "joinTeam": "Join Team",
-  "@joinTeam": {
-    "description": "Title for joining an existing team"
-  },
-
-  "createTeam": "Create Team",
-  "@createTeam": {
-    "description": "Title for creating a new team"
-  },
-
-  "fieldMissing": "This field is required",
-  "@fieldMissing": {
-    "description": "Error message for missing required field"
-  },
-
-  "invalidPassword": "Please enter a valid password",
-  "@invalidPassword": {
-    "description": "Error message for invalid password"
-  },
-
-  "passwordsDoNotMatch": "Passwords do not match",
-  "@passwordsDoNotMatch": {
-    "description": "Error message for password mismatch"
-  },
-
-  "teamAdminInfo": "After registration, you will be the administrator of your own team",
-  "@teamAdminInfo": {
-    "description": "Information message about becoming team admin after registration"
-  },
-
-  "creatingTeam": "Creating your team...\nPlease wait.",
-
-  "email": "Email",
-  "name": "Name",
-  "phoneNumber": "Phone Number",
-  "allWorkers": "All Workers",
-
-  "teamNotFound": "Team not found",
-  "permissionDenied": "You don't have permission for this action",
-
-  "privacyPolicy": "Privacy Policy",
-  "termsOfService": "Terms of Service",
-  "dataProcessing": "Data Processing",
-  "ageRestriction": "Age Restriction",
-  "ageRestrictionText": "You must be at least 13 years old to use this app",
-  "legalNotice": "Legal Notice",
-  "acceptTerms": "I accept the Terms of Service and Privacy Policy",
-  "acceptDataProcessing": "I consent to the processing of my personal data",
-  "acceptAgeRestriction": "I confirm that I am at least 13 years old",
-  "notificationPermission": "Notification Permission",
-  "notificationPermissionText": "Allow notifications to stay updated with your team's activities",
-  "manageNotifications": "Manage Notifications",
-  "exportData": "Export My Data",
-  "exportDataDescription": "Download a copy of your personal data",
-  "deleteData": "Delete My Data",
-  "deleteDataDescription": "Permanently delete all your data from our servers",
-  "cookiePolicy": "Cookie Policy",
-  "cookiePolicyDescription": "We use cookies to improve your experience",
-  "contactSupport": "Contact Support",
-  "lastUpdated": "Last Updated: {date}",
-  "@lastUpdated": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-
-  "chats": "Chats",
-  "groups": "Groups",
-  "newChat": "New Chat",
-  "newGroup": "New Group",
-  "createGroup": "Create Group",
-  "groupName": "Group Name",
-  "groupDescription": "Description (Optional)",
-  "groupMembers": "Members",
-  "noMembers": "No members available to add",
-  "selectMembers": "Please select at least one member",
-  "groupCreated": "Group created",
-  "groupCreationError": "Error creating group",
-  "noChats": "No messages yet",
-  "noGroups": "You are not a member of any group yet",
-  "memberCount": "{count} members",
-  "@memberCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "groupChatComingSoon": "Group chat feature coming soon",
-  "deleteChat": "Delete Chat",
-  "deleteChatConfirm": "Are you sure you want to delete this chat?",
-  "block": "Block",
-  "unblock": "Unblock",
-
-  "onlyAdminsCanMakeAdmin": "Only group admins can assign new admins",
-  "newMembersAdded": "New members added",
-  "newAdminAssigned": "New group admin assigned",
-  "groupCreatedMessage": "Group created",
-
-  "micPermissionTitle": "Microphone Permission",
-  "micPermissionMessage": "We need microphone permission to send voice messages. Would you like to grant permission?",
-  "notNow": "NOT NOW",
-  "continueAction": "CONTINUE",
-  "permissionRequired": "Permission Required",
-  "micPermissionSettingsMessage": "Microphone permission is required to send voice messages. Please grant permission in settings.",
-  "openSettings": "OPEN SETTINGS",
-  "recordingError": "Error",
-  "recordingStartError": "Could not start recording",
-  "recordingStopError": "Could not stop recording",
   "filePickingError": "Error picking file",
-  "attachments": "Attachments",
-  "photo": "Photo",
-  "video": "Video",
   "messageDeletionError": "Error deleting message",
   "userBlocked": "User blocked",
   "userBlockError": "Error blocking user",
   "userUnblocked": "User unblocked",
   "userUnblockError": "Error unblocking user",
-  "onlyAdminsCanAdd": "Only group admins can add members",
-  "memberAdded": "New members added",
-  "onlyAdminsCanRemove": "Only group admins can remove members",
-  "memberRemoved": "A member was removed from the group",
-  "onlyAdminsCanPromote": "Only group admins can assign new admins",
-  "adminAssigned": "New group admin assigned",
-  "systemMessageNewMembers": "New members added",
-  "systemMessageMemberRemoved": "A member was removed",
-  "systemMessageNewAdmin": "New group admin assigned",
-  "systemMessageGroupCreated": "Group created",
-  "teamCreationDate": "Creation Date",
-  "dangerZone": "Danger Zone",
-  "memberManagement": "Member Management",
-  "teamMemberCount": "{count} members",
-  "@teamMemberCount": {
+  "onlyAdminsCanAdd": "Only admins can add members",
+  "onlyAdminsCanRemove": "Only admins can remove members",
+  "onlyAdminsCanPromote": "Only admins can promote members",
+  "failedToRemoveMember": "Failed to remove member",
+  "failedToPromoteAdmin": "Failed to promote admin",
+  "errorTitleGroup": "Group Error",
+  "deleteChat": "Delete Chat",
+  "deleteChatConfirm": "Are you sure you want to delete this chat?",
+  "newChat": "New Chat",
+  "noChats": "No chats yet",
+  "noGroups": "You are not a member of any group yet",
+  "teamSettings": "Team Settings",
+  "teamInformation": "Team Information",
+  "teamName": "Team Name",
+  "inviteMembers": "Invite Members",
+  "shareReferralCode": "Share Referral Code",
+  "close": "Close",
+  "leaveTeam": "Leave Team",
+  "leaveTeamConfirm": "Are you sure you want to leave this team?",
+  "leave": "Leave",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+  "groupCreated": "Group created successfully",
+  "selectMembers": "Please select at least one member",
+  "groupCreationError": "Error creating group",
+  "groupMembers": "Group Members",
+  "noMembers": "No members available to add",
+  "taskUploadSuccess": "Task uploaded successfully",
+  "taskUploadError": "Error uploading task",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "tasks": "Tasks",
+  "allWorkers": "All Workers",
+  "sendEmail": "Send Email",
+  "sendWhatsApp": "Send WhatsApp Message",
+  "startChat": "Start Chat",
+  "whatsAppError": "Could not open WhatsApp",
+  "emailError": "Could not open email app",
+  "emailSubject": "TuncBT - Contact",
+  "emailBody": "Hello {name},\n\n",
+  "@emailBody": {
     "placeholders": {
-      "count": {
-        "type": "int"
+      "name": {
+        "type": "String"
       }
     }
   },
-  "teamMembersLowercase": "members",
-  "chooseYourJob": "Choose your Job",
-  "noTeamYet": "You are not in a team yet",
-  "tasksRequireTeam": "You need to join a team to view tasks",
-  "deleteComment": "Delete Comment",
-  "deleteCommentConfirm": "Are you sure you want to delete this comment?",
   "justNow": "Just now",
   "minutesAgo": "{minutes} minutes ago",
   "@minutesAgo": {
@@ -443,70 +233,31 @@
       }
     }
   },
-  "dataCollection": "Data Collection and Usage",
-  "dataCollectionDesc": "Our app collects and processes some of your personal data to provide better service. This data includes:\n\n• Name and email address\n• Profile picture\n• Phone number\n• Team and task information\n• Usage statistics",
-  "dataSecurity": "Data Security",
-  "dataSecurityDesc": "Your data is stored securely and encrypted using Firebase infrastructure. Only authorized personnel can access your data.",
-  "dataSharing": "Data Sharing",
-  "dataSharingDesc": "Your data is not shared with third parties. Only necessary information is shared between team members.",
-  "dataDeletion": "Data Deletion",
-  "dataDeletionDesc": "When you delete your account, all your personal data and related content (messages, comments, tasks) are permanently deleted.",
-  "cookies": "Cookies",
-  "cookiesDesc": "Our app may use cookies to provide a better user experience.",
-  "contactInfo": "Contact",
-  "contactInfoDesc": "For questions about our privacy policy, you can reach us at support@tuncbt.com",
-  "lastUpdatedAt": "Last updated: {date}",
-  "@lastUpdatedAt": {
+  "lastUpdated": "Last updated: {date}",
+  "@lastUpdated": {
     "placeholders": {
       "date": {
         "type": "String"
       }
     }
   },
-  "termsAgeRestriction": "Age Restriction",
-  "termsAgeRestrictionDesc": "You must be at least 13 years old to use this app. If you are under 13, you must use it under the supervision of a parent or legal guardian.",
-  "accountSecurity": "Account Security",
-  "accountSecurityDesc": "You are responsible for your account security. Do not share your password with anyone and keep it secure.",
-  "unacceptableBehavior": "Unacceptable Behavior",
-  "unacceptableBehaviorDesc": "• Illegal content sharing\n• Spam or unwanted content\n• Harassment or bullying\n• Sharing others' personal data without permission\n• System abuse",
-  "contentRights": "Content Rights",
-  "contentRightsDesc": "You must confirm that you own the rights to the content you share or have the right to share it.",
-  "serviceChanges": "Service Changes",
-  "serviceChangesDesc": "We reserve the right to modify, suspend, or terminate our services without prior notice.",
-  "disclaimer": "Disclaimer",
-  "disclaimerDesc": "The application is provided 'as is'. We do not guarantee that it will operate without interruption or errors.",
-  "termsContact": "Contact",
-  "termsContactDesc": "For questions about terms of service, you can reach us at support@tuncbt.com",
-  "sendEmail": "Send Email",
-  "sendWhatsApp": "Send WhatsApp Message",
-  "startChat": "Start Chat",
-  "whatsAppError": "Could not open WhatsApp",
-  "emailError": "Could not open email application",
-  "emailSubject": "TuncBT - Contact",
-  "emailBody": "Hello {name},\n\n",
-  "@emailBody": {
+  "teamMemberCount": "{count} Members",
+  "@teamMemberCount": {
     "placeholders": {
-      "name": {
-        "type": "String"
+      "count": {
+        "type": "int"
       }
     }
   },
-  "profile_image_size_error": "Profile image size cannot be larger than 5MB",
-  "invalid_image_format": "Invalid file format. Only image files are allowed",
-  "profile_image_upload_failed": "Failed to upload profile image. Please try again",
-  "sessionExpired": "Your session has expired. Please log in again",
-  "userNotFoundError": "Unable to access your user information. Please log in again",
-  "onlyAdminsCanRemove": "Only group administrators can remove members",
-  "onlyAdminsCanPromote": "Only group administrators can promote new administrators",
-  "unexpectedErrorWithAction": "An unexpected error occurred. Please refresh the page and try again",
-  "errorTitleChat": "Message Error",
-  "errorTitleAuth": "Login Error",
-  "errorTitleGroup": "Group Operation Failed",
-  "errorTitleUpload": "Upload Error",
-  "errorTitleNetwork": "Connection Error",
-  "noPermissionToSendMessage": "You don't have permission to send this message",
-  "chatRoomNotFound": "Chat room not found",
-  "networkError": "Please check your internet connection",
-  "failedToRemoveMember": "Failed to remove member from group",
-  "failedToPromoteAdmin": "Failed to promote user to admin"
+  "teamMembersLowercase": "members",
+  "memberCount": "{count} members",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "leaveGroupSuccess": "You have left the group",
+  "leaveGroupError": "Failed to leave the group"
 } 

@@ -1344,6 +1344,62 @@ class ChatController extends GetxController {
     }
   }
 
+  Future<void> leaveGroup(String groupId) async {
+    try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserId == null) throw 'User not authenticated';
+
+      await FirebaseFirestore.instance
+          .collection('groups')
+          .doc(groupId)
+          .update({
+        'members': FieldValue.arrayRemove([currentUserId])
+      });
+
+      // Kullanıcının grup sohbetlerinden grubu sil
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .collection('group_chats')
+          .doc(groupId)
+          .delete();
+    } catch (e) {
+      print('Error leaving group: $e');
+      throw 'Failed to leave group';
+    }
+  }
+
+  Future<List<UserModel>> getGroupMembers(String groupId) async {
+    try {
+      final groupDoc = await FirebaseFirestore.instance
+          .collection('groups')
+          .doc(groupId)
+          .get();
+
+      if (!groupDoc.exists) throw 'Group not found';
+
+      final List<String> memberIds =
+          List<String>.from(groupDoc.data()!['members']);
+      final List<UserModel> members = [];
+
+      for (String memberId in memberIds) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(memberId)
+            .get();
+
+        if (userDoc.exists) {
+          members.add(UserModel.fromFirestore(userDoc));
+        }
+      }
+
+      return members;
+    } catch (e) {
+      print('Error getting group members: $e');
+      return [];
+    }
+  }
+
   @override
   void onClose() {
     messageController.dispose();
