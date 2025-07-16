@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 import 'package:tuncbt/view/screens/auth/screens/forget_pass.dart';
+import 'package:tuncbt/view/widgets/modern_card_widget.dart';
+import 'package:tuncbt/view/widgets/glassmorphic_button.dart';
 
 class AuthScreen extends GetView<AuthController> {
   static const routeName = "/auth";
@@ -49,8 +51,9 @@ class AuthScreen extends GetView<AuthController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.black.withOpacity(0.6),
-            Colors.black.withOpacity(0.3),
+            Colors.black.withOpacity(0.7),
+            Colors.black.withOpacity(0.4),
+            Colors.transparent,
           ],
         ),
       ),
@@ -65,15 +68,18 @@ class AuthScreen extends GetView<AuthController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 40.h),
+              SizedBox(height: 60.h),
               _buildTitle(),
               SizedBox(height: 16.h),
               _buildToggleAuthModeText(),
               SizedBox(height: 40.h),
-              _buildForm(context),
+              ModernInfoCard(
+                child: _buildForm(context),
+              ),
               if (isLogin) _buildForgetPasswordButton(context),
+              SizedBox(height: 24.h),
+              _buildSubmitButton(context),
               SizedBox(height: 40.h),
-              _buildSubmitButton(),
             ],
           ),
         ),
@@ -241,37 +247,19 @@ class AuthScreen extends GetView<AuthController> {
     );
   }
 
-  Widget _buildSubmitButton() {
-    return Obx(() => ElevatedButton(
+  Widget _buildSubmitButton(BuildContext context) {
+    return Obx(() => ModernPrimaryButton(
+          text: isLogin
+              ? AppLocalizations.of(context)!.loginButton
+              : AppLocalizations.of(context)!.registerButton,
+          icon: Icon(
+            isLogin ? Icons.login : Icons.person_add,
+            color: Colors.white,
+            size: 20.sp,
+          ),
           onPressed: controller.isLoading.value ? null : _submitForm,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.pink.shade700,
-            padding: EdgeInsets.symmetric(vertical: 16.h),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r)),
-          ),
-          child: Container(
-            width: double.infinity,
-            alignment: Alignment.center,
-            child: controller.isLoading.value
-                ? CircularProgressIndicator(color: Colors.white)
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isLogin ? 'Login' : 'Sign Up',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Icon(isLogin ? Icons.login : Icons.person_add,
-                          color: Colors.white),
-                    ],
-                  ),
-          ),
+          isLoading: controller.isLoading.value,
+          fullWidth: true,
         ));
   }
 

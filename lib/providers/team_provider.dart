@@ -9,7 +9,6 @@ import 'package:tuncbt/core/models/team_member.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/services/team_service.dart';
 import 'package:tuncbt/core/enums/team_role.dart';
-import 'package:rxdart/rxdart.dart';
 
 class TeamProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

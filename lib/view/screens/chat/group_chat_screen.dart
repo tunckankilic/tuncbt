@@ -9,13 +9,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class GroupChatScreen extends StatelessWidget {
   final ChatGroup group;
+  late final ChatController chatController;
 
-  const GroupChatScreen({Key? key, required this.group}) : super(key: key);
+  GroupChatScreen({Key? key, required this.group}) : super(key: key) {
+    chatController = Get.find<ChatController>();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final chatController = Get.find<ChatController>();
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -52,7 +53,32 @@ class GroupChatScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: () {
-              // TODO: Implement group settings
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(100, 0, 0, 0),
+                items: [
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: const Icon(Icons.group),
+                      title: Text(AppLocalizations.of(context)!.groupMembers),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Get.toNamed('/group-members', arguments: group);
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: const Icon(Icons.exit_to_app),
+                      title: Text(AppLocalizations.of(context)!.leaveTeam),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showLeaveGroupDialog(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
             },
           ),
         ],
@@ -69,6 +95,49 @@ class GroupChatScreen extends StatelessWidget {
           BottomChatField(
             receiverUserId: group.id,
             isGroupChat: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLeaveGroupDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.leaveTeam),
+        content: Text(AppLocalizations.of(context)!.leaveTeamConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await chatController.leaveGroup(group.id);
+                Navigator.pop(context); // Dialog'u kapat
+                Navigator.pop(context); // Grup ekranını kapat
+                Get.snackbar(
+                  AppLocalizations.of(context)!.success,
+                  AppLocalizations.of(context)!.leaveGroupSuccess,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              } catch (e) {
+                Navigator.pop(context);
+                Get.snackbar(
+                  AppLocalizations.of(context)!.error,
+                  AppLocalizations.of(context)!.leaveGroupError,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(AppLocalizations.of(context)!.leave),
           ),
         ],
       ),

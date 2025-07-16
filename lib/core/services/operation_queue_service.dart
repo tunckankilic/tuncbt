@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tuncbt/core/enums/team_role.dart';
 
 enum OperationType {
   joinTeam,

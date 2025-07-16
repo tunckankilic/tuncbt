@@ -480,11 +480,7 @@ class TeamService extends GetxService {
 
   Future<void> updateTeamSettings(String teamId, Map<String, dynamic> settings,
       BuildContext context) async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-      errorMessage.value = '';
-
+    return _handleOperation(() async {
       // Güvenlik kontrolü
       await TeamSecurity.validateTeamDataAccess(teamId,
           requiredRoles: ['admin']);
@@ -500,22 +496,11 @@ class TeamService extends GetxService {
 
       // Önbelleği temizle
       _cache.invalidateCache(teamId);
-    } catch (e) {
-      hasError.value = true;
-      errorMessage.value = e.toString();
-      TeamErrorHandler.handleError(context, e);
-      rethrow;
-    } finally {
-      isLoading.value = false;
-    }
+    }, context);
   }
 
   Future<void> leaveTeam(String teamId, BuildContext context) async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-      errorMessage.value = '';
-
+    return _handleOperation(() async {
       // Güvenlik kontrolü
       await TeamSecurity.validateTeamDataAccess(teamId);
 
@@ -553,14 +538,7 @@ class TeamService extends GetxService {
 
       // Önbelleği temizle
       _cache.invalidateCache(teamId);
-    } catch (e) {
-      hasError.value = true;
-      errorMessage.value = e.toString();
-      TeamErrorHandler.handleError(context, e);
-      rethrow;
-    } finally {
-      isLoading.value = false;
-    }
+    }, context);
   }
 
   /// Kullanıcının takım verilerini temizler

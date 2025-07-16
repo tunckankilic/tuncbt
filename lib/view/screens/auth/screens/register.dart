@@ -92,38 +92,35 @@ class SignUp extends GetView<AuthController> {
         ),
         Row(
           children: [
-            if (!controller.isSocialSignIn.value)
-              SizedBox(
-                width: 150.w,
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.registerHasAccount,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.sp),
-                      ),
-                      const TextSpan(text: '    '),
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => Get.back(),
-                        text: AppLocalizations.of(context)!.login,
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Colors.red[200],
+            SizedBox(
+              width: 150.w,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: AppLocalizations.of(context)!.registerHasAccount,
+                      style: TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
-                        ),
+                          fontSize: 20.sp),
+                    ),
+                    const TextSpan(text: '    '),
+                    TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => Get.back(),
+                      text: AppLocalizations.of(context)!.login,
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.red[200],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            SizedBox(
-              width: 10.w,
             ),
+            SizedBox(width: 10.w),
             _buildImageContainer(size),
             _buildImageEditButton(),
           ],
@@ -206,46 +203,6 @@ class SignUp extends GetView<AuthController> {
     );
   }
 
-  Widget _buildNewTeamInfo(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.createTeam,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.add_moderator, color: Colors.blue, size: 24.sp),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.teamAdminInfo,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTeamInfo(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -292,16 +249,12 @@ class SignUp extends GetView<AuthController> {
       key: _signUpFormKey,
       child: Column(
         children: [
-          if (!controller.isSocialSignIn.value) ...[
-            _buildNameAndImageSection(size, context)
-          ],
+          _buildNameAndImageSection(size, context),
           const SizedBox(height: 20),
-          if (!controller.isSocialSignIn.value) ...[
-            _buildPasswordField(context),
-            const SizedBox(height: 20),
-            _buildConfirmPasswordField(context),
-            const SizedBox(height: 20),
-          ],
+          _buildPasswordField(context),
+          const SizedBox(height: 20),
+          _buildConfirmPasswordField(context),
+          const SizedBox(height: 20),
           _buildPhoneNumberField(context),
           const SizedBox(height: 20),
           _buildPositionField(context),
@@ -635,7 +588,7 @@ class SignUp extends GetView<AuthController> {
         onPressed: canSignUp
             ? () async {
                 if (_signUpFormKey.currentState!.validate()) {
-                  controller.signUp(isSocial: controller.isSocialSignIn.value);
+                  controller.signUp();
                 }
               }
             : null,

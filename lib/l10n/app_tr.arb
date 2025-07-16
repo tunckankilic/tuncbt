@@ -1,71 +1,21 @@
 {
   "@@locale": "tr",
-  
   "appTitle": "TuncBT",
   "@appTitle": {
     "description": "Application name"
   },
-
   "language": "Dil",
-  "@language": {
-    "description": "Dil seçimi için etiket"
-  },
-
   "login": "Giriş Yap",
-  "@login": {
-    "description": "Giriş butonu ve ekran başlığı için metin"
-  },
-
   "register": "Kayıt Ol",
-  "@register": {
-    "description": "Kayıt butonu ve ekran başlığı için metin"
-  },
-
   "cancel": "İptal",
-  "@cancel": {
-    "description": "Genel iptal butonu metni"
-  },
-
   "ok": "Tamam",
-  "@ok": {
-    "description": "Genel onay butonu metni"
-  },
-  
   "tasks": "Görevler",
-  "@tasks": {
-    "description": "Görevler bölümü için navigasyon etiketi"
-  },
-
   "profile": "Profil",
-  "@profile": {
-    "description": "Kullanıcı profili için navigasyon etiketi"
-  },
-
   "settings": "Ayarlar",
-  "@settings": {
-    "description": "Ayarlar için navigasyon etiketi"
-  },
-  
   "save": "Kaydet",
-  "@save": {
-    "description": "Genel kaydetme işlemi butonu"
-  },
-
   "delete": "Sil",
-  "@delete": {
-    "description": "Genel silme işlemi butonu"
-  },
-
   "edit": "Düzenle",
-  "@edit": {
-    "description": "Genel düzenleme işlemi butonu"
-  },
-
   "create": "Oluştur",
-  "@create": {
-    "description": "Genel oluşturma işlemi butonu"
-  },
-
   "taskTitle": "Görev Başlığı",
   "taskDescription": "Görev Açıklaması",
   "taskDeadline": "Son Tarih",
@@ -78,7 +28,7 @@
   "deleteTaskConfirm": "Bu görevi silmek istediğinizden emin misiniz?",
   "taskDeleted": "Görev başarıyla silindi",
   "taskDeleteError": "Görev silinirken bir hata oluştu",
-  "taskUploadSuccess": "Görev yüklendi ve bildirim oluşturuldu",
+  "taskUploadSuccess": "Görev başarıyla yüklendi",
   "taskUploadError": "Görev yüklenirken bir hata oluştu",
   "noTasks": "Henüz ekip görevi yok",
   "addTaskHint": "Yeni görev eklemek için + butonuna tıklayın",
@@ -86,18 +36,9 @@
   "fieldRequired": "Bu alan zorunludur",
   "teamTasks": "Ekip Görevleri",
   "newTask": "Yeni Görev",
-
-  "teamMembers": "Ekip Üyeleri",
-  "teamMembersCount": "{count} Üye",
-  "@teamMembersCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "noTeamMembers": "Henüz ekip üyesi yok",
-  "inviteMembersHint": "Ekibinize yeni üyeler eklemek için referans kodunuzu paylaşın",
+  "teamMembers": "Takım Üyeleri",
+  "noTeamMembers": "Takım üyesi bulunamadı",
+  "inviteMembersHint": "Başlamak için takım üyelerini davet edin",
   "myAccount": "Hesabım",
   "logout": "Çıkış Yap",
   "logoutConfirm": "Çıkış yapmak istediğinizden emin misiniz?",
@@ -117,14 +58,6 @@
   "contactInformation": "İletişim Bilgileri",
   "teamInformation": "Ekip Bilgileri",
   "position": "Pozisyon",
-  "joinedDate": "Katılım: {date}",
-  "@joinedDate": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "noName": "İsim Yok",
   "editName": "İsmi Düzenle",
   "enterName": "İsminizi girin",
@@ -134,106 +67,65 @@
   "contact": "İletişim",
   "commentActions": "Yorum İşlemleri",
   "replyToComment": "Yorumu Yanıtla",
-
   "close": "Kapat",
   "leave": "Ayrıl",
   "loginRequired": "Giriş yapmanız gerekiyor",
   "userNotFound": "Kullanıcı bulunamadı",
-
   "loginEmail": "E-posta",
   "loginPassword": "Şifre",
+  "loginTitle": "Giriş Yap",
   "loginNoAccount": "Hesabınız yok mu?",
   "loginResetPassword": "Şifremi Unuttum",
   "registerEmail": "E-posta Adresi",
   "registerName": "Ad Soyad",
   "registerPhone": "Telefon Numarası",
   "registerPosition": "Şirketteki Pozisyon",
-
   "forgotPasswordTitle": "Şifremi Unuttum",
   "forgotPasswordSubtitle": "Şifrenizi sıfırlamak için e-posta adresinizi girin",
   "forgotPasswordEmail": "E-posta Adresi",
   "forgotPasswordReset": "Şifremi Sıfırla",
   "forgotPasswordBackToLogin": "Giriş Ekranına Dön",
-
-  "authErrorUserNotFound": "Bu e-posta adresiyle kayıtlı kullanıcı bulunamadı",
-  "authErrorWrongPassword": "Hatalı şifre. Lütfen tekrar deneyin",
+  "forgotPassword": "Şifremi Unuttum",
+  "authErrorUserNotFound": "Bu e-posta ile kayıtlı kullanıcı bulunamadı",
+  "authErrorWrongPassword": "Yanlış şifre",
   "authErrorInvalidEmail": "Geçersiz e-posta adresi",
   "authErrorUserDisabled": "Bu hesap devre dışı bırakıldı",
   "authErrorEmailInUse": "Bu e-posta adresi zaten kullanımda",
-  "authErrorOperationNotAllowed": "Bu işleme şu anda izin verilmiyor",
-  "authErrorWeakPassword": "Şifre çok zayıf. Lütfen daha güçlü bir şifre seçin",
-  "authErrorNetworkFailed": "Ağ bağlantı hatası. Lütfen internet bağlantınızı kontrol edin",
-  "authErrorTooManyRequests": "Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin",
+  "authErrorOperationNotAllowed": "Bu işleme izin verilmiyor",
+  "authErrorWeakPassword": "Şifre çok zayıf",
+  "authErrorNetworkFailed": "Ağ bağlantısı hatası",
+  "authErrorTooManyRequests": "Çok fazla deneme. Lütfen daha sonra tekrar deneyin",
   "authErrorInvalidCredential": "Geçersiz kimlik bilgileri",
-  "authErrorAccountExists": "Bu e-posta adresiyle farklı bir giriş yöntemi kullanan bir hesap zaten var",
+  "authErrorAccountExists": "Bu hesap farklı bir yöntemle zaten kayıtlı",
   "authErrorInvalidVerificationCode": "Geçersiz doğrulama kodu",
   "authErrorInvalidVerificationId": "Geçersiz doğrulama ID'si",
-  "authErrorQuotaExceeded": "Kota aşıldı. Lütfen daha sonra tekrar deneyin",
-  "authErrorCredentialInUse": "Bu kimlik bilgileri başka bir hesapla ilişkilendirilmiş",
-  "authErrorRequiresRecentLogin": "Bu işlem için yakın zamanda giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın",
+  "authErrorQuotaExceeded": "Kota aşıldı",
+  "authErrorCredentialInUse": "Bu kimlik bilgileri zaten kullanımda",
+  "authErrorRequiresRecentLogin": "Devam etmek için lütfen tekrar giriş yapın",
   "authErrorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin",
-
   "notInTeam": "Henüz bir ekibe üye değilsiniz",
   "addMember": "Üye Ekle",
-  "teamJoinDate": "Katılım: {date}",
-  "@teamJoinDate": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-
   "signUp": "Kayıt Ol",
   "noPermissionToDelete": "Bu işlemi yapmak için yetkiniz yok",
-
   "error": "Hata",
   "retry": "Tekrar Dene",
   "maximumRetryExceeded": "Maksimum yeniden deneme sayısı aşıldı",
   "success": "Başarılı",
   "operationSuccess": "İşlem başarıyla tamamlandı",
-
   "joinTeam": "Takıma Katıl",
-  "@joinTeam": {
-    "description": "Title for joining an existing team"
-  },
-
   "createTeam": "Takım Oluştur",
-  "@createTeam": {
-    "description": "Title for creating a new team"
-  },
-
   "fieldMissing": "Bu alan zorunludur",
-  "@fieldMissing": {
-    "description": "Error message for missing required field"
-  },
-
   "invalidPassword": "Lütfen geçerli bir şifre girin",
-  "@invalidPassword": {
-    "description": "Error message for invalid password"
-  },
-
   "passwordsDoNotMatch": "Şifreler eşleşmiyor",
-  "@passwordsDoNotMatch": {
-    "description": "Error message for password mismatch"
-  },
-
   "teamAdminInfo": "Kaydolduktan sonra kendi takımınızın yöneticisi olacaksınız",
-  "@teamAdminInfo": {
-    "description": "Information message about becoming team admin after registration"
-  },
-
   "creatingTeam": "Takımınız oluşturuluyor...\nLütfen bekleyin.",
-
   "email": "E-posta",
   "password": "Şifre",
   "name": "Ad Soyad",
   "phoneNumber": "Telefon Numarası",
   "allWorkers": "Tüm Çalışanlar",
-
   "teamNotFound": "Takım bulunamadı",
   "permissionDenied": "Bu işlem için yetkiniz bulunmamaktadır",
-
   "privacyPolicy": "Gizlilik Politikası",
   "termsOfService": "Kullanım Şartları",
   "dataProcessing": "Veri İşleme",
@@ -253,15 +145,6 @@
   "cookiePolicy": "Çerez Politikası",
   "cookiePolicyDescription": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz",
   "contactSupport": "Destek İle İletişime Geç",
-  "lastUpdated": "Son güncelleme: {date}",
-  "@lastUpdated": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-
   "chats": "Sohbetler",
   "groups": "Gruplar",
   "newChat": "Yeni Sohbet",
@@ -271,29 +154,19 @@
   "groupDescription": "Açıklama (İsteğe bağlı)",
   "groupMembers": "Üyeler",
   "noMembers": "Eklenebilecek üye bulunamadı",
-  "selectMembers": "En az bir üye seçmelisiniz",
+  "selectMembers": "Lütfen en az bir üye seçin",
   "groupCreationError": "Grup oluşturulurken bir hata oluştu",
   "noChats": "Henüz mesajınız yok",
   "noGroups": "Henüz bir gruba üye değilsiniz",
-  "memberCount": "{count} üye",
-  "@memberCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "groupChatComingSoon": "Grup sohbeti özelliği yakında eklenecek",
   "deleteChat": "Sohbeti Sil",
   "deleteChatConfirm": "Bu sohbeti silmek istediğinizden emin misiniz?",
   "block": "Engelle",
   "unblock": "Engeli Kaldır",
-
   "onlyAdminsCanMakeAdmin": "Yalnızca grup adminleri yeni admin atayabilir",
   "newMembersAdded": "Yeni üyeler eklendi",
   "newAdminAssigned": "Yeni grup admini atandı",
   "groupCreatedMessage": "Grup oluşturuldu",
-
   "micPermissionTitle": "Mikrofon İzni",
   "micPermissionMessage": "Sesli mesaj göndermek için mikrofon iznine ihtiyacımız var. İzin vermek ister misiniz?",
   "notNow": "ŞİMDİ DEĞİL",
@@ -301,56 +174,40 @@
   "permissionRequired": "İzin Gerekli",
   "micPermissionSettingsMessage": "Sesli mesaj göndermek için mikrofon izni gerekli. Lütfen ayarlardan izin verin.",
   "openSettings": "AYARLARI AÇ",
-  "recordingError": "Hata",
+  "recordingError": "Kayıt Hatası",
   "recordingStartError": "Kayıt başlatılamadı",
   "recordingStopError": "Kayıt durdurulamadı",
-  "filePickingError": "Dosya seçilirken bir hata oluştu",
+  "filePickingError": "Dosya seçme hatası",
   "attachments": "Ekler",
   "photo": "Fotoğraf",
   "video": "Video",
-  "messageDeletionError": "Mesaj silinirken bir hata oluştu",
+  "messageDeletionError": "Mesaj silme hatası",
   "userBlocked": "Kullanıcı engellendi",
-  "userBlockError": "Kullanıcı engellenirken bir hata oluştu",
+  "userBlockError": "Kullanıcı engelleme hatası",
   "userUnblocked": "Kullanıcının engeli kaldırıldı",
-  "userUnblockError": "Kullanıcının engeli kaldırılırken bir hata oluştu",
+  "userUnblockError": "Kullanıcının engeli kaldırılamadı",
   "groupCreated": "Grup başarıyla oluşturuldu",
-  "onlyAdminsCanAdd": "Yalnızca grup yöneticileri üye ekleyebilir",
+  "onlyAdminsCanAdd": "Sadece yöneticiler üye ekleyebilir",
   "memberAdded": "Yeni üyeler eklendi",
-  "onlyAdminsCanRemove": "Yalnızca grup yöneticileri üye çıkarabilir",
   "memberRemoved": "Bir üye gruptan çıkarıldı",
-  "onlyAdminsCanPromote": "Yalnızca grup yöneticileri yeni yönetici atayabilir",
   "adminAssigned": "Yeni grup yöneticisi atandı",
   "systemMessageNewMembers": "Yeni üyeler eklendi",
   "systemMessageMemberRemoved": "Bir üye çıkarıldı",
   "systemMessageNewAdmin": "Yeni grup yöneticisi atandı",
   "systemMessageGroupCreated": "Grup oluşturuldu",
-  "failedToSendMessage": "Mesaj gönderilemedi",
   "failedToSendFile": "Dosya gönderilemedi",
   "gifSentSuccessfully": "GIF başarıyla gönderildi",
   "failedToSendGIF": "GIF gönderilemedi",
-
-  "loginTitle": "Giriş Yap",
   "registerTitle": "Kayıt Ol",
   "registerPassword": "Şifre",
   "registerConfirmPassword": "Şifre Tekrar",
-  "registerHasAccount": "Zaten hesabınız var mı?",
-
+  "registerHasAccount": "Hesabın var mı?",
   "teamCreationDate": "Oluşturulma Tarihi",
   "dangerZone": "Tehlikeli Bölge",
   "memberManagement": "Üye Yönetimi",
-  "teamMemberCount": "{count} üye",
-  "@teamMemberCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "teamMembersLowercase": "üye",
-
   "chooseYourJob": "İş Pozisyonunuzu Seçin",
-  "noTeamYet": "Henüz bir takıma ait değilsiniz",
-  "tasksRequireTeam": "Görevleri görüntülemek için bir takıma katılmanız gerekiyor",
+  "noTeamYet": "Henüz Takım Yok",
+  "tasksRequireTeam": "Görevleri yönetmek için bir takımın parçası olmanız gerekir",
   "deleteComment": "Yorumu Sil",
   "deleteCommentConfirm": "Bu yorumu silmek istediğinizden emin misiniz?",
   "justNow": "Az önce",
@@ -378,40 +235,32 @@
       }
     }
   },
-  "lastUpdatedAt": "Son güncelleme: {date}",
-  "@lastUpdatedAt": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "dataCollection": "Veri Toplama ve Kullanım",
-  "dataCollectionDesc": "Uygulamamız, size daha iyi hizmet verebilmek için bazı kişisel verilerinizi toplar ve işler. Bu veriler şunları içerir:\n\n• İsim ve e-posta adresi\n• Profil fotoğrafı\n• Telefon numarası\n• Takım ve görev bilgileri\n• Kullanım istatistikleri",
+  "dataCollection": "Veri Toplama",
+  "dataCollectionDesc": "Hizmetlerimizi sağlamak için gerekli bilgileri topluyoruz.",
   "dataSecurity": "Veri Güvenliği",
-  "dataSecurityDesc": "Verileriniz Firebase altyapısı kullanılarak güvenli bir şekilde saklanır ve şifrelenir. Verilerinize sadece yetkili kişiler erişebilir.",
+  "dataSecurityDesc": "Verilerinizi korumak için güvenlik önlemleri uyguluyoruz.",
   "dataSharing": "Veri Paylaşımı",
-  "dataSharingDesc": "Verileriniz üçüncü taraflarla paylaşılmaz. Sadece takım üyeleri arasında gerekli bilgiler paylaşılır.",
+  "dataSharingDesc": "Verilerinizi sadece izninizle veya yasal zorunluluk durumunda paylaşırız.",
   "dataDeletion": "Veri Silme",
-  "dataDeletionDesc": "Hesabınızı sildiğinizde, tüm kişisel verileriniz ve ilgili içerikler (mesajlar, yorumlar, görevler) kalıcı olarak silinir.",
+  "dataDeletionDesc": "Kişisel verilerinizin silinmesini talep edebilirsiniz.",
   "cookies": "Çerezler",
-  "cookiesDesc": "Uygulamamız, daha iyi bir kullanıcı deneyimi sağlamak için çerezler kullanabilir.",
-  "contactInfo": "İletişim",
-  "contactInfoDesc": "Gizlilik politikamız hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz",
+  "cookiesDesc": "Deneyiminizi iyileştirmek için çerezler kullanıyoruz.",
+  "contactInfo": "İletişim Bilgileri",
+  "contactInfoDesc": "Gizlilik endişeleriniz için lütfen bizimle iletişime geçin.",
   "termsAgeRestriction": "Yaş Sınırlaması",
-  "termsAgeRestrictionDesc": "Bu uygulamayı kullanmak için en az 13 yaşında olmanız gerekmektedir. 13 yaşından küçükseniz, ebeveyn veya yasal vasi gözetiminde kullanmanız gerekir.",
+  "termsAgeRestrictionDesc": "Kullanıcılar 18 yaş ve üzeri olmalıdır.",
   "accountSecurity": "Hesap Güvenliği",
-  "accountSecurityDesc": "Hesap güvenliğinizden siz sorumlusunuz. Şifrenizi kimseyle paylaşmayın ve güvenli bir şekilde saklayın.",
+  "accountSecurityDesc": "Kullanıcılar hesaplarının güvenliğinden sorumludur.",
   "unacceptableBehavior": "Kabul Edilemez Davranışlar",
-  "unacceptableBehaviorDesc": "• Yasadışı içerik paylaşımı\n• Spam veya istenmeyen içerik\n• Taciz veya zorbalık\n• Başkalarının kişisel verilerini izinsiz paylaşma\n• Sistemin kötüye kullanımı",
+  "unacceptableBehaviorDesc": "Her türlü taciz, kötüye kullanım veya yasa dışı faaliyetler kesinlikle yasaktır.",
   "contentRights": "İçerik Hakları",
-  "contentRightsDesc": "Paylaştığınız içeriklerin haklarının size ait olduğunu veya paylaşma hakkına sahip olduğunuzu teyit etmelisiniz.",
+  "contentRightsDesc": "Kullanıcılar içerik haklarını korurken bize kullanım lisansı verir.",
   "serviceChanges": "Hizmet Değişiklikleri",
-  "serviceChangesDesc": "Hizmetlerimizi önceden haber vermeksizin değiştirme, askıya alma veya sonlandırma hakkını saklı tutarız.",
+  "serviceChangesDesc": "Hizmetleri değiştirme veya sonlandırma hakkını saklı tutarız.",
   "disclaimer": "Sorumluluk Reddi",
-  "disclaimerDesc": "Uygulama 'olduğu gibi' sunulmaktadır. Kesintisiz veya hatasız çalışacağına dair garanti vermiyoruz.",
+  "disclaimerDesc": "Hizmet 'olduğu gibi' sunulur, garanti verilmez.",
   "termsContact": "İletişim",
-  "termsContactDesc": "Kullanım şartları hakkında sorularınız için support@tuncbt.com adresinden bize ulaşabilirsiniz.",
+  "termsContactDesc": "Bu şartlar hakkında sorularınız için lütfen bizimle iletişime geçin.",
   "sendEmail": "E-posta Gönder",
   "sendWhatsApp": "WhatsApp'ta Mesaj Gönder",
   "startChat": "Sohbet Başlat",
@@ -426,23 +275,57 @@
       }
     }
   },
-  "profile_image_size_error": "Profil resmi boyutu 5MB'dan büyük olamaz",
-  "invalid_image_format": "Geçersiz dosya formatı. Sadece resim dosyaları yüklenebilir",
-  "profile_image_upload_failed": "Profil resmi yüklenirken bir hata oluştu. Lütfen tekrar deneyin",
-  "sessionExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın",
+  "profile_image_size_error": "Profil resmi boyutu 5MB'ı geçemez",
+  "invalid_image_format": "Geçersiz dosya formatı. Sadece resim dosyaları kabul edilir",
+  "profile_image_upload_failed": "Profil resmi yüklenemedi",
+  "sessionExpired": "Oturum süresi doldu. Lütfen tekrar giriş yapın",
   "userNotFoundError": "Kullanıcı bilgilerinize ulaşılamadı. Lütfen tekrar giriş yapın",
-  "onlyAdminsCanRemove": "Üyeleri yalnızca grup yöneticileri çıkarabilir",
-  "onlyAdminsCanPromote": "Yeni yönetici atamasını yalnızca grup yöneticileri yapabilir",
+  "onlyAdminsCanRemove": "Sadece yöneticiler üye çıkarabilir",
+  "onlyAdminsCanPromote": "Sadece yöneticiler yetki verebilir",
   "unexpectedErrorWithAction": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin",
-  "errorTitleChat": "Mesaj Hatası",
+  "errorTitleChat": "Sohbet Hatası",
   "errorTitleAuth": "Giriş Hatası",
-  "errorTitleGroup": "Grup İşlemi Başarısız",
+  "errorTitleGroup": "Grup Hatası",
   "errorTitleUpload": "Yükleme Hatası",
   "errorTitleNetwork": "Bağlantı Hatası",
-  "noPermissionToSendMessage": "Bu mesajı gönderme yetkiniz yok",
+  "noPermissionToSendMessage": "Mesaj gönderme izniniz yok",
   "chatRoomNotFound": "Sohbet odası bulunamadı",
-  "networkError": "İnternet bağlantınızı kontrol edin",
-  "failedToSendMessage": "Mesaj gönderilemedi. Lütfen tekrar deneyin",
-  "failedToRemoveMember": "Üye gruptan çıkarılamadı",
-  "failedToPromoteAdmin": "Yönetici ataması yapılamadı"
+  "networkError": "Ağ hatası",
+  "failedToSendMessage": "Mesaj gönderilemedi",
+  "failedToRemoveMember": "Üye çıkarılamadı",
+  "failedToPromoteAdmin": "Yönetici ataması yapılamadı",
+  "loginButton": "Giriş Yap",
+  "registerButton": "Kayıt Ol",
+  "totalTasks": "Toplam Görev",
+  "completedTasks": "Tamamlanan Görevler",
+  "pendingTasks": "Bekleyen Görevler",
+  "noTitle": "Başlık Yok",
+  "noDescription": "Açıklama Yok",
+  "lastUpdated": "Son güncelleme: {date}",
+  "@lastUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "teamMemberCount": "{count} Üye",
+  "@teamMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "teamMembersLowercase": "üye",
+  "memberCount": "{count} üye",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "leaveGroupSuccess": "Gruptan ayrıldınız",
+  "leaveGroupError": "Gruptan ayrılırken bir hata oluştu"
 } 

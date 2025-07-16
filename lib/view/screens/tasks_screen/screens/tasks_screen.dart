@@ -8,10 +8,9 @@ import 'package:tuncbt/providers/team_provider.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_controller.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
-import 'package:tuncbt/view/widgets/task_widget.dart';
 import 'package:tuncbt/view/widgets/loading_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tuncbt/core/services/team_service.dart';
+import 'package:tuncbt/view/widgets/modern_card_widget.dart';
+import 'package:tuncbt/view/widgets/glassmorphic_button.dart';
 
 class TasksScreen extends StatefulWidget {
   static const routeName = "/tasks";
@@ -76,15 +75,13 @@ class _TasksScreenState extends State<TasksScreen> {
 
     return Scaffold(
       drawer: DrawerWidget(),
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppTheme.backgroundColor.withOpacity(0.95),
-              AppTheme.backgroundColor,
-            ],
+            colors: Constants.backgroundGradient,
           ),
         ),
         child: RefreshIndicator(
@@ -95,6 +92,7 @@ class _TasksScreenState extends State<TasksScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               _buildSliverAppBar(context, teamProvider),
+              _buildStatsSection(context),
               _buildTasksList(context),
             ],
           ),
@@ -217,7 +215,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Widget _buildSliverAppBar(BuildContext context, TeamProvider teamProvider) {
     return SliverAppBar(
-      expandedHeight: 180.h,
+      expandedHeight: 200.h,
       floating: false,
       pinned: true,
       stretch: true,
@@ -228,73 +226,155 @@ class _TasksScreenState extends State<TasksScreen> {
           teamProvider.currentTeam?.teamName ??
               AppLocalizations.of(context)!.teamTasks,
           style: TextStyle(
-            color: AppTheme.textColor,
+            color: Colors.white,
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
-          ),
-        ),
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppTheme.primaryColor.withOpacity(0.9),
-                AppTheme.accentColor.withOpacity(0.9),
-              ],
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -50.w,
-                top: -50.h,
-                child: Container(
-                  width: 200.w,
-                  height: 200.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: -30.w,
-                bottom: -60.h,
-                child: Container(
-                  width: 150.w,
-                  height: 150.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.task_alt,
-                      size: 40.sp,
-                      color: Colors.white.withOpacity(0.9),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Görevler',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+            shadows: [
+              Shadow(
+                offset: const Offset(0, 2),
+                blurRadius: 4,
+                color: Colors.black.withOpacity(0.3),
               ),
             ],
           ),
         ),
+        background: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: Constants.primaryGradient,
+                ),
+              ),
+            ),
+            // Glassmorphic overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Decorative circles
+            Positioned(
+              right: -50.w,
+              top: -50.h,
+              child: Container(
+                width: 200.w,
+                height: 200.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            Positioned(
+              left: -30.w,
+              bottom: -60.h,
+              child: Container(
+                width: 150.w,
+                height: 150.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.05),
+                ),
+              ),
+            ),
+            // Content
+            Positioned(
+              bottom: 60.h,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                    child: Icon(
+                      Icons.task_alt,
+                      size: 32.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Takım Görevleri',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsSection(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        child: Obx(() {
+          final totalTasks = controller.totalTasks;
+          final completedTasks = controller.completedTasks;
+          final pendingTasks = controller.pendingTasks;
+
+          return Row(
+            children: [
+              Expanded(
+                child: ModernStatsCard(
+                  title: AppLocalizations.of(context)!.totalTasks,
+                  value: totalTasks.toString(),
+                  icon: Icons.task_alt,
+                  color: AppTheme.primaryColor,
+                  onTap: () {
+                    // Filter all tasks
+                  },
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: ModernStatsCard(
+                  title: AppLocalizations.of(context)!.completedTasks,
+                  value: completedTasks.toString(),
+                  icon: Icons.check_circle,
+                  color: AppTheme.successColor,
+                  onTap: () {
+                    // Filter completed tasks
+                  },
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: ModernStatsCard(
+                  title: AppLocalizations.of(context)!.pendingTasks,
+                  value: pendingTasks.toString(),
+                  icon: Icons.pending,
+                  color: AppTheme.warningColor,
+                  onTap: () {
+                    // Filter pending tasks
+                  },
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -402,15 +482,82 @@ class _TasksScreenState extends State<TasksScreen> {
                 final task = controller.tasks[index];
                 return AnimatedSlideTransition(
                   index: index,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.h),
-                    child: TaskWidget(
-                      taskTitle: task['taskTitle'],
-                      taskDescription: task['taskDescription'],
-                      taskId: task['taskId'],
-                      uploadedBy: task['uploadedBy'],
-                      isDone: task['isDone'],
-                      teamId: task['teamId'],
+                  child: ModernTaskCard(
+                    isCompleted: task['isDone'] ?? false,
+                    accentColor: task['isDone'] == true
+                        ? AppTheme.successColor
+                        : AppTheme.primaryColor,
+                    onTap: () {
+                      // Navigate to task details
+                      print('Task tapped: ${task['taskId']}');
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 48.w,
+                              height: 48.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: (task['isDone'] == true
+                                        ? AppTheme.successColor
+                                        : AppTheme.primaryColor)
+                                    .withOpacity(0.1),
+                              ),
+                              child: Icon(
+                                task['isDone'] == true
+                                    ? Icons.check_circle
+                                    : Icons.access_time,
+                                color: task['isDone'] == true
+                                    ? AppTheme.successColor
+                                    : AppTheme.primaryColor,
+                                size: 24.sp,
+                              ),
+                            ),
+                            SizedBox(width: 16.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    task['taskTitle'] ??
+                                        AppLocalizations.of(context)!.noTitle,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppTheme.onSurfaceColor,
+                                      decoration: task['isDone'] == true
+                                          ? TextDecoration.lineThrough
+                                          : null,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Text(
+                                    task['taskDescription'] ??
+                                        AppLocalizations.of(context)!
+                                            .noDescription,
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: AppTheme.onSurfaceVariantColor,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.keyboard_arrow_right,
+                              color: AppTheme.onSurfaceVariantColor,
+                              size: 24.sp,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -428,31 +575,33 @@ class _TasksScreenState extends State<TasksScreen> {
       return const SizedBox.shrink();
     }
 
-    return Row(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton(
           onPressed: () => controller.addTestTask(),
-          backgroundColor: AppTheme.primaryColor,
+          backgroundColor: AppTheme.secondaryColor,
           heroTag: 'test_task',
-          child: const Icon(Icons.bug_report),
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: const Icon(
+            Icons.bug_report,
+            color: Colors.white,
+          ),
         ),
-        SizedBox(width: 16.w),
-        FloatingActionButton.extended(
+        SizedBox(height: 16.h),
+        ModernPrimaryButton(
+          text: 'Yeni Görev',
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 20,
+          ),
           onPressed: () => Get.toNamed(
             UploadTask.routeName,
             arguments: {'teamId': teamProvider.teamId},
-          ),
-          backgroundColor: AppTheme.accentColor,
-          elevation: 4,
-          heroTag: 'new_task',
-          icon: const Icon(Icons.add),
-          label: Text(
-            'Yeni Görev',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
       ],

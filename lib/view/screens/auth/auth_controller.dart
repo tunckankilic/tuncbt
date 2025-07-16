@@ -4,25 +4,18 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/enums/team_role.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
-import 'package:tuncbt/view/screens/auth/screens/register.dart';
-import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/core/config/constants.dart' as app_constants;
-import 'package:tuncbt/core/config/firebase_constants.dart';
 import 'package:tuncbt/utils/team_errors.dart';
 import 'package:mime/mime.dart';
 import 'package:tuncbt/view/widgets/loading_screen.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
-import 'package:tuncbt/core/models/team.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -43,9 +36,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   final obscureText = true.obs;
   final isLoading = false.obs;
   final imageFile = Rx<File?>(null);
-  final isSocialSignIn = false.obs;
-  String? intialNameValue;
-  String? initialEmailValue;
 
   final GlobalKey<FormState> emailKey = GlobalKey<FormState>();
   final GlobalKey<FormState> passKay = GlobalKey<FormState>();
@@ -53,7 +43,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
   final animationValue = 0.0.obs;
-  final socialMediaPhotoUrl = ''.obs;
 
   final teamName = ''.obs;
   final isTeamLoading = false.obs;
@@ -175,7 +164,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       isLoading.value = true;
       _showLoadingOverlay();
       try {
-        final userCredential = await _auth.signInWithEmailAndPassword(
+        await _auth.signInWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
           password: passwordController.text.trim(),
         );
@@ -332,7 +321,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  Future<void> signUp({bool isSocial = false}) async {
+  Future<void> signUp() async {
     if (isLoading.value) return;
     isLoading.value = true;
 
@@ -345,16 +334,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
             message: AppLocalizations.of(Get.context!)!.creatingTeam,
           ));
 
-      if (!isSocial) {
-        print('Kayıt işlemi başlatılıyor...');
-        UserCredential authResult = await _auth.createUserWithEmailAndPassword(
-          email: emailController.text.trim().toLowerCase(),
-          password: passwordController.text.trim(),
-        );
-        uid = authResult.user!.uid;
-        print('Firebase Auth kaydı başarılı. UID: $uid');
-      }
-
       if (imageFile.value != null) {
         print('Profil resmi yükleniyor...');
         try {
@@ -362,8 +341,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         } catch (e) {
           print('Profil resmi yükleme hatası: $e');
         }
-      } else if (isSocial) {
-        imageUrl = _auth.currentUser?.photoURL ?? '';
       }
 
       if (_referralCode == null) {
@@ -500,7 +477,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         }
       }
 
-      if (!isSocial) {
+      if (imageFile.value != null) {
         print('Firebase Auth profili güncelleniyor...');
         await _auth.currentUser!.updateDisplayName(fullNameController.text);
         await _auth.currentUser!.updatePhotoURL(imageUrl);
@@ -538,101 +515,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       );
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  // Future<void> signInWithGoogle() async {
-  //   if (isLoading.value) return;
-  //   isLoading.value = true;
-  //   _showLoadingOverlay();
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser!.authentication;
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-  //     initialEmailValue = googleUser.email;
-  //     intialNameValue = googleUser.displayName;
-  //     UserCredential userCredential =
-  //         await _auth.signInWithCredential(credential);
-  //     await _checkAndCreateUser(userCredential.user!);
-  //   } on FirebaseAuthException catch (e) {
-  //     Get.snackbar('Google Sign In Failed', _getReadableAuthError(e));
-  //   } catch (error) {
-  //     Get.snackbar('Error',
-  //         'An error occurred during Google sign in. Please try again.');
-  //   } finally {
-  //     isLoading.value = false;
-  //     _hideLoadingOverlay();
-  //   }
-  // }
-
-  // Future<void> signInWithApple() async {
-  //   if (isLoading.value) return;
-  //   isLoading.value = true;
-  //   _showLoadingOverlay();
-  //   try {
-  //     final appleCredential = await SignInWithApple.getAppleIDCredential(
-  //       scopes: [
-  //         AppleIDAuthorizationScopes.email,
-  //         AppleIDAuthorizationScopes.fullName,
-  //       ],
-  //     );
-  //     final oauthCredential = OAuthProvider("apple.com").credential(
-  //       idToken: appleCredential.identityToken,
-  //       accessToken: appleCredential.authorizationCode,
-  //     );
-  //     UserCredential userCredential =
-  //         await _auth.signInWithCredential(oauthCredential);
-  //     await _checkAndCreateUser(userCredential.user!);
-  //   } on FirebaseAuthException catch (e) {
-  //     Get.snackbar('Apple Sign In Failed', _getReadableAuthError(e));
-  //   } catch (error) {
-  //     Get.snackbar(
-  //         'Error', 'An error occurred during Apple sign in. Please try again.');
-  //   } finally {
-  //     isLoading.value = false;
-  //     _hideLoadingOverlay();
-  //   }
-  // }
-
-  Future<void> _checkAndCreateUser(User user) async {
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(user.uid).get();
-
-    if (!userDoc.exists ||
-        !_isUserDataComplete(userDoc.data() as Map<String, dynamic>?)) {
-      isSocialSignIn.value = true;
-      fullNameController.text = user.displayName ?? '';
-      emailController.text = user.email ?? '';
-      if (user.photoURL != null) {
-        await _downloadAndSetProfileImage(user.photoURL!);
-      }
-      Get.offAll(() => SignUp());
-    } else {
-      Get.offAllNamed(TasksScreen.routeName);
-    }
-  }
-
-  bool _isUserDataComplete(Map<String, dynamic>? userData) {
-    return userData != null &&
-        userData['name'] != null &&
-        userData['email'] != null &&
-        userData['phoneNumber'] != null &&
-        userData['positionInCompany'] != null;
-  }
-
-  Future<void> _downloadAndSetProfileImage(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      final file = File('${documentDirectory.path}/profile.jpg');
-      file.writeAsBytesSync(response.bodyBytes);
-      imageFile.value = file;
-    } catch (e) {
-      print("Error downloading profile image: $e");
     }
   }
 

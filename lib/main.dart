@@ -7,7 +7,6 @@ import 'package:tuncbt/core/config/router.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
-import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/core/services/push_notifications.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/services/team_service_controller.dart';
@@ -77,7 +76,11 @@ void main() async {
   // Initialize TeamServiceController
   Get.put(TeamServiceController());
 
-  runApp(MyApp(prefs: prefs, initialLocale: savedLanguage));
+  runApp(MyApp(
+    prefs: prefs,
+    initialLocale: savedLanguage,
+    key: MyAppState.key,
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -91,11 +94,21 @@ class MyApp extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   late String _currentLocale;
+  static final GlobalKey<MyAppState> key = GlobalKey<MyAppState>();
+
+  // Make it public by removing underscore
+  void changeLanguage(String languageCode) async {
+    setState(() {
+      _currentLocale = languageCode;
+    });
+    await widget.prefs.setString(LANGUAGE_CODE, languageCode);
+    timeago.setDefaultLocale(languageCode);
+  }
 
   @override
   void initState() {
@@ -116,14 +129,6 @@ class _MyAppState extends State<MyApp> {
     // and routing through NavigationService
   }
 
-  void _changeLanguage(String languageCode) async {
-    setState(() {
-      _currentLocale = languageCode;
-    });
-    await widget.prefs.setString(LANGUAGE_CODE, languageCode);
-    timeago.setDefaultLocale(languageCode);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -132,6 +137,8 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'TuncBT',
         theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         initialBinding: AuthBindings(),
         getPages: RouteManager.routes,
         home: const UserState(),
@@ -159,8 +166,8 @@ class _MyAppState extends State<MyApp> {
             }
           }
 
-          // Eğer desteklenmeyen bir dil ise varsayılan olarak Türkçe'ye dön
-          return const Locale('tr');
+          // Eğer desteklenmeyen bir dil ise varsayılan olarak ingilizce'ye dön
+          return const Locale('en');
         },
       ),
     );

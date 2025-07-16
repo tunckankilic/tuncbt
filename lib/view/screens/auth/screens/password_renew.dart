@@ -67,24 +67,6 @@ class PasswordRenew extends GetView<AuthController> {
     );
   }
 
-  Widget _socialLoginButton({
-    required VoidCallback onPressed,
-    required IconData icon,
-    required String label,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: Colors.white),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.pink.shade700,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      ),
-    );
-  }
-
   Widget _buildEmailField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
