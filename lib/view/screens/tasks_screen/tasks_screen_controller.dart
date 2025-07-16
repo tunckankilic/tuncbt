@@ -4,15 +4,14 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/core/models/user_model.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_service_controller.dart';
+import 'package:tuncbt/core/services/firebase_listener_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TasksScreenController extends GetxController {
   final RxBool isLoading = false.obs;
-  final RxList tasks = [].obs;
   final RxString currentFilter = ''.obs;
   final RxString errorMessage = ''.obs;
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
@@ -20,12 +19,16 @@ class TasksScreenController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  late final TeamProvider _teamProvider;
-  StreamSubscription? _tasksSubscription;
+  late final TeamServiceController _teamController;
+  late final FirebaseListenerService _listenerService;
 
   TasksScreenController() {
-    _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
+    _teamController = Get.find<TeamServiceController>();
+    _listenerService = Get.find<FirebaseListenerService>();
   }
+
+  // Get tasks from FirebaseListenerService
+  List<Map<String, dynamic>> get tasks => _listenerService.teamTasks;
 
   @override
   void onInit() {
@@ -35,21 +38,22 @@ class TasksScreenController extends GetxController {
   }
 
   void _setupTeamListener() {
-    _teamProvider.addListener(_onTeamProviderChanged);
+    // Listen to team changes using GetX reactivity
+    ever(_teamController.currentTeam, (_) => _onTeamChanged());
+    ever(_teamController.isInitialized, (_) => _onTeamChanged());
   }
 
-  void _onTeamProviderChanged() {
-    if (_teamProvider.isInitialized && _teamProvider.teamId != null) {
+  void _onTeamChanged() {
+    if (_teamController.isInitialized.value && _teamController.teamId != null) {
       print(
-          'TasksScreenController: Takım değişikliği algılandı - TeamID: ${_teamProvider.teamId}');
+          'TasksScreenController: Takım değişikliği algılandı - TeamID: ${_teamController.teamId}');
       _setupTasksStream();
     }
   }
 
   @override
   void onClose() {
-    _tasksSubscription?.cancel();
-    _teamProvider.removeListener(_onTeamProviderChanged);
+    // FirebaseListenerService handles subscription cleanup automatically
     super.onClose();
   }
 
@@ -87,197 +91,186 @@ class TasksScreenController extends GetxController {
 
   void _setupTasksStream() {
     try {
-      if (_teamProvider.teamId == null) {
+      if (_teamController.teamId == null) {
         errorMessage.value = 'Henüz bir takıma ait değilsiniz';
         print('TasksScreenController: TeamID bulunamadı');
         return;
       }
 
       print(
-          'TasksScreenController: Görevler dinleniyor... TeamID: ${_teamProvider.teamId}');
+          'TasksScreenController: Firebase listener kurulumu... TeamID: ${_teamController.teamId}');
       isLoading.value = true;
 
-      final tasksRef = _firestore
-          .collection('teams')
-          .doc(_teamProvider.teamId)
-          .collection('tasks');
+      // Setup listeners through FirebaseListenerService
+      _listenerService.setupTeamListeners(_teamController.teamId!);
 
-      print('TasksScreenController: Görev koleksiyonu yolu: ${tasksRef.path}');
+      isLoading.value = false;
+      errorMessage.value = '';
 
-      // Önceki subscription'ı iptal et
-      _tasksSubscription?.cancel();
-
-      // Yeni subscription oluştur
-      _tasksSubscription =
-          tasksRef.orderBy('createdAt', descending: true).snapshots().listen(
-        (snapshot) {
-          print(
-              'TasksScreenController: Görev snapshot alındı - Doküman sayısı: ${snapshot.docs.length}');
-
-          tasks.value = snapshot.docs.map((doc) {
-            final data = doc.data();
-            data['taskId'] = doc.id;
-            // Eksik alanlar için varsayılan değerler ekle
-            data['teamId'] = data['teamId'] ?? _teamProvider.teamId;
-            data['taskTitle'] = data['taskTitle'] ?? '';
-            data['taskDescription'] = data['taskDescription'] ?? '';
-            data['taskCategory'] = data['taskCategory'] ?? 'Genel';
-            data['uploadedBy'] = data['uploadedBy'] ?? '';
-            data['isDone'] = data['isDone'] ?? false;
-            data['createdAt'] = data['createdAt'] ?? Timestamp.now();
-            data['taskComments'] = data['taskComments'] ?? [];
-            print('TasksScreenController: Görev verisi: $data');
-            return data;
-          }).toList();
-
-          print('TasksScreenController: ${tasks.length} görev güncellendi');
-          applyFilter();
-          isLoading.value = false;
-          errorMessage.value = '';
-        },
-        onError: (error) {
-          log("Error fetching tasks: $error");
-          print('TasksScreenController: Görev yükleme hatası: $error');
-          errorMessage.value = 'Görevler yüklenirken hata oluştu: $error';
-          isLoading.value = false;
-        },
-      );
+      print('TasksScreenController: Firebase listener kurulumu tamamlandı');
     } catch (e) {
-      log("Error in setupTasksStream: $e");
-      print('TasksScreenController: Beklenmeyen hata: $e');
-      errorMessage.value = 'Görevler yüklenirken beklenmeyen bir hata oluştu';
+      print('TasksScreenController: _setupTasksStream error: $e');
+      errorMessage.value = 'Görevler yüklenirken hata oluştu: $e';
       isLoading.value = false;
     }
   }
 
-  void showTaskCategoriesDialog(BuildContext context) {
-    if (currentUser.value?.teamId == null) {
-      Get.snackbar(
-        'Hata',
-        'Kategori filtrelemesi için bir takıma ait olmanız gerekiyor',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
-    final Size size = MediaQuery.of(context).size;
-
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          'Görev Kategorisi',
-          style: TextStyle(fontSize: 20, color: Colors.pink.shade800),
-        ),
-        content: SizedBox(
-          width: size.width * 0.9,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: Constants.taskCategoryList.length,
-            itemBuilder: (ctx, index) {
-              return InkWell(
-                onTap: () {
-                  filterTasks(Constants.taskCategoryList[index]);
-                  Get.back();
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_rounded,
-                      color: Colors.red.shade200,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        Constants.taskCategoryList[index],
-                        style: TextStyle(
-                          color: Constants.darkBlue,
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Kapat'),
-          ),
-          TextButton(
-            onPressed: () {
-              currentFilter.value = '';
-              applyFilter();
-              Get.back();
-            },
-            child: const Text('Filtreyi Kaldır'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void filterTasks(String category) {
-    currentFilter.value = category;
+  void setFilter(String filter) {
+    currentFilter.value = filter;
     applyFilter();
   }
 
   void applyFilter() {
+    // Filter is now handled by FirebaseListenerService.getFilteredTasks
+    print('TasksScreenController: Filter uygulandı: ${currentFilter.value}');
+  }
+
+  // Get filtered tasks
+  List<Map<String, dynamic>> getFilteredTasks() {
     if (currentFilter.value.isEmpty) {
-      // If no filter, show all tasks
-      tasks.refresh();
-    } else {
-      // Filter tasks based on the selected category
-      tasks.value = tasks
-          .where((task) => task['taskCategory'] == currentFilter.value)
-          .toList();
+      return tasks;
+    }
+
+    return _listenerService.getFilteredTasks(
+      category: currentFilter.value,
+    );
+  }
+
+  void refreshTasks() async {
+    if (_teamController.teamId != null) {
+      _setupTasksStream();
     }
   }
 
-  // Test için örnek görev ekleme fonksiyonu
-  Future<void> addTestTask() async {
+  void addTask(Map<String, dynamic> taskData) async {
     try {
-      if (_teamProvider.teamId == null) {
-        errorMessage.value = 'Henüz bir takıma ait değilsiniz';
-        return;
+      isLoading.value = true;
+      if (_teamController.teamId == null) {
+        throw Exception('Takım ID bulunamadı');
       }
 
-      final user = _auth.currentUser;
-      if (user == null) {
-        errorMessage.value = 'Oturum açmanız gerekiyor';
-        return;
-      }
-
-      print(
-          'TasksScreenController: Test görevi ekleniyor... TeamID: ${_teamProvider.teamId}');
-
-      final taskData = {
-        'taskTitle': 'Test Görevi',
-        'taskDescription': 'Bu bir test görevidir.',
-        'taskCategory': 'Genel',
-        'isDone': false,
-        'uploadedBy': user.uid,
+      // Görev verilerine ekstra alanlar ekleme
+      taskData.addAll({
         'createdAt': FieldValue.serverTimestamp(),
-      };
+        'createdBy': _auth.currentUser?.uid,
+        'teamId': _teamController.teamId,
+      });
 
-      final tasksRef = _firestore
-          .collection('teams')
-          .doc(_teamProvider.teamId)
-          .collection('tasks');
+      // Firestore'a görevi ekleme
+      await _firestore
+          .collection(Constants.teamsCollection)
+          .doc(_teamController.teamId)
+          .collection(Constants.tasksCollection)
+          .add(taskData);
 
-      print('TasksScreenController: Görev koleksiyonu yolu: ${tasksRef.path}');
-
-      final docRef = await tasksRef.add(taskData);
-      print(
-          'TasksScreenController: Test görevi eklendi - TaskID: ${docRef.id}');
+      print('TasksScreenController: Yeni görev başarıyla eklendi');
     } catch (e) {
-      log("Error adding test task: $e");
-      print('TasksScreenController: Test görevi ekleme hatası: $e');
-      errorMessage.value = 'Test görevi eklenirken hata oluştu';
+      errorMessage.value = 'Görev eklenirken hata oluştu: $e';
+      print('TasksScreenController: addTask error: $e');
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  void updateTask(String taskId, Map<String, dynamic> updates) async {
+    try {
+      isLoading.value = true;
+      if (_teamController.teamId == null) {
+        throw Exception('Takım ID bulunamadı');
+      }
+
+      // Güncelleme zamanını ekleme
+      updates['updatedAt'] = FieldValue.serverTimestamp();
+      updates['updatedBy'] = _auth.currentUser?.uid;
+
+      // Firestore'da görevi güncelleme
+      await _firestore
+          .collection(Constants.teamsCollection)
+          .doc(_teamController.teamId)
+          .collection(Constants.tasksCollection)
+          .doc(taskId)
+          .update(updates);
+
+      print('TasksScreenController: Görev başarıyla güncellendi: $taskId');
+    } catch (e) {
+      errorMessage.value = 'Görev güncellenirken hata oluştu: $e';
+      print('TasksScreenController: updateTask error: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void deleteTask(String taskId) async {
+    try {
+      isLoading.value = true;
+      if (_teamController.teamId == null) {
+        throw Exception('Takım ID bulunamadı');
+      }
+
+      // Firestore'dan görevi silme
+      await _firestore
+          .collection(Constants.teamsCollection)
+          .doc(_teamController.teamId)
+          .collection(Constants.tasksCollection)
+          .doc(taskId)
+          .delete();
+
+      print('TasksScreenController: Görev başarıyla silindi: $taskId');
+    } catch (e) {
+      errorMessage.value = 'Görev silinirken hata oluştu: $e';
+      print('TasksScreenController: deleteTask error: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Category filtering methods
+  void filterByCategory(String category) {
+    if (category == 'All' || category == 'Tümü') {
+      currentFilter.value = '';
+    } else {
+      currentFilter.value = category;
+    }
+    applyFilter();
+  }
+
+  // Status filtering methods
+  void filterByStatus(String status) {
+    currentFilter.value = status;
+    applyFilter();
+  }
+
+  // Get task counts
+  int get totalTasks => tasks.length;
+  int get completedTasks =>
+      tasks.where((task) => task['isDone'] == true).length;
+  int get pendingTasks => tasks.where((task) => task['isDone'] == false).length;
+
+  // Get tasks by category
+  List<Map<String, dynamic>> getTasksByCategory(String category) {
+    return _listenerService.getFilteredTasks(category: category);
+  }
+
+  // Get tasks by status
+  List<Map<String, dynamic>> getTasksByStatus(bool isDone) {
+    return tasks
+        .where((task) => task['isDone'] == isDone)
+        .cast<Map<String, dynamic>>()
+        .toList();
+  }
+
+  // Search tasks
+  List<Map<String, dynamic>> searchTasks(String query) {
+    return _listenerService.getFilteredTasks(searchQuery: query);
+  }
+
+  void addTestTask() {
+    final testTask = {
+      'taskTitle': 'Test Görevi',
+      'taskDescription': 'Bu bir test görevidir.',
+      'isDone': false,
+      'uploadedBy': _auth.currentUser?.uid,
+    };
+    addTask(testTask);
   }
 }

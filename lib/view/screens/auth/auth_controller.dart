@@ -21,12 +21,15 @@ import 'package:tuncbt/utils/team_errors.dart';
 import 'package:mime/mime.dart';
 import 'package:tuncbt/view/widgets/loading_screen.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
+import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/models/team.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  late final AuthService _authService;
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -68,6 +71,10 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   @override
   void onInit() {
     super.onInit();
+
+    // Get AuthService instance
+    _authService = Get.find<AuthService>();
+
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 20));
     _animation =
@@ -160,32 +167,7 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  Future<void> _checkTeamStatus(String userId) async {
-    try {
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      if (!userDoc.exists) return;
-
-      final userData = UserModel.fromFirestore(userDoc);
-      hasTeam.value = userData.hasTeam;
-
-      if (userData.hasTeam && userData.teamId != null) {
-        final teamDoc =
-            await _firestore.collection('teams').doc(userData.teamId).get();
-        if (!teamDoc.exists) {
-          // Takım silinmiş, kullanıcı bilgilerini güncelle
-          await _firestore.collection('users').doc(userId).update({
-            'hasTeam': false,
-            'teamId': null,
-            'teamRole': null,
-          });
-          hasTeam.value = false;
-        }
-      }
-    } catch (e) {
-      print('Error checking team status: $e');
-      hasTeam.value = false;
-    }
-  }
+  // Team status check is now handled by AuthService
 
   Future<void> login() async {
     if (isLoading.value) return;
@@ -198,16 +180,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           password: passwordController.text.trim(),
         );
 
-        await _checkTeamStatus(userCredential.user!.uid);
-
+        // AuthService will automatically handle auth state change and team status
         emailController.text = "";
         passwordController.text = "";
 
-        if (hasTeam.value) {
-          Get.offAllNamed(TasksScreen.routeName);
-        } else {
-          Get.offAllNamed('/auth/referral');
-        }
+        // Navigation will be handled by UserState based on AuthService state
+        // Just close the loading overlay, UserState will redirect appropriately
       } on FirebaseAuthException catch (e) {
         Get.snackbar('Giriş Başarısız', _getReadableAuthError(e));
       } catch (error) {
@@ -530,9 +508,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         print('Firebase Auth profili güncellendi');
       }
 
-      print('Kayıt işlemi başarılı, TasksScreen\'e yönlendiriliyor...');
+      print(
+          'Kayıt işlemi başarılı, AuthService auth state\'i handle edecek...');
       await Future.delayed(const Duration(seconds: 1));
-      Get.offAllNamed(TasksScreen.routeName);
+
+      // Close loading screen - UserState will handle navigation based on AuthService
+      Get.back();
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.code} - ${e.message}');
       Get.back(); // Loading ekranını kapat
@@ -777,9 +758,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> signOut() async {
     try {
-      await _auth.signOut();
-      hasTeam.value = false;
-      Get.offAllNamed('/login');
+      await _authService.signOut();
+      // AuthService will handle state cleanup and UserState will handle navigation
     } catch (error) {
       Get.snackbar(
           'Hata', 'Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.');

@@ -58,6 +58,44 @@ class UserModel {
     );
   }
 
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      position: json['position'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'])
+          : DateTime.now(),
+      isOnline: json['isOnline'] ?? false,
+      teamId: json['teamId'],
+      invitedBy: json['invitedBy'],
+      teamRole: json['teamRole'] != null
+          ? TeamRole.fromString(json['teamRole'])
+          : null,
+      hasTeam: json['hasTeam'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'imageUrl': imageUrl,
+      'phoneNumber': phoneNumber,
+      'position': position,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'isOnline': isOnline,
+      'teamId': teamId,
+      'invitedBy': invitedBy,
+      'teamRole': teamRole?.toString().split('.').last.toLowerCase(),
+      'hasTeam': hasTeam,
+    };
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,

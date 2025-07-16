@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
+  // Firestore koleksiyon isimleri
+  static const String teamsCollection = 'teams';
+  static const String usersCollection = 'users';
+  static const String tasksCollection = 'tasks';
+
   // Takım sistemi sabitleri
   static const int maxTeamSize = 50;
   static const int referralCodeLength = 8;

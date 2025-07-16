@@ -1,10 +1,9 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 import 'package:tuncbt/core/models/team_member.dart';
 import 'package:tuncbt/core/models/user_model.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_service_controller.dart';
 
 class AllWorkersController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,10 +11,10 @@ class AllWorkersController extends GetxController {
   final isLoading = true.obs;
   final memberCount = 0.obs;
 
-  late final TeamProvider _teamProvider;
+  late final TeamServiceController _teamController;
 
   AllWorkersController() {
-    _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
+    _teamController = Get.find<TeamServiceController>();
   }
 
   @override
@@ -26,14 +25,14 @@ class AllWorkersController extends GetxController {
 
   void fetchTeamMembers() {
     try {
-      if (_teamProvider.teamId == null) {
+      if (_teamController.teamId == null) {
         isLoading.value = false;
         return;
       }
 
       _firestore
           .collection('team_members')
-          .where('teamId', isEqualTo: _teamProvider.teamId)
+          .where('teamId', isEqualTo: _teamController.teamId)
           .where('isActive', isEqualTo: true)
           .snapshots()
           .listen((snapshot) async {
