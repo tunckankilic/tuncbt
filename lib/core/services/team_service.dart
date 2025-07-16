@@ -17,26 +17,19 @@ import 'package:tuncbt/utils/team_sync.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
 
 class TeamService extends GetxService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _connectivity = Connectivity();
+  final errorMessage = ''.obs;
+  final hasError = false.obs;
+  final isLoading = false.obs;
   final maxTeamSize = 50;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _cache = Get.put(TeamCache());
+  final _connectivity = Connectivity();
+  StreamSubscription? _connectivitySubscription;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool _hasNetworkConnection = true;
   final _sync = Get.put(TeamSync());
   final _uuid = Uuid();
-
-  final isLoading = false.obs;
-  final hasError = false.obs;
-  final errorMessage = ''.obs;
-
-  StreamSubscription? _connectivitySubscription;
-  bool _hasNetworkConnection = true;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _setupConnectivityListener();
-  }
 
   @override
   void onClose() {
@@ -44,43 +37,10 @@ class TeamService extends GetxService {
     super.onClose();
   }
 
-  void _setupConnectivityListener() {
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen((result) {
-      _hasNetworkConnection = result != ConnectivityResult.none;
-    });
-  }
-
-  Future<void> _checkNetworkConnection() async {
-    if (!_hasNetworkConnection) {
-      throw TeamNetworkException();
-    }
-  }
-
-  Future<void> _handleOperation(
-      Future<void> Function() operation, BuildContext context) async {
-    try {
-      isLoading.value = true;
-      hasError.value = false;
-      errorMessage.value = '';
-
-      await _checkNetworkConnection();
-      await operation();
-
-      Get.snackbar(
-        'Success',
-        'Operation completed successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    } catch (e) {
-      hasError.value = true;
-      errorMessage.value = e.toString();
-      TeamErrorHandler.handleError(context, e);
-    } finally {
-      isLoading.value = false;
-    }
+  @override
+  void onInit() {
+    super.onInit();
+    _setupConnectivityListener();
   }
 
   /// Yeni bir takım oluşturur
@@ -756,29 +716,68 @@ class TeamService extends GetxService {
       );
     }
   }
+
+  void _setupConnectivityListener() {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((result) {
+      _hasNetworkConnection = result != ConnectivityResult.none;
+    });
+  }
+
+  Future<void> _checkNetworkConnection() async {
+    if (!_hasNetworkConnection) {
+      throw TeamNetworkException();
+    }
+  }
+
+  Future<void> _handleOperation(
+      Future<void> Function() operation, BuildContext context) async {
+    try {
+      isLoading.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      await _checkNetworkConnection();
+      await operation();
+
+      Get.snackbar(
+        'Success',
+        'Operation completed successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      TeamErrorHandler.handleError(context, e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
 
 /// Takım işlem sonucu
 class TeamOperationResult<T> {
-  final bool success;
-  final T? data;
-  final TeamException? error;
+  TeamOperationResult.failure({required this.error})
+      : success = false,
+        data = null;
 
   TeamOperationResult.success({required this.data})
       : success = true,
         error = null;
 
-  TeamOperationResult.failure({required this.error})
-      : success = false,
-        data = null;
+  final T? data;
+  final TeamException? error;
+  final bool success;
 }
 
 /// Takım işlemleri için özel hata sınıfı
 class TeamException implements Exception {
-  final String message;
-  final TeamErrorType errorType;
-
   TeamException(this.message, {required this.errorType});
+
+  final TeamErrorType errorType;
+  final String message;
 
   @override
   String toString() => message;

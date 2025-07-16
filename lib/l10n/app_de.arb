@@ -111,26 +111,26 @@
   "deleteComment": "Kommentar löschen",
   "deleteCommentConfirm": "Möchten Sie diesen Kommentar wirklich löschen?",
   "edit": "Bearbeiten",
-  "daysAgo": "vor {count} Tagen",
+  "daysAgo": "vor {days} Tagen",
   "@daysAgo": {
     "placeholders": {
-      "count": {
+      "days": {
         "type": "int"
       }
     }
   },
-  "hoursAgo": "vor {count} Stunden",
+  "hoursAgo": "vor {hours} Stunden",
   "@hoursAgo": {
     "placeholders": {
-      "count": {
+      "hours": {
         "type": "int"
       }
     }
   },
-  "minutesAgo": "vor {count} Minuten",
+  "minutesAgo": "vor {minutes} Minuten",
   "@minutesAgo": {
     "placeholders": {
-      "count": {
+      "minutes": {
         "type": "int"
       }
     }
