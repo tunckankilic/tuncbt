@@ -22,16 +22,17 @@ class CacheService extends GetxService {
   Future<void> cacheTeamData(Team? team) async {
     try {
       if (team != null) {
-        await _prefs.setString(_teamDataKey, jsonEncode(team.toJson()));
+        final teamJson = jsonEncode(team.toJson());
+        await _prefs.setString(_teamDataKey, teamJson);
         await _prefs.setString(_teamIdKey, team.teamId);
         print('CacheService: Takım verisi önbelleğe alındı - ${team.teamName}');
       } else {
-        await _prefs.remove(_teamDataKey);
-        await _prefs.remove(_teamIdKey);
+        await clearTeamCache();
         print('CacheService: Takım verisi önbellekten silindi');
       }
     } catch (e) {
       print('CacheService: Takım verisi önbellekleme hatası - $e');
+      await clearTeamCache();
     }
   }
 
@@ -39,11 +40,12 @@ class CacheService extends GetxService {
     try {
       final teamJson = _prefs.getString(_teamDataKey);
       if (teamJson != null) {
-        final teamData = Map<String, dynamic>.from(jsonDecode(teamJson));
+        final teamData = jsonDecode(teamJson) as Map<String, dynamic>;
         return Team.fromJson(teamData);
       }
     } catch (e) {
       print('CacheService: Takım verisi okuma hatası - $e');
+      clearTeamCache();
     }
     return null;
   }
@@ -52,11 +54,9 @@ class CacheService extends GetxService {
   Future<void> cacheUserRole(TeamRole? role) async {
     try {
       if (role != null) {
-        await _prefs.setString(_userRoleKey, role.toString().split('.').last);
-        print('CacheService: Kullanıcı rolü önbelleğe alındı - $role');
+        await _prefs.setString(_userRoleKey, role.toString());
       } else {
         await _prefs.remove(_userRoleKey);
-        print('CacheService: Kullanıcı rolü önbellekten silindi');
       }
     } catch (e) {
       print('CacheService: Kullanıcı rolü önbellekleme hatası - $e');
@@ -68,7 +68,7 @@ class CacheService extends GetxService {
       final roleStr = _prefs.getString(_userRoleKey);
       if (roleStr != null) {
         return TeamRole.values.firstWhere(
-          (e) => e.toString().split('.').last == roleStr,
+          (e) => e.toString() == roleStr,
           orElse: () => TeamRole.member,
         );
       }
@@ -82,11 +82,10 @@ class CacheService extends GetxService {
   Future<void> cacheUserData(UserModel? user) async {
     try {
       if (user != null) {
-        await _prefs.setString(_userDataKey, jsonEncode(user.toJson()));
-        print('CacheService: Kullanıcı verisi önbelleğe alındı - ${user.name}');
+        final userJson = jsonEncode(user.toJson());
+        await _prefs.setString(_userDataKey, userJson);
       } else {
         await _prefs.remove(_userDataKey);
-        print('CacheService: Kullanıcı verisi önbellekten silindi');
       }
     } catch (e) {
       print('CacheService: Kullanıcı verisi önbellekleme hatası - $e');
@@ -97,7 +96,7 @@ class CacheService extends GetxService {
     try {
       final userJson = _prefs.getString(_userDataKey);
       if (userJson != null) {
-        final userData = Map<String, dynamic>.from(jsonDecode(userJson));
+        final userData = jsonDecode(userJson) as Map<String, dynamic>;
         return UserModel.fromJson(userData);
       }
     } catch (e) {
@@ -109,8 +108,8 @@ class CacheService extends GetxService {
   // Team members caching
   Future<void> cacheTeamMembers(List<UserModel> members) async {
     try {
-      final membersJson = members.map((m) => m.toJson()).toList();
-      await _prefs.setString(_teamMembersKey, jsonEncode(membersJson));
+      final membersJson = jsonEncode(members.map((m) => m.toJson()).toList());
+      await _prefs.setString(_teamMembersKey, membersJson);
       print(
           'CacheService: Takım üyeleri önbelleğe alındı - ${members.length} üye');
     } catch (e) {
@@ -122,9 +121,8 @@ class CacheService extends GetxService {
     try {
       final membersJson = _prefs.getString(_teamMembersKey);
       if (membersJson != null) {
-        final membersList = List<Map<String, dynamic>>.from(
-          jsonDecode(membersJson),
-        );
+        final membersList =
+            (jsonDecode(membersJson) as List).cast<Map<String, dynamic>>();
         return membersList.map((m) => UserModel.fromJson(m)).toList();
       }
     } catch (e) {
@@ -148,26 +146,34 @@ class CacheService extends GetxService {
 
   // Clear all cache
   Future<void> clearAllCache() async {
-    await Future.wait([
-      _prefs.remove(_teamDataKey),
-      _prefs.remove(_teamIdKey),
-      _prefs.remove(_userRoleKey),
-      _prefs.remove(_userDataKey),
-      _prefs.remove(_teamMembersKey),
-      _prefs.remove(_lastSyncKey),
-    ]);
-    print('CacheService: Tüm önbellek temizlendi');
+    try {
+      await Future.wait([
+        _prefs.remove(_teamDataKey),
+        _prefs.remove(_teamIdKey),
+        _prefs.remove(_userRoleKey),
+        _prefs.remove(_userDataKey),
+        _prefs.remove(_teamMembersKey),
+        _prefs.remove(_lastSyncKey),
+      ]);
+      print('CacheService: Tüm önbellek temizlendi');
+    } catch (e) {
+      print('CacheService: Önbellek temizleme hatası - $e');
+    }
   }
 
   // Clear team related cache
   Future<void> clearTeamCache() async {
-    await Future.wait([
-      _prefs.remove(_teamDataKey),
-      _prefs.remove(_teamIdKey),
-      _prefs.remove(_userRoleKey),
-      _prefs.remove(_teamMembersKey),
-    ]);
-    print('CacheService: Takım önbelleği temizlendi');
+    try {
+      await Future.wait([
+        _prefs.remove(_teamDataKey),
+        _prefs.remove(_teamIdKey),
+        _prefs.remove(_userRoleKey),
+        _prefs.remove(_teamMembersKey),
+      ]);
+      print('CacheService: Takım önbelleği temizlendi');
+    } catch (e) {
+      print('CacheService: Takım önbelleği temizleme hatası - $e');
+    }
   }
 
   // Check if cache is stale

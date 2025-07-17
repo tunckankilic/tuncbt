@@ -762,4 +762,147 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get teamInviteSubject => 'TuncBT Takım Daveti';
+
+  @override
+  String get teamCreationDate => 'Oluşturulma Tarihi';
+
+  @override
+  String get memberManagement => 'Üye Yönetimi';
+
+  @override
+  String get dangerZone => 'Tehlikeli Bölge';
+
+  @override
+  String get settings => 'Ayarlar';
+
+  @override
+  String get myAccount => 'Hesabım';
+
+  @override
+  String get messages => 'Mesajlar';
+
+  @override
+  String get notifications => 'Bildirimler';
+
+  @override
+  String get contact => 'İletişim';
+
+  @override
+  String get commentActions => 'Yorum İşlemleri';
+
+  @override
+  String get replyToComment => 'Yorumu Yanıtla';
+
+  @override
+  String get signUp => 'Kayıt Ol';
+
+  @override
+  String get maximumRetryExceeded => 'Maksimum yeniden deneme sayısı aşıldı';
+
+  @override
+  String get dataProcessing => 'Veri İşleme';
+
+  @override
+  String get ageRestriction => 'Yaş Sınırlaması';
+
+  @override
+  String get ageRestrictionText =>
+      'Bu uygulamayı kullanmak için en az 13 yaşında olmalısınız';
+
+  @override
+  String get legalNotice => 'Yasal Bildirim';
+
+  @override
+  String get notificationPermission => 'Bildirim İzni';
+
+  @override
+  String get manageNotifications => 'Bildirimleri Yönet';
+
+  @override
+  String get exportData => 'Verilerimi İndir';
+
+  @override
+  String get exportDataDescription =>
+      'Kişisel verilerinizin bir kopyasını indirin';
+
+  @override
+  String get deleteData => 'Verilerimi Sil';
+
+  @override
+  String get deleteDataDescription =>
+      'Tüm verilerinizi sunucularımızdan kalıcı olarak silin';
+
+  @override
+  String get cookiePolicy => 'Çerez Politikası';
+
+  @override
+  String get cookiePolicyDescription =>
+      'Deneyiminizi iyileştirmek için çerezler kullanıyoruz';
+
+  @override
+  String get contactSupport => 'Destek İle İletişime Geç';
+
+  @override
+  String get groupChatComingSoon => 'Grup sohbeti özelliği yakında eklenecek';
+
+  @override
+  String get block => 'Engelle';
+
+  @override
+  String get unblock => 'Engeli Kaldır';
+
+  @override
+  String get onlyAdminsCanMakeAdmin =>
+      'Yalnızca grup adminleri yeni admin atayabilir';
+
+  @override
+  String get newMembersAdded => 'Yeni üyeler eklendi';
+
+  @override
+  String get newAdminAssigned => 'Yeni grup admini atandı';
+
+  @override
+  String get groupCreatedMessage => 'Grup oluşturuldu';
+
+  @override
+  String get attachments => 'Ekler';
+
+  @override
+  String get memberAdded => 'Yeni üyeler eklendi';
+
+  @override
+  String get memberRemoved => 'Bir üye gruptan çıkarıldı';
+
+  @override
+  String get adminAssigned => 'Yeni grup yöneticisi atandı';
+
+  @override
+  String get systemMessageNewMembers => 'Yeni üyeler eklendi';
+
+  @override
+  String get systemMessageMemberRemoved => 'Bir üye çıkarıldı';
+
+  @override
+  String get systemMessageNewAdmin => 'Yeni grup yöneticisi atandı';
+
+  @override
+  String get systemMessageGroupCreated => 'Grup oluşturuldu';
+
+  @override
+  String get teamErrorMemberDataMissing => 'Üye verisi eksik veya geçersiz';
+
+  @override
+  String get teamErrorInvalidRole => 'Geçersiz takım rolü';
+
+  @override
+  String get teamErrorInvalidTimestamp => 'Geçersiz tarih formatı';
+
+  @override
+  String get teamErrorMemberNotFound => 'Üye bulunamadı';
+
+  @override
+  String get teamErrorDataInvalid => 'Takım verisi geçersiz';
+
+  @override
+  String get teamErrorUserDataMissing => 'Kullanıcı verisi eksik';
 }

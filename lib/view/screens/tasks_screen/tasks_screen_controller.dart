@@ -269,6 +269,7 @@ class TasksScreenController extends GetxController {
       'taskDescription': 'Bu bir test görevidir.',
       'isDone': false,
       'uploadedBy': _auth.currentUser?.uid,
+      'taskCategory': 'Genel',
     };
     addTask(testTask);
   }

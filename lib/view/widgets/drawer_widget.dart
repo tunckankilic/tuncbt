@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer';
 import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:tuncbt/view/screens/chat/chat_index.dart';
+import 'package:tuncbt/core/services/logout_service.dart';
 
 class DrawerController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -84,7 +85,7 @@ class DrawerController extends GetxController {
 
   void navigateToAddTask() {
     if (currentTeam.value != null) {
-      Get.to(() => const UploadTaskScreen(), binding: InnerScreenBindings());
+      Get.to(() => UploadTaskScreen(), binding: InnerScreenBindings());
     }
   }
 
@@ -171,13 +172,10 @@ class DrawerWidget extends StatelessWidget {
 
   Future<void> _handleSignOut(BuildContext context) async {
     try {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // Drawer'ı kapat
 
-      final teamController = Get.find<TeamController>();
-      await teamController.clearTeamData();
-
-      await FirebaseAuth.instance.signOut();
-      Get.offAllNamed('/auth');
+      final logoutService = Get.find<LogoutService>();
+      await logoutService.logout();
     } catch (e) {
       print('Sign out error: $e');
       Get.snackbar(
@@ -280,15 +278,15 @@ class DrawerWidget extends StatelessWidget {
                       Get.toNamed(ChatIndexScreen.routeName);
                     },
                   ),
+                  ListTile(
+                    leading: Icon(Icons.people, color: AppTheme.primaryColor),
+                    title: Text(AppLocalizations.of(context)!.allWorkers),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(AllWorkersScreen.routeName);
+                    },
+                  ),
                   if (isAdmin) ...[
-                    ListTile(
-                      leading: Icon(Icons.people, color: AppTheme.primaryColor),
-                      title: Text(AppLocalizations.of(context)!.allWorkers),
-                      onTap: () {
-                        Get.back();
-                        Get.toNamed(AllWorkersScreen.routeName);
-                      },
-                    ),
                     ListTile(
                       leading:
                           Icon(Icons.settings, color: AppTheme.primaryColor),

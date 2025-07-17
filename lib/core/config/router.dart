@@ -1,32 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/models/user_model.dart';
+import 'package:tuncbt/view/screens/all_workers/all_workers.dart';
+import 'package:tuncbt/view/screens/all_workers/all_workers_bindings.dart';
+import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/auth.dart';
+import 'package:tuncbt/view/screens/auth/screens/forget_pass.dart';
+import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/password_renew.dart';
-import 'package:tuncbt/view/screens/bindings.dart';
-import 'package:tuncbt/view/screens/chat/chat_screen.dart';
-import 'package:tuncbt/view/screens/chat/chat_index.dart';
+import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
+import 'package:tuncbt/view/screens/auth/screens/register.dart';
 import 'package:tuncbt/view/screens/chat/chat_bindings.dart';
+import 'package:tuncbt/view/screens/chat/chat_index.dart';
+import 'package:tuncbt/view/screens/chat/chat_screen.dart';
+import 'package:tuncbt/view/screens/chat/group_members_screen.dart';
+import 'package:tuncbt/view/screens/inner_screens/inner_screen_bindings.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/profile.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/task_details.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/upload_task.dart';
-import 'package:tuncbt/view/screens/screens.dart';
-import 'package:tuncbt/view/screens/users/users_bindings.dart';
-import 'package:tuncbt/view/screens/users/users_screen.dart';
-import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
-import 'package:tuncbt/view/screens/auth/screens/login.dart';
-import 'package:tuncbt/view/screens/auth/screens/register.dart';
-import 'package:tuncbt/view/screens/auth/auth_controller.dart';
-import 'package:tuncbt/view/screens/inner_screens/screens/invite_members.dart';
 import 'package:tuncbt/view/screens/legal/privacy_policy.dart';
 import 'package:tuncbt/view/screens/legal/terms_of_service.dart';
-import 'package:tuncbt/view/screens/chat/group_members_screen.dart';
+import 'package:tuncbt/view/screens/tasks_screen/screens/tasks_screen.dart';
+import 'package:tuncbt/view/screens/tasks_screen/tasks_screen_bindings.dart';
+import 'package:tuncbt/view/screens/users/users_bindings.dart';
+import 'package:tuncbt/view/screens/users/users_screen.dart';
+import 'package:tuncbt/core/services/auth_service.dart';
 
 class RouteManager {
   static const String home = '/home';
   static const String login = '/login';
   static const String settings = '/settings';
+  static const String tasks = '/tasks';
+  static const String uploadTask = '/upload-task';
 
   static final routes = [
+    GetPage(
+      name: tasks,
+      page: () => const TasksScreen(),
+      binding: TasksScreenBindings(),
+    ),
+    GetPage(
+      name: uploadTask,
+      page: () => UploadTaskScreen(),
+      binding: InnerScreenBindings(),
+    ),
     GetPage(
       name: AllWorkersScreen.routeName,
       page: () => AllWorkersScreen(),
@@ -83,7 +102,7 @@ class RouteManager {
     GetPage(
         name: UploadTaskScreen.routeName,
         page: () => UploadTaskScreen(),
-        binding: TasksScreenBindings()),
+        binding: InnerScreenBindings()),
     GetPage(
       name: PasswordRenew.routeName,
       page: () => PasswordRenew(),
@@ -156,9 +175,9 @@ class RouteManager {
 class RouteGuard extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
-    if (Get.find<AuthController>().hasTeam.value == false &&
-        route != '/auth/referral') {
-      return RouteSettings(name: '/auth/referral');
+    final authService = Get.find<AuthService>();
+    if (!authService.hasTeam.value && route != '/auth/referral') {
+      return const RouteSettings(name: '/auth/referral');
     }
     return null;
   }

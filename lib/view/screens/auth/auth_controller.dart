@@ -79,11 +79,15 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           });
     _animationController.forward();
 
-    // Mevcut kullanıcıları migrate et
-    UserModel.migrateExistingUsers().then((_) {
-      print('Kullanıcı migrasyonu tamamlandı');
-    }).catchError((error) {
-      print('Kullanıcı migrasyonu sırasında hata: $error');
+    // Kullanıcı oturum açtığında migrasyon yap
+    ever(_authService.authStatus, (status) {
+      if (status == AuthStatus.authenticated) {
+        UserModel.migrateExistingUsers().then((_) {
+          print('Kullanıcı migrasyonu tamamlandı');
+        }).catchError((error) {
+          print('Kullanıcı migrasyonu sırasında hata: $error');
+        });
+      }
     });
   }
 
@@ -326,13 +330,19 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     isLoading.value = true;
 
     try {
-      String uid = _auth.currentUser?.uid ?? '';
-      String imageUrl = '';
-
       // Loading ekranını göster
       Get.to(() => LoadingScreen(
             message: AppLocalizations.of(Get.context!)!.creatingTeam,
           ));
+
+      // Önce Firebase Auth'da kullanıcı oluştur
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim().toLowerCase(),
+        password: passwordController.text.trim(),
+      );
+
+      final uid = userCredential.user!.uid;
+      String imageUrl = '';
 
       if (imageFile.value != null) {
         print('Profil resmi yükleniyor...');
@@ -489,8 +499,11 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           'Kayıt işlemi başarılı, AuthService auth state\'i handle edecek...');
       await Future.delayed(const Duration(seconds: 1));
 
-      // Close loading screen - UserState will handle navigation based on AuthService
+      // Close loading screen
       Get.back();
+
+      // Ana sayfaya yönlendir ve önceki sayfaları temizle
+      Get.offAllNamed('/tasks');
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.code} - ${e.message}');
       Get.back(); // Loading ekranını kapat

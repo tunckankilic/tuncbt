@@ -271,10 +271,10 @@ class SignUp extends GetView<AuthController> {
           validator: (value) => value!.isEmpty
               ? AppLocalizations.of(context)!.fieldMissing
               : null,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.registerEmail,
-            hintStyle: const TextStyle(color: Colors.black),
+            hintStyle: const TextStyle(color: Colors.white70),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
             focusedBorder: const UnderlineInputBorder(
@@ -291,10 +291,10 @@ class SignUp extends GetView<AuthController> {
           validator: (value) => value!.isEmpty
               ? AppLocalizations.of(context)!.fieldMissing
               : null,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context)!.registerName,
-            hintStyle: const TextStyle(color: Colors.black),
+            hintStyle: const TextStyle(color: Colors.white70),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
             focusedBorder: const UnderlineInputBorder(
@@ -372,7 +372,7 @@ class SignUp extends GetView<AuthController> {
           validator: (value) => value!.isEmpty || value.length < 7
               ? AppLocalizations.of(context)!.invalidPassword
               : null,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             suffixIcon: GestureDetector(
               onTap: controller.toggleObscureText,
@@ -383,7 +383,7 @@ class SignUp extends GetView<AuthController> {
                   color: Colors.white),
             ),
             hintText: AppLocalizations.of(context)!.registerPassword,
-            hintStyle: const TextStyle(color: Colors.black),
+            hintStyle: const TextStyle(color: Colors.white70),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
             focusedBorder: const UnderlineInputBorder(
@@ -401,7 +401,7 @@ class SignUp extends GetView<AuthController> {
           validator: (value) => value != controller.passwordController.text
               ? AppLocalizations.of(context)!.passwordsDoNotMatch
               : null,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             suffixIcon: GestureDetector(
               onTap: controller.toggleObscureText,
@@ -412,7 +412,7 @@ class SignUp extends GetView<AuthController> {
                   color: Colors.white),
             ),
             hintText: AppLocalizations.of(context)!.registerConfirmPassword,
-            hintStyle: const TextStyle(color: Colors.black),
+            hintStyle: const TextStyle(color: Colors.white70),
             enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white)),
             focusedBorder: const UnderlineInputBorder(
@@ -428,10 +428,10 @@ class SignUp extends GetView<AuthController> {
       controller: controller.phoneNumberController,
       validator: (value) =>
           value!.isEmpty ? AppLocalizations.of(context)!.fieldMissing : null,
-      style: const TextStyle(color: Colors.black),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: AppLocalizations.of(context)!.registerPhone,
-        hintStyle: const TextStyle(color: Colors.black),
+        hintStyle: const TextStyle(color: Colors.white70),
         enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white)),
         focusedBorder: const UnderlineInputBorder(
@@ -450,12 +450,12 @@ class SignUp extends GetView<AuthController> {
         controller: controller.positionCPController,
         validator: (value) =>
             value!.isEmpty ? AppLocalizations.of(context)!.fieldMissing : null,
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           suffixIcon:
-              const Icon(Icons.arrow_downward_rounded, color: Colors.black),
+              const Icon(Icons.arrow_downward_rounded, color: Colors.white),
           hintText: AppLocalizations.of(context)!.registerPosition,
-          hintStyle: const TextStyle(color: Colors.black),
+          hintStyle: const TextStyle(color: Colors.white70),
           enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white)),
           focusedBorder: const UnderlineInputBorder(
@@ -485,7 +485,9 @@ class SignUp extends GetView<AuthController> {
                     AppLocalizations.of(context)!.acceptTerms,
                     style: TextStyle(fontSize: 14.sp, color: Colors.white),
                   ),
-                  subtitle: Row(
+                  subtitle: Wrap(
+                    alignment: WrapAlignment.start,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       TextButton(
                         onPressed: () => Get.toNamed('/terms-of-service'),
