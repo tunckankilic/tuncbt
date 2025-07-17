@@ -1,5 +1,21 @@
 {
   "@@locale": "en",
+  "quickActions": "Quick Actions",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
+  "codeCopied": "Code copied",
+  "@codeCopied": {
+    "description": "Message shown when code is copied"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name label"
+  },
+  "logoutError": "Error occurred while logging out",
+  "@logoutError": {
+    "description": "Error message shown when logout fails"
+  },
   "login": "Login",
   "register": "Register",
   "email": "Email",
@@ -44,6 +60,17 @@
   "error": "Error",
   "retry": "Retry",
   "appTitle": "TuncBT",
+  "@appTitle": {
+    "description": "Application name"
+  },
+  "loadingTeamData": "Loading team data...",
+  "@loadingTeamData": {
+    "description": "Loading message when team data is being fetched"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading state message"
+  },
   "loginButton": "Login",
   "registerButton": "Register",
   "loginResetPassword": "Reset Password",
@@ -259,5 +286,33 @@
     }
   },
   "leaveGroupSuccess": "You have left the group",
-  "leaveGroupError": "Failed to leave the group"
+  "leaveGroupError": "Failed to leave the group",
+  "operationSuccess": "Operation completed successfully",
+  "unexpectedErrorWithAction": "An unexpected error occurred. Please refresh the page and try again",
+  "errorTitleUpload": "Upload Error",
+  "errorTitleNetwork": "Network Error",
+  "errorTitleAuth": "Authentication Error",
+  "userNotFoundError": "User not found. Please log in again",
+  "teamNotFound": "Team not found",
+  "permissionDenied": "You don't have permission for this action",
+  "language": "Language",
+  "shareReferralCodeMessage": "Use this referral code to join my team: {code}",
+  "@shareReferralCodeMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "personalInfo": "Personal Information",
+  "teamInfo": "Team Information",
+  "teamRole": "Team Role",
+  "position": "Position",
+  "phoneNumber": "Phone Number",
+  "teamNotFoundText": "Team not found",
+  "roleNotFoundText": "Role not found",
+  "teamInviteSubject": "TuncBT Team Invitation",
+  "@teamInviteSubject": {
+    "description": "Subject for team invitation share"
+  }
 } 

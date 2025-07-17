@@ -100,6 +100,30 @@ abstract class AppLocalizations {
     Locale('de')
   ];
 
+  /// Quick actions section title
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// Message shown when code is copied
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get codeCopied;
+
+  /// Full name label
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// Error message shown when logout fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred while logging out'**
+  String get logoutError;
+
   /// No description provided for @login.
   ///
   /// In en, this message translates to:
@@ -358,11 +382,23 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
-  /// No description provided for @appTitle.
+  /// Application name
   ///
   /// In en, this message translates to:
   /// **'TuncBT'**
   String get appTitle;
+
+  /// Loading message when team data is being fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Loading team data...'**
+  String get loadingTeamData;
+
+  /// Loading state message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
 
   /// No description provided for @loginButton.
   ///
@@ -1365,6 +1401,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to leave the group'**
   String get leaveGroupError;
+
+  /// No description provided for @operationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation completed successfully'**
+  String get operationSuccess;
+
+  /// No description provided for @unexpectedErrorWithAction.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please refresh the page and try again'**
+  String get unexpectedErrorWithAction;
+
+  /// No description provided for @errorTitleUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Error'**
+  String get errorTitleUpload;
+
+  /// No description provided for @errorTitleNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Error'**
+  String get errorTitleNetwork;
+
+  /// No description provided for @errorTitleAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Error'**
+  String get errorTitleAuth;
+
+  /// No description provided for @userNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found. Please log in again'**
+  String get userNotFoundError;
+
+  /// No description provided for @teamNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Team not found'**
+  String get teamNotFound;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission for this action'**
+  String get permissionDenied;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @shareReferralCodeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this referral code to join my team: {code}'**
+  String shareReferralCodeMessage(String code);
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInfo;
+
+  /// No description provided for @teamInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Information'**
+  String get teamInfo;
+
+  /// No description provided for @teamRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Role'**
+  String get teamRole;
+
+  /// No description provided for @position.
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get position;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @teamNotFoundText.
+  ///
+  /// In en, this message translates to:
+  /// **'Team not found'**
+  String get teamNotFoundText;
+
+  /// No description provided for @roleNotFoundText.
+  ///
+  /// In en, this message translates to:
+  /// **'Role not found'**
+  String get roleNotFoundText;
+
+  /// Subject for team invitation share
+  ///
+  /// In en, this message translates to:
+  /// **'TuncBT Team Invitation'**
+  String get teamInviteSubject;
 }
 
 class _AppLocalizationsDelegate

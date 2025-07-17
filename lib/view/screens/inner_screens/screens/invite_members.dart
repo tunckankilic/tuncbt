@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 
 class InviteMembersScreen extends StatelessWidget {
   static const routeName = '/invite-members';
@@ -12,11 +13,11 @@ class InviteMembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final teamProvider = Provider.of<TeamProvider>(context);
-    final referralCode = teamProvider.currentTeam?.referralCode ?? '';
+    final teamController = Get.find<TeamController>();
+    final referralCode = teamController.currentTeam?.referralCode ?? '';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Üye Davet Et')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.inviteMembers)),
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -28,7 +29,7 @@ class InviteMembersScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Takım Davet Kodu',
+                      AppLocalizations.of(context)!.referralCode,
                       style: TextStyle(fontSize: 16.sp),
                     ),
                     SizedBox(height: 8.h),
@@ -49,7 +50,9 @@ class InviteMembersScreen extends StatelessWidget {
                             Clipboard.setData(
                                 ClipboardData(text: referralCode));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Kod kopyalandı')),
+                              SnackBar(
+                                  content: Text(AppLocalizations.of(context)!
+                                      .codeCopied)),
                             );
                           },
                         ),
@@ -63,12 +66,13 @@ class InviteMembersScreen extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
                 Share.share(
-                  'TuncBT takımıma katıl! Davet kodum: $referralCode',
-                  subject: 'TuncBT Takım Daveti',
+                  AppLocalizations.of(context)!
+                      .shareReferralCodeMessage(referralCode),
+                  subject: AppLocalizations.of(context)!.teamInviteSubject,
                 );
               },
               icon: const Icon(Icons.share),
-              label: const Text('Davet Kodunu Paylaş'),
+              label: Text(AppLocalizations.of(context)!.shareReferralCode),
             ),
           ],
         ),

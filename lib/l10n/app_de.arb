@@ -1,5 +1,9 @@
 {
   "@@locale": "de",
+  "quickActions": "Schnellzugriff",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
   "login": "Anmelden",
   "register": "Registrieren",
   "email": "E-Mail",
@@ -52,6 +56,17 @@
   "error": "Fehler",
   "retry": "Wiederholen",
   "appTitle": "TuncBT",
+  "@appTitle": {
+    "description": "Application name"
+  },
+  "loadingTeamData": "Team-Daten werden geladen...",
+  "@loadingTeamData": {
+    "description": "Loading message when team data is being fetched"
+  },
+  "loading": "Wird geladen...",
+  "@loading": {
+    "description": "Loading state message"
+  },
   "loginButton": "Anmelden",
   "registerButton": "Registrieren",
   "loginResetPassword": "Passwort zurücksetzen",
@@ -267,5 +282,45 @@
   "tasks": "Aufgaben",
   "allWorkers": "Alle Mitarbeiter",
   "leaveGroupSuccess": "Sie haben die Gruppe verlassen",
-  "leaveGroupError": "Fehler beim Verlassen der Gruppe"
+  "leaveGroupError": "Fehler beim Verlassen der Gruppe",
+  "operationSuccess": "Vorgang erfolgreich abgeschlossen",
+  "unexpectedErrorWithAction": "Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut",
+  "errorTitleUpload": "Upload-Fehler",
+  "errorTitleNetwork": "Netzwerkfehler",
+  "errorTitleAuth": "Authentifizierungsfehler",
+  "userNotFoundError": "Benutzer nicht gefunden. Bitte melden Sie sich erneut an",
+  "teamNotFound": "Team nicht gefunden",
+  "permissionDenied": "Sie haben keine Berechtigung für diese Aktion",
+  "language": "Sprache",
+  "shareReferralCodeMessage": "Verwende diesen Einladungscode, um meinem Team beizutreten: {code}",
+  "@shareReferralCodeMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "codeCopied": "Code kopiert",
+  "@codeCopied": {
+    "description": "Message shown when code is copied"
+  },
+  "fullName": "Vollständiger Name",
+  "@fullName": {
+    "description": "Full name label"
+  },
+  "logoutError": "Fehler beim Abmelden",
+  "@logoutError": {
+    "description": "Error message shown when logout fails"
+  },
+  "personalInfo": "Persönliche Informationen",
+  "teamInfo": "Team-Informationen",
+  "teamRole": "Team-Rolle",
+  "position": "Position",
+  "phoneNumber": "Telefonnummer",
+  "teamNotFoundText": "Team nicht gefunden",
+  "roleNotFoundText": "Rolle nicht gefunden",
+  "teamInviteSubject": "TuncBT Team-Einladung",
+  "@teamInviteSubject": {
+    "description": "Subject for team invitation share"
+  }
 } 

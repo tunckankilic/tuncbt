@@ -1,15 +1,4 @@
-import 'dart:developer';
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tuncbt/core/models/team.dart';
-import 'package:tuncbt/core/models/team_member.dart';
-import 'package:tuncbt/core/models/user_model.dart';
-import 'package:tuncbt/core/services/team_service.dart';
-import 'package:tuncbt/core/enums/team_role.dart';
-
+/*
 class TeamProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -382,3 +371,4 @@ class TeamProvider with ChangeNotifier {
     notifyListeners();
   }
 }
+*/

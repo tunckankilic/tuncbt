@@ -16,8 +16,7 @@ import 'package:tuncbt/view/screens/tasks_screen/screens/tasks_screen.dart';
 import 'package:tuncbt/user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer';
-import 'package:provider/provider.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:tuncbt/view/screens/chat/chat_index.dart';
 
 class DrawerController extends GetxController {
@@ -85,7 +84,7 @@ class DrawerController extends GetxController {
 
   void navigateToAddTask() {
     if (currentTeam.value != null) {
-      Get.to(() => UploadTask(), binding: InnerScreenBindings());
+      Get.to(() => const UploadTaskScreen(), binding: InnerScreenBindings());
     }
   }
 
@@ -172,23 +171,18 @@ class DrawerWidget extends StatelessWidget {
 
   Future<void> _handleSignOut(BuildContext context) async {
     try {
-      // Önce drawer'ı kapat
       Navigator.of(context).pop();
 
-      // TeamProvider'ı temizle
-      final teamProvider = Provider.of<TeamProvider>(context, listen: false);
-      await teamProvider.clearTeamData();
+      final teamController = Get.find<TeamController>();
+      await teamController.clearTeamData();
 
-      // Firebase'den çıkış yap
       await FirebaseAuth.instance.signOut();
-
-      // Auth sayfasına yönlendir
       Get.offAllNamed('/auth');
     } catch (e) {
       print('Sign out error: $e');
       Get.snackbar(
-        'Hata',
-        'Çıkış yapılırken bir sorun oluştu',
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.logoutError,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -198,9 +192,9 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final teamProvider = Provider.of<TeamProvider>(context);
-    final currentTeam = teamProvider.currentTeam;
-    final isAdmin = teamProvider.isAdmin;
+    final teamController = Get.find<TeamController>();
+    final currentTeam = teamController.currentTeam;
+    final isAdmin = teamController.isAdmin;
 
     return Drawer(
       child: Container(

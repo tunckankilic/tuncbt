@@ -9,6 +9,18 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get codeCopied => 'Code copied';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get logoutError => 'Error occurred while logging out';
+
+  @override
   String get login => 'Login';
 
   @override
@@ -142,6 +154,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appTitle => 'TuncBT';
+
+  @override
+  String get loadingTeamData => 'Loading team data...';
+
+  @override
+  String get loading => 'Loading...';
 
   @override
   String get loginButton => 'Login';
@@ -677,4 +695,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaveGroupError => 'Failed to leave the group';
+
+  @override
+  String get operationSuccess => 'Operation completed successfully';
+
+  @override
+  String get unexpectedErrorWithAction =>
+      'An unexpected error occurred. Please refresh the page and try again';
+
+  @override
+  String get errorTitleUpload => 'Upload Error';
+
+  @override
+  String get errorTitleNetwork => 'Network Error';
+
+  @override
+  String get errorTitleAuth => 'Authentication Error';
+
+  @override
+  String get userNotFoundError => 'User not found. Please log in again';
+
+  @override
+  String get teamNotFound => 'Team not found';
+
+  @override
+  String get permissionDenied => 'You don\'t have permission for this action';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String shareReferralCodeMessage(String code) {
+    return 'Use this referral code to join my team: $code';
+  }
+
+  @override
+  String get personalInfo => 'Personal Information';
+
+  @override
+  String get teamInfo => 'Team Information';
+
+  @override
+  String get teamRole => 'Team Role';
+
+  @override
+  String get position => 'Position';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get teamNotFoundText => 'Team not found';
+
+  @override
+  String get roleNotFoundText => 'Role not found';
+
+  @override
+  String get teamInviteSubject => 'TuncBT Team Invitation';
 }

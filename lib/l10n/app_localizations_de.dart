@@ -9,6 +9,18 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get quickActions => 'Schnellzugriff';
+
+  @override
+  String get codeCopied => 'Code kopiert';
+
+  @override
+  String get fullName => 'Vollständiger Name';
+
+  @override
+  String get logoutError => 'Fehler beim Abmelden';
+
+  @override
   String get login => 'Anmelden';
 
   @override
@@ -148,6 +160,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get appTitle => 'TuncBT';
+
+  @override
+  String get loadingTeamData => 'Team-Daten werden geladen...';
+
+  @override
+  String get loading => 'Wird geladen...';
 
   @override
   String get loginButton => 'Anmelden';
@@ -697,4 +715,63 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get leaveGroupError => 'Fehler beim Verlassen der Gruppe';
+
+  @override
+  String get operationSuccess => 'Vorgang erfolgreich abgeschlossen';
+
+  @override
+  String get unexpectedErrorWithAction =>
+      'Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut';
+
+  @override
+  String get errorTitleUpload => 'Upload-Fehler';
+
+  @override
+  String get errorTitleNetwork => 'Netzwerkfehler';
+
+  @override
+  String get errorTitleAuth => 'Authentifizierungsfehler';
+
+  @override
+  String get userNotFoundError =>
+      'Benutzer nicht gefunden. Bitte melden Sie sich erneut an';
+
+  @override
+  String get teamNotFound => 'Team nicht gefunden';
+
+  @override
+  String get permissionDenied =>
+      'Sie haben keine Berechtigung für diese Aktion';
+
+  @override
+  String get language => 'Sprache';
+
+  @override
+  String shareReferralCodeMessage(String code) {
+    return 'Verwende diesen Einladungscode, um meinem Team beizutreten: $code';
+  }
+
+  @override
+  String get personalInfo => 'Persönliche Informationen';
+
+  @override
+  String get teamInfo => 'Team-Informationen';
+
+  @override
+  String get teamRole => 'Team-Rolle';
+
+  @override
+  String get position => 'Position';
+
+  @override
+  String get phoneNumber => 'Telefonnummer';
+
+  @override
+  String get teamNotFoundText => 'Team nicht gefunden';
+
+  @override
+  String get roleNotFoundText => 'Rolle nicht gefunden';
+
+  @override
+  String get teamInviteSubject => 'TuncBT Team-Einladung';
 }
