@@ -6,6 +6,12 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>tr</string>
+		<string>en</string>
+		<string>de</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Tuncbt</string>
 	<key>CFBundleExecutable</key>
@@ -37,21 +43,30 @@
 	<array>
 		<string>https</string>
 		<string>http</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Bu uygulama, profil fotoğrafı çekmeniz için kamera erişimi istiyor.</string>
+	<string>This app requires camera access to take profile photos, make video calls, and share media content.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Bu uygulama, video çekerken ses kaydı yapabilmek için mikrofon erişimi istiyor.</string>
+	<string>This app requires microphone access to send voice messages, make audio/video calls, and record sound during video capture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Bu uygulama, profil fotoğrafı seçmeniz için fotoğraf kütüphanenize erişim istiyor.</string>
+	<string>This app requires photo library access to share photos and videos, select profile pictures, and save media content.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to save shared media to your photo library.</string>
+	<key>NSDocumentsUsageDescription</key>
+	<string>This app requires access to documents for file sharing and management.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+		<string>processing</string>
+		<string>audio</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -61,5 +76,22 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/screens/login.dart';
 import 'package:tuncbt/view/screens/auth/screens/referral_input.dart';
@@ -13,18 +14,19 @@ class UserState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = Get.find<AuthService>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Obx(() {
       // Loading state
       if (authService.isUnknown || authService.isLoading.value) {
-        return const Scaffold(
+        return Scaffold(
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Yükleniyor...'),
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text(l10n.loading),
               ],
             ),
           ),
@@ -57,9 +59,9 @@ class UserState extends StatelessWidget {
       }
 
       // Fallback - should not reach here
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: Text('Beklenmeyen durum'),
+          child: Text(l10n.error),
         ),
       );
     });

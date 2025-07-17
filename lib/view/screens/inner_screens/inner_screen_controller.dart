@@ -10,22 +10,17 @@ import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/core/models/task_model.dart';
 import 'package:tuncbt/core/models/team.dart';
 import 'package:tuncbt/core/models/team_member.dart';
+import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
-import 'package:tuncbt/providers/team_provider.dart';
 
 class InnerScreenController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late final TeamProvider _teamProvider;
-
-  InnerScreenController() {
-    _teamProvider = Provider.of<TeamProvider>(Get.context!, listen: false);
-  }
+  late final TeamController _teamController;
 
   // Common variables
   final RxBool isLoading = false.obs;
@@ -47,7 +42,7 @@ class InnerScreenController extends GetxController {
   final RxBool isCommenting = false.obs;
   final RxBool canUpdateTaskStatus = false.obs;
   final RxBool canAddComment = false.obs;
-  final commentController = TextEditingController();
+  final TextEditingController commentController = TextEditingController();
 
   // Upload Task variables
   final TextEditingController taskCategoryController =
@@ -61,10 +56,14 @@ class InnerScreenController extends GetxController {
   final Rx<DateTime?> picked = Rx<DateTime?>(null);
   final Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
 
-  // Yorum düzenleme için controller
-  final editCommentController = TextEditingController();
+  // Comment editing variables
+  final TextEditingController editCommentController = TextEditingController();
   final RxBool isEditingComment = false.obs;
   final RxString editingCommentId = ''.obs;
+
+  InnerScreenController() {
+    _teamController = Get.find<TeamController>();
+  }
 
   @override
   void onInit() {

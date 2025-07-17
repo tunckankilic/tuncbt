@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuncbt/core/config/constants.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:tuncbt/view/screens/all_workers/all_workers_controller.dart';
 import 'package:tuncbt/view/widgets/all_workers_widget.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
@@ -17,12 +16,12 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
 
   @override
   Widget build(BuildContext context) {
-    final teamProvider = Provider.of<TeamProvider>(context);
-    if (!teamProvider.isInitialized) {
-      teamProvider.initializeTeamData();
+    final teamController = Get.find<TeamController>();
+    if (!teamController.isInitialized) {
+      teamController.initializeTeamData();
     }
 
-    if (teamProvider.teamId == null) {
+    if (teamController.teamId == null) {
       Get.back();
       Get.snackbar(
         'Hata',
@@ -39,14 +38,15 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
       drawer: DrawerWidget(),
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(context, teamProvider),
-          _buildWorkersList(teamProvider, context),
+          _buildSliverAppBar(context, teamController),
+          _buildWorkersList(teamController, context),
         ],
       ),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context, TeamProvider teamProvider) {
+  Widget _buildSliverAppBar(
+      BuildContext context, TeamController teamController) {
     return SliverAppBar(
       expandedHeight: 200.h,
       floating: false,
@@ -56,23 +56,23 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              teamProvider.currentTeam?.teamName ??
-                  AppLocalizations.of(context)!.teamMembers,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!
-                  .teamMemberCount(teamProvider.teamMembers.length),
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 14.sp,
-              ),
-            ),
+            Obx(() => Text(
+                  teamController.currentTeam?.teamName ??
+                      AppLocalizations.of(context)!.teamMembers,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+            Obx(() => Text(
+                  AppLocalizations.of(context)!
+                      .teamMemberCount(teamController.teamMembers.length),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14.sp,
+                  ),
+                )),
           ],
         ),
         background: Container(
@@ -95,7 +95,8 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
     );
   }
 
-  Widget _buildWorkersList(TeamProvider teamProvider, BuildContext context) {
+  Widget _buildWorkersList(
+      TeamController teamController, BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const SliverFillRemaining(
@@ -122,7 +123,7 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                if (teamProvider.isAdmin)
+                if (teamController.isAdmin)
                   Text(
                     AppLocalizations.of(context)!.inviteMembersHint,
                     textAlign: TextAlign.center,

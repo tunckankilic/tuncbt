@@ -6,8 +6,7 @@ import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/inner_screens/inner_screen_controller.dart';
 import 'package:tuncbt/core/services/account_deletion.dart';
 import 'package:tuncbt/view/widgets/drawer_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:tuncbt/providers/team_provider.dart';
+import 'package:tuncbt/core/services/team_controller.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 
 enum UserType { commenter, worker, currentUser }
@@ -34,7 +33,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    final teamProvider = Provider.of<TeamProvider>(context);
+    final teamController = Get.find<TeamController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +57,7 @@ class ProfileScreen extends GetView<InnerScreenController> {
         }
 
         final user = controller.currentUser.value;
-        if (user == null) {
+        if (user == UserModel.empty()) {
           return Center(
             child: Text(
               AppLocalizations.of(context)!.userNotFound,
@@ -75,45 +74,45 @@ class ProfileScreen extends GetView<InnerScreenController> {
               _buildProfileHeader(user),
               SizedBox(height: 24.h),
               _buildInfoCard(
-                title: 'Kişisel Bilgiler',
+                title: AppLocalizations.of(context)!.personalInfo,
                 items: [
                   InfoItem(
                     icon: Icons.person,
-                    label: 'Ad Soyad',
+                    label: AppLocalizations.of(context)!.fullName,
                     value: user.name,
                   ),
                   InfoItem(
                     icon: Icons.email,
-                    label: 'E-posta',
+                    label: AppLocalizations.of(context)!.email,
                     value: user.email,
                   ),
                   InfoItem(
                     icon: Icons.phone,
-                    label: 'Telefon',
+                    label: AppLocalizations.of(context)!.phoneNumber,
                     value: user.phoneNumber,
                   ),
                   InfoItem(
                     icon: Icons.work,
-                    label: 'Pozisyon',
+                    label: AppLocalizations.of(context)!.position,
                     value: user.position,
                   ),
                 ],
               ),
               SizedBox(height: 16.h),
               _buildInfoCard(
-                title: 'Takım Bilgileri',
+                title: AppLocalizations.of(context)!.teamInfo,
                 items: [
                   InfoItem(
                     icon: Icons.group,
-                    label: 'Takım',
-                    value: teamProvider.currentTeam?.teamName ??
-                        'Takım bulunamadı',
+                    label: AppLocalizations.of(context)!.teamName,
+                    value: teamController.currentTeam?.teamName ??
+                        AppLocalizations.of(context)!.teamNotFoundText,
                   ),
                   InfoItem(
                     icon: Icons.admin_panel_settings,
-                    label: 'Rol',
-                    value:
-                        user.teamRole?.name.toUpperCase() ?? 'Rol bulunamadı',
+                    label: AppLocalizations.of(context)!.teamRole,
+                    value: user.teamRole?.name.toUpperCase() ??
+                        AppLocalizations.of(context)!.roleNotFoundText,
                   ),
                 ],
               ),

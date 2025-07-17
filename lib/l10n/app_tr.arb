@@ -1,8 +1,24 @@
 {
+  "codeCopied": "Kod kopyalandı",
+  "@codeCopied": {
+    "description": "Message shown when code is copied"
+  },
+  "teamInviteSubject": "TuncBT Takım Daveti",
+  "@teamInviteSubject": {
+    "description": "Subject for team invitation share"
+  },
   "@@locale": "tr",
   "appTitle": "TuncBT",
   "@appTitle": {
     "description": "Application name"
+  },
+  "loadingTeamData": "Takım bilgileri yükleniyor...",
+  "@loadingTeamData": {
+    "description": "Loading message when team data is being fetched"
+  },
+  "loading": "Yükleniyor...",
+  "@loading": {
+    "description": "Loading state message"
   },
   "language": "Dil",
   "login": "Giriş Yap",
@@ -62,6 +78,9 @@
   "editName": "İsmi Düzenle",
   "enterName": "İsminizi girin",
   "quickActions": "Hızlı İşlemler",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
   "messages": "Mesajlar",
   "notifications": "Bildirimler",
   "contact": "İletişim",
@@ -123,6 +142,9 @@
   "password": "Şifre",
   "name": "Ad Soyad",
   "phoneNumber": "Telefon Numarası",
+  "@phoneNumber": {
+    "description": "Phone number label"
+  },
   "allWorkers": "Tüm Çalışanlar",
   "teamNotFound": "Takım bulunamadı",
   "permissionDenied": "Bu işlem için yetkiniz bulunmamaktadır",
@@ -279,12 +301,12 @@
   "invalid_image_format": "Geçersiz dosya formatı. Sadece resim dosyaları kabul edilir",
   "profile_image_upload_failed": "Profil resmi yüklenemedi",
   "sessionExpired": "Oturum süresi doldu. Lütfen tekrar giriş yapın",
-  "userNotFoundError": "Kullanıcı bilgilerinize ulaşılamadı. Lütfen tekrar giriş yapın",
+  "userNotFoundError": "Kullanıcı bulunamadı. Lütfen tekrar giriş yapın",
   "onlyAdminsCanRemove": "Sadece yöneticiler üye çıkarabilir",
   "onlyAdminsCanPromote": "Sadece yöneticiler yetki verebilir",
   "unexpectedErrorWithAction": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin",
   "errorTitleChat": "Sohbet Hatası",
-  "errorTitleAuth": "Giriş Hatası",
+  "errorTitleAuth": "Kimlik Doğrulama Hatası",
   "errorTitleGroup": "Grup Hatası",
   "errorTitleUpload": "Yükleme Hatası",
   "errorTitleNetwork": "Bağlantı Hatası",
@@ -327,5 +349,52 @@
     }
   },
   "leaveGroupSuccess": "Gruptan ayrıldınız",
-  "leaveGroupError": "Gruptan ayrılırken bir hata oluştu"
+  "leaveGroupError": "Gruptan ayrılırken bir hata oluştu",
+  "teamMembersCount": "{count} Üye",
+  "@teamMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareReferralCodeMessage": "Takımıma katılmak için referans kodunu kullan: {code}",
+  "@shareReferralCodeMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "personalInfo": "Kişisel Bilgiler",
+  "@personalInfo": {
+    "description": "Personal information section title"
+  },
+  "teamInfo": "Takım Bilgileri",
+  "@teamInfo": {
+    "description": "Team information section title"
+  },
+  "fullName": "Ad Soyad",
+  "@fullName": {
+    "description": "Full name label"
+  },
+  "@position": {
+    "description": "Position label"
+  },
+  "teamNotFoundText": "Takım bulunamadı",
+  "@teamNotFoundText": {
+    "description": "Text shown when team is not found"
+  },
+  "roleNotFoundText": "Rol bulunamadı",
+  "@roleNotFoundText": {
+    "description": "Text shown when role is not found"
+  },
+  "logoutError": "Çıkış yapılırken bir sorun oluştu",
+  "@logoutError": {
+    "description": "Error message shown when logout fails"
+  },
+  "teamRole": "Takım Rolü",
+  "@teamRole": {
+    "description": "Team role label"
+  }
 } 

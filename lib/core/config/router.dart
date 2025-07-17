@@ -8,6 +8,7 @@ import 'package:tuncbt/view/screens/chat/chat_screen.dart';
 import 'package:tuncbt/view/screens/chat/chat_index.dart';
 import 'package:tuncbt/view/screens/chat/chat_bindings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
+import 'package:tuncbt/view/screens/inner_screens/screens/upload_task.dart';
 import 'package:tuncbt/view/screens/screens.dart';
 import 'package:tuncbt/view/screens/users/users_bindings.dart';
 import 'package:tuncbt/view/screens/users/users_screen.dart';
@@ -47,8 +48,8 @@ class RouteManager {
       binding: AuthBindings(),
     ),
     GetPage(
-      name: UploadTask.routeName,
-      page: () => UploadTask(),
+      name: UploadTaskScreen.routeName,
+      page: () => UploadTaskScreen(),
       binding: InnerScreenBindings(),
     ),
     GetPage(
@@ -80,8 +81,8 @@ class RouteManager {
       binding: TasksScreenBindings(),
     ),
     GetPage(
-        name: UploadTask.routeName,
-        page: () => UploadTask(),
+        name: UploadTaskScreen.routeName,
+        page: () => UploadTaskScreen(),
         binding: TasksScreenBindings()),
     GetPage(
       name: PasswordRenew.routeName,

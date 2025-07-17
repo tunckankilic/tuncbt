@@ -9,6 +9,18 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
+  String get quickActions => 'Hızlı İşlemler';
+
+  @override
+  String get codeCopied => 'Kod kopyalandı';
+
+  @override
+  String get fullName => 'Ad Soyad';
+
+  @override
+  String get logoutError => 'Çıkış yapılırken bir sorun oluştu';
+
+  @override
   String get login => 'Giriş Yap';
 
   @override
@@ -145,6 +157,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get appTitle => 'TuncBT';
+
+  @override
+  String get loadingTeamData => 'Takım bilgileri yükleniyor...';
+
+  @override
+  String get loading => 'Yükleniyor...';
 
   @override
   String get loginButton => 'Giriş Yap';
@@ -686,4 +704,62 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get leaveGroupError => 'Gruptan ayrılırken bir hata oluştu';
+
+  @override
+  String get operationSuccess => 'İşlem başarıyla tamamlandı';
+
+  @override
+  String get unexpectedErrorWithAction =>
+      'Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin';
+
+  @override
+  String get errorTitleUpload => 'Yükleme Hatası';
+
+  @override
+  String get errorTitleNetwork => 'Bağlantı Hatası';
+
+  @override
+  String get errorTitleAuth => 'Kimlik Doğrulama Hatası';
+
+  @override
+  String get userNotFoundError =>
+      'Kullanıcı bulunamadı. Lütfen tekrar giriş yapın';
+
+  @override
+  String get teamNotFound => 'Takım bulunamadı';
+
+  @override
+  String get permissionDenied => 'Bu işlem için yetkiniz bulunmamaktadır';
+
+  @override
+  String get language => 'Dil';
+
+  @override
+  String shareReferralCodeMessage(String code) {
+    return 'Takımıma katılmak için referans kodunu kullan: $code';
+  }
+
+  @override
+  String get personalInfo => 'Kişisel Bilgiler';
+
+  @override
+  String get teamInfo => 'Takım Bilgileri';
+
+  @override
+  String get teamRole => 'Takım Rolü';
+
+  @override
+  String get position => 'Pozisyon';
+
+  @override
+  String get phoneNumber => 'Telefon Numarası';
+
+  @override
+  String get teamNotFoundText => 'Takım bulunamadı';
+
+  @override
+  String get roleNotFoundText => 'Rol bulunamadı';
+
+  @override
+  String get teamInviteSubject => 'TuncBT Takım Daveti';
 }
