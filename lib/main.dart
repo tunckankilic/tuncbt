@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tuncbt/core/config/env_config.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/services/cache_service.dart';
@@ -18,11 +20,18 @@ import 'package:tuncbt/core/services/team_service_controller.dart';
 import 'package:tuncbt/firebase_options.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/user_state.dart';
+import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
 const String LANGUAGE_CODE = 'languageCode';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load(fileName: ".env.production");
+
+  // Initialize EnvConfig
+  await EnvConfig().init();
 
   // Firebase'i başlat
   await Firebase.initializeApp(
@@ -65,30 +74,23 @@ void main() async {
   // Initialize NavigationService
   Get.put(NavigationService());
 
-  // Initialize FirebaseListenerService
+  // Initialize controllers
+  Get.lazyPut(() => AuthController(), fenix: true);
+
+  // Initialize core services with lazy loading
+  Get.lazyPut(() => AuthService(), fenix: true);
+  Get.lazyPut(() => TeamController(), fenix: true);
+  Get.lazyPut(() => TeamServiceController(), fenix: true);
+  Get.lazyPut(() => LogoutService(), fenix: true);
+  Get.lazyPut(() => ErrorHandlingService(), fenix: true);
+
+  // Initialize Firebase related services
   Get.put(FirebaseListenerService());
-
-  // Initialize OperationQueueService
   Get.put(OperationQueueService());
-
-  // Initialize LogoutService
-  Get.put(LogoutService());
-
-  // Initialize ErrorHandlingService
-  Get.put(ErrorHandlingService());
 
   final pushNotificationSystems = PushNotificationSystems();
   await pushNotificationSystems.init();
   Get.put(pushNotificationSystems);
-
-  // Initialize AuthService
-  Get.put(AuthService());
-
-  // Initialize TeamController
-  Get.put(TeamController());
-
-  // Initialize TeamServiceController
-  Get.put(TeamServiceController());
 
   runApp(MyApp(
     initialLocale: savedLanguage,
@@ -122,26 +124,33 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'TuncBT',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      locale: _locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('tr'),
-        Locale('en'),
-        Locale('de'),
-      ],
-      home: const UserState(),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          title: 'TuncBT',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          locale: _locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('tr'),
+            Locale('en'),
+            Locale('de'),
+          ],
+          home: const UserState(),
+        );
+      },
     );
   }
 }
