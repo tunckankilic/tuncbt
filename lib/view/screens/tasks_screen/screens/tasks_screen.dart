@@ -199,7 +199,7 @@ class _TasksScreenState extends State<TasksScreen> {
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             SizedBox(height: 16.h),
@@ -218,7 +218,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   child: ModernStatsCard(
                     title: AppLocalizations.of(context)!.completedTasks,
                     value: controller.tasks
-                        .where((task) => task['isCompleted'] ?? false)
+                        .where((task) => task['isDone'] ?? false)
                         .length
                         .toString(),
                     icon: Icons.check_circle,
@@ -234,7 +234,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   child: ModernStatsCard(
                     title: AppLocalizations.of(context)!.pendingTasks,
                     value: controller.tasks
-                        .where((task) => !(task['isCompleted'] ?? false))
+                        .where((task) => !(task['isDone'] ?? false))
                         .length
                         .toString(),
                     icon: Icons.pending_actions,
@@ -252,7 +252,6 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   Widget _buildTasksList(BuildContext context) {
-    final teamController = Get.find<TeamController>();
     return Obx(() {
       if (controller.isLoading.value) {
         return const SliverFillRemaining(
@@ -262,53 +261,64 @@ class _TasksScreenState extends State<TasksScreen> {
 
       if (controller.tasks.isEmpty) {
         return SliverFillRemaining(
+          hasScrollBody: false,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.assignment_outlined,
-                  size: 64.sp,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  AppLocalizations.of(context)!.noTasks,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  AppLocalizations.of(context)!.addTaskHint,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.sp,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.assignment_outlined,
+                    size: 64.sp,
                     color: Colors.grey,
                   ),
-                ),
-              ],
+                  SizedBox(height: 16.h),
+                  Text(
+                    AppLocalizations.of(context)!.noTasks,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    AppLocalizations.of(context)!.addTaskHint,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       }
 
+      final tasks = controller.tasks.toList(); // Liste kopyası oluştur
+
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            final task = controller.tasks[index];
+            if (index >= tasks.length) {
+              return SizedBox(height: 80.h);
+            }
+            final task = tasks[index];
             return TaskWidget(
-              taskTitle: task['title'] ?? AppLocalizations.of(context)!.noTitle,
-              taskDescription: task['description'] ??
+              key: ValueKey(task['taskId']), // Unique key ekle
+              taskTitle:
+                  task['taskTitle'] ?? AppLocalizations.of(context)!.noTitle,
+              taskDescription: task['taskDescription'] ??
                   AppLocalizations.of(context)!.noDescription,
-              taskId: task['id'],
-              uploadedBy: task['createdBy'] ?? '',
-              isDone: task['isCompleted'] ?? false,
-              teamId: teamController.teamId ?? '',
+              taskId: task['taskId'],
+              uploadedBy: task['uploadedBy'] ?? '',
+              isDone: task['isDone'] ?? false,
+              teamId: Get.find<TeamController>().teamId ?? '',
             );
           },
-          childCount: controller.tasks.length,
+          childCount: tasks.length + 1,
         ),
       );
     });
@@ -333,4 +343,6 @@ class _TasksScreenState extends State<TasksScreen> {
       );
     });
   }
+
+  //DD47E7E6
 }

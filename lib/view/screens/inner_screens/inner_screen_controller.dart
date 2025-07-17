@@ -27,7 +27,11 @@ class InnerScreenController extends GetxController {
   final RxString currentUserId = ''.obs;
   final RxString errorMessage = ''.obs;
 
-  // User related variables
+  // Form keys
+  final formKey = GlobalKey<FormState>();
+  final uploadTaskFormKey = GlobalKey<FormState>();
+
+  // Controllers
   final Rx<UserModel> currentUser = UserModel.empty().obs;
   final RxBool isSameUser = false.obs;
 
@@ -52,7 +56,6 @@ class InnerScreenController extends GetxController {
       TextEditingController();
   final TextEditingController deadlineDateController =
       TextEditingController(text: 'Görev son tarihini seçin');
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Rx<DateTime?> picked = Rx<DateTime?>(null);
   final Rx<Timestamp?> deadlineDateTimeStamp = Rx<Timestamp?>(null);
 
@@ -291,13 +294,9 @@ class InnerScreenController extends GetxController {
         isDone: taskData['isDone'] ?? false,
         uploadedBy: taskData['uploadedBy'] ?? '',
         createdAt: (taskData['createdAt'] as Timestamp).toDate(),
-        deadline: (taskData['deadlineDate'] as Timestamp?)?.toDate() ??
+        deadline: (taskData['deadlineDateTimeStamp'] as Timestamp?)?.toDate() ??
             DateTime.now(),
-        deadlineDate: (taskData['deadlineDate'] as Timestamp?)
-                ?.toDate()
-                .toString()
-                .split(' ')[0] ??
-            '',
+        deadlineDate: taskData['deadlineDate'] ?? '',
         comments: await _loadComments(taskData),
         teamId: userData.teamId!,
         category: taskData['taskCategory'] ?? 'Genel',
@@ -702,112 +701,75 @@ class InnerScreenController extends GetxController {
   }
 
   Future<void> uploadTask() async {
-    if (!_validateForm()) return;
+    if (isLoading.value) return;
+    isLoading.value = true;
 
     try {
-      isLoading.value = true;
+      final teamController = Get.find<TeamController>();
+      final teamId = teamController.teamId;
+      final userId = _auth.currentUser?.uid;
 
-      // Kullanıcı ve takım kontrolü
-      final User? user = _auth.currentUser;
-      if (user == null) {
-        Get.snackbar('Hata', 'Oturum açmanız gerekiyor');
-        return;
-      }
-
-      print('Görev yükleme başladı - UserID: ${user.uid}');
-
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-      if (!userDoc.exists) {
-        Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı');
-        return;
-      }
-
-      final userData = UserModel.fromFirestore(userDoc);
-      print('Kullanıcı verileri: ${userData.toFirestore()}');
-
-      if (userData.teamId == null || userData.teamId!.isEmpty) {
+      if (teamId == null) {
         Get.snackbar(
-            'Hata', 'Görev eklemek için bir takıma ait olmanız gerekiyor');
+          'Hata',
+          'Takım bilgisi bulunamadı',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
         return;
       }
 
-      // Takım üyeliği kontrolü
-      final memberDocId = '${userData.teamId}_${user.uid}';
-      print('Takım üyeliği kontrolü - DocID: $memberDocId');
-
-      final memberDoc =
-          await _firestore.collection('team_members').doc(memberDocId).get();
-
-      print('Takım üyeliği dokümanı: ${memberDoc.data()}');
-
-      if (!memberDoc.exists || !(memberDoc.data()?['isActive'] ?? false)) {
-        Get.snackbar('Hata', 'Takım üyeliğiniz aktif değil');
+      if (userId == null) {
+        Get.snackbar(
+          'Hata',
+          'Kullanıcı bilgisi bulunamadı',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
         return;
       }
 
-      final memberRole = memberDoc.data()?['role'] as String? ?? '';
-      print('Üye rolü: $memberRole');
+      // Yeni görev oluştur
+      final taskRef =
+          _firestore.collection('teams').doc(teamId).collection('tasks').doc();
 
-      if (memberRole.toLowerCase() != 'admin' &&
-          memberRole.toLowerCase() != 'manager') {
-        Get.snackbar('Hata', 'Bu işlem için yetkiniz bulunmamaktadır');
-        return;
-      }
-
-      final taskId = const Uuid().v4();
       final now = DateTime.now();
+      final task = TaskModel(
+        id: taskRef.id,
+        uploadedBy: userId,
+        title: taskTitleController.text,
+        description: taskDescriptionController.text,
+        deadline: deadlineDateTimeStamp.value?.toDate() ?? now,
+        deadlineDate: deadlineDateController.text,
+        category: taskCategoryController.text,
+        comments: [],
+        isDone: false,
+        createdAt: now,
+        teamId: teamId,
+      );
 
-      print('Görev oluşturuluyor - TaskID: $taskId');
+      await taskRef.set(task.toFirestore());
 
-      final taskData = {
-        'taskId': taskId,
-        'taskTitle': taskTitleController.text,
-        'taskDescription': taskDescriptionController.text,
-        'taskCategory': taskCategoryController.text,
-        'createdAt': Timestamp.fromDate(now),
-        'deadlineDate': deadlineDateTimeStamp.value,
-        'isDone': false,
-        'teamId': userData.teamId,
-        'uploadedBy': user.uid,
-        'taskComments': [],
-      };
-
-      print('Görev verisi: $taskData');
-
-      // Görevi ekle - teams koleksiyonunun altına
-      await _firestore
-          .collection('teams')
-          .doc(userData.teamId)
-          .collection('tasks')
-          .doc(taskId)
-          .set(taskData);
-
-      print('Görev başarıyla eklendi');
-
-      // Bildirim oluştur
-      await _createTaskNotification(taskId, userData.teamId!);
-
-      // Başarı mesajı
+      // Başarılı mesajı göster
+      Get.back(); // Görev oluşturma ekranını kapat
       Get.snackbar(
         'Başarılı',
-        'Görev başarıyla eklendi',
-        snackPosition: SnackPosition.BOTTOM,
+        'Görev başarıyla oluşturuldu',
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
 
       // Form alanlarını temizle
-      _resetForm();
-
-      // Önceki sayfaya dön
-      Get.back();
-    } catch (e, stackTrace) {
-      print('Görev ekleme hatası: $e');
-      print('Stack trace: $stackTrace');
+      taskTitleController.clear();
+      taskDescriptionController.clear();
+      taskCategoryController.text = 'Görev kategorisi seçin';
+      deadlineDateController.text = 'Görev son tarihini seçin';
+      deadlineDateTimeStamp.value = null;
+    } catch (e) {
+      print('Görev oluşturma hatası: $e');
       Get.snackbar(
         'Hata',
-        'Görev eklenirken bir hata oluştu',
-        snackPosition: SnackPosition.BOTTOM,
+        'Görev oluşturulurken bir hata oluştu',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -869,7 +831,7 @@ class InnerScreenController extends GetxController {
       AlertDialog(
         title: Text(
           'Görev Kategorisi',
-          style: TextStyle(fontSize: 20, color: Colors.pink.shade800),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         content: SizedBox(
           width: size.width * 0.9,
@@ -887,14 +849,14 @@ class InnerScreenController extends GetxController {
                   children: [
                     Icon(
                       Icons.check_circle_rounded,
-                      color: Colors.red.shade200,
+                      color: Colors.white,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         Constants.taskCategoryList[index],
                         style: TextStyle(
-                          color: Constants.darkBlue,
+                          color: Colors.white,
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
                         ),
@@ -909,7 +871,10 @@ class InnerScreenController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('İptal'),
+            child: Text(
+              'İptal',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),

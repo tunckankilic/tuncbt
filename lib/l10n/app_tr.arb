@@ -396,5 +396,11 @@
   "teamRole": "Takım Rolü",
   "@teamRole": {
     "description": "Team role label"
-  }
+  },
+  "teamErrorMemberDataMissing": "Üye verisi eksik veya geçersiz",
+  "teamErrorInvalidRole": "Geçersiz takım rolü",
+  "teamErrorInvalidTimestamp": "Geçersiz tarih formatı",
+  "teamErrorMemberNotFound": "Üye bulunamadı",
+  "teamErrorDataInvalid": "Takım verisi geçersiz",
+  "teamErrorUserDataMissing": "Kullanıcı verisi eksik"
 } 

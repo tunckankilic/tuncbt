@@ -7,6 +7,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tuncbt/core/config/env_config.dart';
+import 'package:tuncbt/core/config/router.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/services/cache_service.dart';
 import 'package:tuncbt/core/services/error_handling_service.dart';
@@ -20,7 +21,6 @@ import 'package:tuncbt/core/services/team_service_controller.dart';
 import 'package:tuncbt/firebase_options.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/user_state.dart';
-import 'package:tuncbt/view/screens/auth/auth_controller.dart';
 
 const String LANGUAGE_CODE = 'languageCode';
 
@@ -71,11 +71,12 @@ void main() async {
   // Initialize CacheService first
   Get.put(CacheService(prefs));
 
-  // Initialize NavigationService
+  // Initialize core services
+  Get.put(AuthService());
+  Get.put(TeamServiceController());
+  Get.put(FirebaseListenerService());
   Get.put(NavigationService());
-
-  // Initialize controllers
-  Get.lazyPut(() => AuthController(), fenix: true);
+  Get.put(LogoutService());
 
   // Initialize core services with lazy loading
   Get.lazyPut(() => AuthService(), fenix: true);
@@ -148,7 +149,13 @@ class MyAppState extends State<MyApp> {
             Locale('en'),
             Locale('de'),
           ],
+          initialRoute: '/',
+          getPages: RouteManager.routes,
           home: const UserState(),
+          unknownRoute: GetPage(
+            name: '/not-found',
+            page: () => const UserState(),
+          ),
         );
       },
     );

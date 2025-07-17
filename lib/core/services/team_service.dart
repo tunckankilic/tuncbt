@@ -15,6 +15,8 @@ import 'package:tuncbt/utils/team_cache.dart';
 import 'package:tuncbt/utils/team_security.dart';
 import 'package:tuncbt/utils/team_sync.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
+import 'package:tuncbt/l10n/app_localizations.dart';
+import 'dart:convert';
 
 class TeamService extends GetxService {
   final errorMessage = ''.obs;
@@ -253,17 +255,36 @@ class TeamService extends GetxService {
         print('TeamService: Takım dokümanı bulunamadı');
         return TeamOperationResult.failure(
           error: TeamException(
-            'Takım bulunamadı',
+            AppLocalizations.of(Get.context!)!.teamNotFound,
             errorType: TeamErrorType.teamNotFound,
           ),
         );
       }
 
-      final data = Map<String, dynamic>.from(doc.data()!);
-      data['teamId'] = doc.id; // teamId'yi ekle
-
       try {
-        final team = Team.fromFirestore(doc);
+        final data = doc.data();
+        print('TeamService: Ham veri: $data');
+
+        if (data == null) {
+          throw TeamException(
+            'Takım verisi boş',
+            errorType: TeamErrorType.unknown,
+          );
+        }
+
+        final team = Team(
+          teamId: doc.id,
+          teamName: data['name'] ?? '',
+          referralCode: data['referralCode'],
+          createdBy: data['createdBy'] ?? '',
+          createdAt: data['createdAt'] != null
+              ? (data['createdAt'] is Timestamp
+                  ? data['createdAt'].toDate()
+                  : DateTime.parse(data['createdAt'].toString()))
+              : DateTime.now(),
+          memberCount: data['memberCount'] ?? 1,
+          isActive: data['isActive'] ?? true,
+        );
         print('TeamService: Takım nesnesi oluşturuldu: $team');
         return TeamOperationResult.success(data: team);
       } catch (e, stackTrace) {
@@ -308,7 +329,7 @@ class TeamService extends GetxService {
       if (user == null) {
         return TeamOperationResult.failure(
           error: TeamException(
-            'Kullanıcı oturumu bulunamadı',
+            AppLocalizations.of(Get.context!)!.userNotFound,
             errorType: TeamErrorType.userNotFound,
           ),
         );
@@ -319,20 +340,31 @@ class TeamService extends GetxService {
       if (!userDoc.exists) {
         return TeamOperationResult.failure(
           error: TeamException(
-            'Kullanıcı bilgileri bulunamadı',
+            AppLocalizations.of(Get.context!)!.userNotFound,
             errorType: TeamErrorType.userNotFound,
           ),
         );
       }
 
-      final userData = userDoc.data()!;
+      final userData = userDoc.data();
+      print('TeamService: Kullanıcı verisi: $userData');
+
+      if (userData == null) {
+        return TeamOperationResult.failure(
+          error: TeamException(
+            AppLocalizations.of(Get.context!)!.userNotFound,
+            errorType: TeamErrorType.userNotFound,
+          ),
+        );
+      }
+
       final userTeamId = userData['teamId'] as String?;
 
       // Takım ID'si eşleşmiyor
       if (userTeamId != teamId) {
         return TeamOperationResult.failure(
           error: TeamException(
-            'Bu takıma erişim yetkiniz yok',
+            AppLocalizations.of(Get.context!)!.permissionDenied,
             errorType: TeamErrorType.teamNotFound,
           ),
         );
@@ -354,39 +386,36 @@ class TeamService extends GetxService {
       if (membersSnapshot.docs.isEmpty) {
         return TeamOperationResult.failure(
           error: TeamException(
-            'Takım üyeleri bulunamadı',
+            AppLocalizations.of(Get.context!)!.noTeamMembers,
             errorType: TeamErrorType.teamNotFound,
           ),
         );
       }
 
       // Bellek içinde filtreleme ve sıralama yap
-      final filteredDocs = membersSnapshot.docs
-          .where((doc) => doc.data()['isActive'] == true)
-          .toList()
-        ..sort((a, b) {
-          final aTime = (a.data()['joinedAt'] as Timestamp).toDate();
-          final bTime = (b.data()['joinedAt'] as Timestamp).toDate();
-          return aTime.compareTo(bTime);
-        });
-
-      if (filteredDocs.length > maxTeamSize) {
-        filteredDocs.length = maxTeamSize;
-      }
-
       final members = await Future.wait(
-        filteredDocs.map((doc) async {
+        membersSnapshot.docs.map((doc) async {
           final data = doc.data();
+          print('TeamService: Üye verisi: $data');
+
           if (!data.containsKey('role') || !data.containsKey('joinedAt')) {
             throw TeamException(
-              'Üye verisi eksik',
+              AppLocalizations.of(Get.context!)!.teamErrorMemberDataMissing,
               errorType: TeamErrorType.unknown,
             );
           }
 
           final userId = doc.id.split('_').last;
-          final userData =
+          final memberUserDoc =
               await _firestore.collection('users').doc(userId).get();
+          final memberUserData = memberUserDoc.data();
+
+          if (memberUserData == null) {
+            throw TeamException(
+              AppLocalizations.of(Get.context!)!.teamErrorUserDataMissing,
+              errorType: TeamErrorType.unknown,
+            );
+          }
 
           // Role dönüşümü
           final roleStr = data['role'] as String? ??
@@ -401,15 +430,22 @@ class TeamService extends GetxService {
           print(
               'TeamService: Üye rolü dönüştürülüyor - RoleStr: $roleStr, Role: $role');
 
+          if (data['joinedAt'] is! Timestamp) {
+            throw TeamException(
+              AppLocalizations.of(Get.context!)!.teamErrorInvalidTimestamp,
+              errorType: TeamErrorType.unknown,
+            );
+          }
+
           return TeamMember(
             userId: userId,
             teamId: teamId,
             role: role,
             joinedAt: (data['joinedAt'] as Timestamp).toDate(),
-            invitedBy: userData.data()?['invitedBy'],
+            invitedBy: memberUserData['invitedBy'] as String?,
           );
         }),
-      );
+      ).then((members) => members.where((member) => member != null).toList());
 
       // Önbelleğe ekle
       _cache.cacheTeamMembers(teamId, members);

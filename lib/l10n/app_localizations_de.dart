@@ -774,4 +774,149 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get teamInviteSubject => 'TuncBT Team-Einladung';
+
+  @override
+  String get teamCreationDate => 'Erstellungsdatum';
+
+  @override
+  String get memberManagement => 'Mitgliederverwaltung';
+
+  @override
+  String get dangerZone => 'Gefahrenzone';
+
+  @override
+  String get settings => 'Einstellungen';
+
+  @override
+  String get myAccount => 'Mein Konto';
+
+  @override
+  String get messages => 'Nachrichten';
+
+  @override
+  String get notifications => 'Benachrichtigungen';
+
+  @override
+  String get contact => 'Kontakt';
+
+  @override
+  String get commentActions => 'Kommentaraktionen';
+
+  @override
+  String get replyToComment => 'Auf Kommentar antworten';
+
+  @override
+  String get signUp => 'Registrieren';
+
+  @override
+  String get maximumRetryExceeded =>
+      'Maximale Anzahl der Versuche überschritten';
+
+  @override
+  String get dataProcessing => 'Datenverarbeitung';
+
+  @override
+  String get ageRestriction => 'Altersbeschränkung';
+
+  @override
+  String get ageRestrictionText =>
+      'Sie müssen mindestens 13 Jahre alt sein, um diese App zu nutzen';
+
+  @override
+  String get legalNotice => 'Rechtlicher Hinweis';
+
+  @override
+  String get notificationPermission => 'Benachrichtigungserlaubnis';
+
+  @override
+  String get manageNotifications => 'Benachrichtigungen verwalten';
+
+  @override
+  String get exportData => 'Daten exportieren';
+
+  @override
+  String get exportDataDescription =>
+      'Laden Sie eine Kopie Ihrer persönlichen Daten herunter';
+
+  @override
+  String get deleteData => 'Daten löschen';
+
+  @override
+  String get deleteDataDescription =>
+      'Löschen Sie alle Ihre Daten dauerhaft von unseren Servern';
+
+  @override
+  String get cookiePolicy => 'Cookie-Richtlinie';
+
+  @override
+  String get cookiePolicyDescription =>
+      'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern';
+
+  @override
+  String get contactSupport => 'Support kontaktieren';
+
+  @override
+  String get groupChatComingSoon => 'Gruppenchat-Funktion kommt bald';
+
+  @override
+  String get block => 'Blockieren';
+
+  @override
+  String get unblock => 'Entsperren';
+
+  @override
+  String get onlyAdminsCanMakeAdmin =>
+      'Nur Gruppenadministratoren können neue Administratoren zuweisen';
+
+  @override
+  String get newMembersAdded => 'Neue Mitglieder hinzugefügt';
+
+  @override
+  String get newAdminAssigned => 'Neuer Gruppenadministrator zugewiesen';
+
+  @override
+  String get groupCreatedMessage => 'Gruppe erstellt';
+
+  @override
+  String get attachments => 'Anhänge';
+
+  @override
+  String get memberAdded => 'Neue Mitglieder hinzugefügt';
+
+  @override
+  String get memberRemoved => 'Ein Mitglied wurde entfernt';
+
+  @override
+  String get adminAssigned => 'Neuer Gruppenadministrator zugewiesen';
+
+  @override
+  String get systemMessageNewMembers => 'Neue Mitglieder hinzugefügt';
+
+  @override
+  String get systemMessageMemberRemoved => 'Ein Mitglied wurde entfernt';
+
+  @override
+  String get systemMessageNewAdmin => 'Neuer Gruppenadministrator zugewiesen';
+
+  @override
+  String get systemMessageGroupCreated => 'Gruppe erstellt';
+
+  @override
+  String get teamErrorMemberDataMissing =>
+      'Mitgliedsdaten fehlen oder sind ungültig';
+
+  @override
+  String get teamErrorInvalidRole => 'Ungültige Teamrolle';
+
+  @override
+  String get teamErrorInvalidTimestamp => 'Ungültiges Datumsformat';
+
+  @override
+  String get teamErrorMemberNotFound => 'Mitglied nicht gefunden';
+
+  @override
+  String get teamErrorDataInvalid => 'Teamdaten sind ungültig';
+
+  @override
+  String get teamErrorUserDataMissing => 'Benutzerdaten fehlen';
 }

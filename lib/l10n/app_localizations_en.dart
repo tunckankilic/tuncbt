@@ -752,4 +752,146 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teamInviteSubject => 'TuncBT Team Invitation';
+
+  @override
+  String get teamCreationDate => 'Creation Date';
+
+  @override
+  String get memberManagement => 'Member Management';
+
+  @override
+  String get dangerZone => 'Danger Zone';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get myAccount => 'My Account';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get commentActions => 'Comment Actions';
+
+  @override
+  String get replyToComment => 'Reply to Comment';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get maximumRetryExceeded => 'Maximum retry exceeded';
+
+  @override
+  String get dataProcessing => 'Data Processing';
+
+  @override
+  String get ageRestriction => 'Age Restriction';
+
+  @override
+  String get ageRestrictionText =>
+      'You must be at least 13 years old to use this app';
+
+  @override
+  String get legalNotice => 'Legal Notice';
+
+  @override
+  String get notificationPermission => 'Notification Permission';
+
+  @override
+  String get manageNotifications => 'Manage Notifications';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get exportDataDescription => 'Download a copy of your personal data';
+
+  @override
+  String get deleteData => 'Delete Data';
+
+  @override
+  String get deleteDataDescription =>
+      'Permanently delete all your data from our servers';
+
+  @override
+  String get cookiePolicy => 'Cookie Policy';
+
+  @override
+  String get cookiePolicyDescription =>
+      'We use cookies to improve your experience';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get groupChatComingSoon => 'Group chat feature coming soon';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get unblock => 'Unblock';
+
+  @override
+  String get onlyAdminsCanMakeAdmin =>
+      'Only group admins can assign new admins';
+
+  @override
+  String get newMembersAdded => 'New members added';
+
+  @override
+  String get newAdminAssigned => 'New group admin assigned';
+
+  @override
+  String get groupCreatedMessage => 'Group created';
+
+  @override
+  String get attachments => 'Attachments';
+
+  @override
+  String get memberAdded => 'New members added';
+
+  @override
+  String get memberRemoved => 'A member has been removed';
+
+  @override
+  String get adminAssigned => 'New group admin assigned';
+
+  @override
+  String get systemMessageNewMembers => 'New members added';
+
+  @override
+  String get systemMessageMemberRemoved => 'A member has been removed';
+
+  @override
+  String get systemMessageNewAdmin => 'New group admin assigned';
+
+  @override
+  String get systemMessageGroupCreated => 'Group created';
+
+  @override
+  String get teamErrorMemberDataMissing => 'Member data is missing or invalid';
+
+  @override
+  String get teamErrorInvalidRole => 'Invalid team role';
+
+  @override
+  String get teamErrorInvalidTimestamp => 'Invalid date format';
+
+  @override
+  String get teamErrorMemberNotFound => 'Member not found';
+
+  @override
+  String get teamErrorDataInvalid => 'Team data is invalid';
+
+  @override
+  String get teamErrorUserDataMissing => 'User data is missing';
 }

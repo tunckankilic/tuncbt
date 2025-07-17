@@ -1509,6 +1509,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TuncBT Team Invitation'**
   String get teamInviteSubject;
+
+  /// No description provided for @teamCreationDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation Date'**
+  String get teamCreationDate;
+
+  /// No description provided for @memberManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Management'**
+  String get memberManagement;
+
+  /// No description provided for @dangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get dangerZone;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @myAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'My Account'**
+  String get myAccount;
+
+  /// No description provided for @messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messages;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @commentActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment Actions'**
+  String get commentActions;
+
+  /// No description provided for @replyToComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to Comment'**
+  String get replyToComment;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @maximumRetryExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum retry exceeded'**
+  String get maximumRetryExceeded;
+
+  /// No description provided for @dataProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Processing'**
+  String get dataProcessing;
+
+  /// No description provided for @ageRestriction.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Restriction'**
+  String get ageRestriction;
+
+  /// No description provided for @ageRestrictionText.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 13 years old to use this app'**
+  String get ageRestrictionText;
+
+  /// No description provided for @legalNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Notice'**
+  String get legalNotice;
+
+  /// No description provided for @notificationPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission'**
+  String get notificationPermission;
+
+  /// No description provided for @manageNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Notifications'**
+  String get manageNotifications;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @exportDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy of your personal data'**
+  String get exportDataDescription;
+
+  /// No description provided for @deleteData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Data'**
+  String get deleteData;
+
+  /// No description provided for @deleteDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete all your data from our servers'**
+  String get deleteDataDescription;
+
+  /// No description provided for @cookiePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookie Policy'**
+  String get cookiePolicy;
+
+  /// No description provided for @cookiePolicyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We use cookies to improve your experience'**
+  String get cookiePolicyDescription;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @groupChatComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Group chat feature coming soon'**
+  String get groupChatComingSoon;
+
+  /// No description provided for @block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get block;
+
+  /// No description provided for @unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblock;
+
+  /// No description provided for @onlyAdminsCanMakeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Only group admins can assign new admins'**
+  String get onlyAdminsCanMakeAdmin;
+
+  /// No description provided for @newMembersAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get newMembersAdded;
+
+  /// No description provided for @newAdminAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get newAdminAssigned;
+
+  /// No description provided for @groupCreatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created'**
+  String get groupCreatedMessage;
+
+  /// No description provided for @attachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachments;
+
+  /// No description provided for @memberAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get memberAdded;
+
+  /// No description provided for @memberRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'A member has been removed'**
+  String get memberRemoved;
+
+  /// No description provided for @adminAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get adminAssigned;
+
+  /// No description provided for @systemMessageNewMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'New members added'**
+  String get systemMessageNewMembers;
+
+  /// No description provided for @systemMessageMemberRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'A member has been removed'**
+  String get systemMessageMemberRemoved;
+
+  /// No description provided for @systemMessageNewAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'New group admin assigned'**
+  String get systemMessageNewAdmin;
+
+  /// No description provided for @systemMessageGroupCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created'**
+  String get systemMessageGroupCreated;
+
+  /// No description provided for @teamErrorMemberDataMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Member data is missing or invalid'**
+  String get teamErrorMemberDataMissing;
+
+  /// No description provided for @teamErrorInvalidRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid team role'**
+  String get teamErrorInvalidRole;
+
+  /// No description provided for @teamErrorInvalidTimestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid date format'**
+  String get teamErrorInvalidTimestamp;
+
+  /// No description provided for @teamErrorMemberNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Member not found'**
+  String get teamErrorMemberNotFound;
+
+  /// No description provided for @teamErrorDataInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Team data is invalid'**
+  String get teamErrorDataInvalid;
+
+  /// No description provided for @teamErrorUserDataMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'User data is missing'**
+  String get teamErrorUserDataMissing;
 }
 
 class _AppLocalizationsDelegate

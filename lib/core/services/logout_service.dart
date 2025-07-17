@@ -64,8 +64,7 @@ class LogoutService extends GetxService {
       await _auth.signOut();
 
       // 6. Navigate to login
-      _navigationService.navigateTo(NavigationDestination.login,
-          clearStack: true);
+      await Get.offAllNamed('/auth');
 
       print('LogoutService: Çıkış işlemi başarılı');
       return true;
