@@ -99,24 +99,59 @@ class DrawerController extends GetxController {
     if (currentTeam.value != null) {
       Get.dialog(
         AlertDialog(
-          title: Text(AppLocalizations.of(Get.context!)!.referralCode),
+          title: Text(
+            AppLocalizations.of(Get.context!)!.referralCode,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryColor,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppLocalizations.of(Get.context!)!.inviteMembersHint),
+              Text(
+                AppLocalizations.of(Get.context!)!.inviteMembersHint,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppTheme.textColor,
+                ),
+              ),
+              SizedBox(height: 16.h),
               SelectableText(
                 currentTeam.value!.referralCode ?? '',
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
           ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 24.w,
+            vertical: 16.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
           actions: [
             TextButton(
               onPressed: () => Get.back(),
-              child: Text(AppLocalizations.of(Get.context!)!.cancel),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 8.h,
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(Get.context!)!.cancel,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppTheme.secondaryColor,
+                ),
+              ),
             ),
           ],
         ),
@@ -130,36 +165,75 @@ class DrawerController extends GetxController {
         title: Row(
           children: [
             Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.person,
-                  size: 20.r,
-                )),
+              padding: EdgeInsets.all(8.w),
+              child: Icon(
+                Icons.person,
+                size: 24.sp,
+                color: AppTheme.primaryColor,
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(AppLocalizations.of(Get.context!)!.logout),
+              padding: EdgeInsets.all(8.w),
+              child: Text(
+                AppLocalizations.of(Get.context!)!.logout,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
         content: Text(
           AppLocalizations.of(Get.context!)!.logoutConfirm,
-          style: const TextStyle(
-            fontSize: 20,
+          style: TextStyle(
+            fontSize: 16.sp,
             fontStyle: FontStyle.italic,
           ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 24.w,
+          vertical: 16.h,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(AppLocalizations.of(Get.context!)!.cancel),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 8.h,
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(Get.context!)!.cancel,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppTheme.secondaryColor,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
               await _auth.signOut();
               Get.offAll(() => const UserState());
             },
-            child: Text(AppLocalizations.of(Get.context!)!.ok,
-                style: const TextStyle(color: Colors.red)),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 8.h,
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(Get.context!)!.ok,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
@@ -168,7 +242,12 @@ class DrawerController extends GetxController {
 }
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  final bool isLargeTablet;
+
+  const DrawerWidget({
+    Key? key,
+    this.isLargeTablet = false,
+  }) : super(key: key);
 
   Future<void> _handleSignOut(BuildContext context) async {
     try {
@@ -195,6 +274,7 @@ class DrawerWidget extends StatelessWidget {
     final isAdmin = teamController.isAdmin;
 
     return Drawer(
+      width: 300.w,
       child: Container(
         color: AppTheme.backgroundColor,
         child: Column(
@@ -227,22 +307,46 @@ class DrawerWidget extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
-                    leading: Icon(Icons.task, color: AppTheme.primaryColor),
-                    title: Text(AppLocalizations.of(context)!.tasks),
+                    leading: Icon(
+                      Icons.task,
+                      color: AppTheme.primaryColor,
+                      size: 24.sp,
+                    ),
+                    title: Text(
+                      AppLocalizations.of(context)!.tasks,
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     onTap: () {
                       Get.back();
                       Get.toNamed(TasksScreen.routeName);
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.message, color: AppTheme.primaryColor),
-                    title: const Text('Mesajlar'),
+                    leading: Icon(
+                      Icons.message,
+                      color: AppTheme.primaryColor,
+                      size: 24.sp,
+                    ),
+                    title: Text(
+                      'Mesajlar',
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 2.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
@@ -261,9 +365,9 @@ class DrawerWidget extends StatelessWidget {
                             return unreadCount > 0
                                 ? Text(
                                     unreadCount.toString(),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   )
@@ -279,8 +383,19 @@ class DrawerWidget extends StatelessWidget {
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.people, color: AppTheme.primaryColor),
-                    title: Text(AppLocalizations.of(context)!.allWorkers),
+                    leading: Icon(
+                      Icons.people,
+                      color: AppTheme.primaryColor,
+                      size: 24.sp,
+                    ),
+                    title: Text(
+                      AppLocalizations.of(context)!.allWorkers,
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     onTap: () {
                       Get.back();
                       Get.toNamed(AllWorkersScreen.routeName);
@@ -288,9 +403,19 @@ class DrawerWidget extends StatelessWidget {
                   ),
                   if (isAdmin) ...[
                     ListTile(
-                      leading:
-                          Icon(Icons.settings, color: AppTheme.primaryColor),
-                      title: const Text('Takım Ayarları'),
+                      leading: Icon(
+                        Icons.settings,
+                        color: AppTheme.primaryColor,
+                        size: 24.sp,
+                      ),
+                      title: Text(
+                        'Takım Ayarları',
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
                       onTap: () {
                         Get.back();
                         Get.toNamed('/team-settings');
@@ -298,8 +423,19 @@ class DrawerWidget extends StatelessWidget {
                     ),
                   ],
                   ListTile(
-                    leading: Icon(Icons.person, color: AppTheme.primaryColor),
-                    title: Text(AppLocalizations.of(context)!.profile),
+                    leading: Icon(
+                      Icons.person,
+                      color: AppTheme.primaryColor,
+                      size: 24.sp,
+                    ),
+                    title: Text(
+                      AppLocalizations.of(context)!.profile,
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     onTap: () {
                       Get.back();
                       Get.toNamed('/profile');
@@ -317,13 +453,25 @@ class DrawerWidget extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     minimumSize: Size(double.infinity, 50.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 12.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
                   ),
-                  icon: const Icon(Icons.exit_to_app, color: Colors.white),
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
                   label: Text(
                     'Çıkış Yap',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

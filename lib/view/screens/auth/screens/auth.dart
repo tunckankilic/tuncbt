@@ -61,49 +61,65 @@ class AuthScreen extends GetView<AuthController> {
   }
 
   Widget _buildScrollableContent(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+    final horizontalPadding = isLargeTablet ? screenWidth * 0.2 : 24.w;
+
     return SafeArea(
       child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 60.h),
-              _buildTitle(),
-              SizedBox(height: 16.h),
-              _buildToggleAuthModeText(),
-              SizedBox(height: 40.h),
-              ModernInfoCard(
-                child: _buildForm(context),
-              ),
-              if (isLogin) _buildForgetPasswordButton(context),
-              SizedBox(height: 24.h),
-              _buildSubmitButton(context),
-              SizedBox(height: 40.h),
-            ],
+        child: Center(
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: isLargeTablet ? 800.0 : double.infinity,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: isLargeTablet ? 100.0 : 60.h),
+                _buildTitle(context),
+                SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+                _buildToggleAuthModeText(context),
+                SizedBox(height: isLargeTablet ? 60.0 : 40.h),
+                ModernInfoCard(
+                  child: _buildForm(context),
+                ),
+                if (isLogin) _buildForgetPasswordButton(context),
+                SizedBox(height: isLargeTablet ? 32.0 : 24.h),
+                _buildSubmitButton(context),
+                SizedBox(height: isLargeTablet ? 60.0 : 40.h),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Text(
       isLogin ? 'Login' : 'Sign Up',
       style: TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.bold,
-        fontSize: 32.sp,
+        fontSize: isLargeTablet ? 48.0 : 32.sp,
       ),
     );
   }
 
-  Widget _buildToggleAuthModeText() {
+  Widget _buildToggleAuthModeText(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+    final fontSize = isLargeTablet ? 20.0 : 16.sp;
+
     return GestureDetector(
       onTap: () => Get.off(() => AuthScreen(isLogin: !isLogin)),
       child: RichText(
         text: TextSpan(
-          style: TextStyle(fontSize: 16.sp),
+          style: TextStyle(fontSize: fontSize),
           children: [
             TextSpan(
               text: isLogin
@@ -126,19 +142,23 @@ class AuthScreen extends GetView<AuthController> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+    final spacing = isLargeTablet ? 24.0 : 16.h;
+
     return Form(
       key: _formKey,
       child: Column(
         children: [
-          if (!isLogin) _buildFullNameField(),
-          SizedBox(height: 16.h),
-          _buildEmailField(),
-          SizedBox(height: 16.h),
-          _buildPasswordField(),
+          if (!isLogin) _buildFullNameField(context),
+          SizedBox(height: spacing),
+          _buildEmailField(context),
+          SizedBox(height: spacing),
+          _buildPasswordField(context),
           if (!isLogin) ...[
-            SizedBox(height: 16.h),
+            SizedBox(height: spacing),
             _buildPhoneNumberField(context),
-            SizedBox(height: 16.h),
+            SizedBox(height: spacing),
             _buildPositionField(context),
           ],
         ],
@@ -146,41 +166,61 @@ class AuthScreen extends GetView<AuthController> {
     );
   }
 
-  Widget _buildFullNameField() {
+  Widget _buildFullNameField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return TextFormField(
       controller: controller.fullNameController,
       validator: (value) => value!.isEmpty ? "This Field is missing" : null,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration('Full name'),
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: isLargeTablet ? 18.0 : 16.sp,
+      ),
+      decoration: _inputDecoration('Full name', context: context),
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return TextFormField(
       controller: controller.emailController,
       validator: (value) => value!.isEmpty || !value.contains("@")
           ? "Please enter a valid Email address"
           : null,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration('Email'),
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: isLargeTablet ? 18.0 : 16.sp,
+      ),
+      decoration: _inputDecoration('Email', context: context),
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Obx(() => TextFormField(
           controller: controller.passwordController,
           obscureText: controller.obscureText.value,
           validator: (value) => value!.isEmpty || value.length < 7
               ? "Please enter a valid password"
               : null,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: isLargeTablet ? 18.0 : 16.sp,
+          ),
           decoration: _inputDecoration('Password',
+              context: context,
               suffixIcon: IconButton(
                 icon: Icon(
                   controller.obscureText.value
                       ? Icons.visibility
                       : Icons.visibility_off,
                   color: Colors.white70,
+                  size: isLargeTablet ? 28.0 : 24.sp,
                 ),
                 onPressed: controller.toggleObscureText,
               )),
@@ -188,16 +228,26 @@ class AuthScreen extends GetView<AuthController> {
   }
 
   Widget _buildPhoneNumberField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return TextFormField(
       controller: controller.phoneNumberController,
       validator: (value) =>
           value!.isEmpty ? AppLocalizations.of(context)!.fieldRequired : null,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration(AppLocalizations.of(context)!.registerPhone),
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: isLargeTablet ? 18.0 : 16.sp,
+      ),
+      decoration: _inputDecoration(AppLocalizations.of(context)!.registerPhone,
+          context: context),
     );
   }
 
   Widget _buildPositionField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return GestureDetector(
       onTap: () => controller.showJobCategoriesDialog(),
       child: AbsorbPointer(
@@ -206,31 +256,58 @@ class AuthScreen extends GetView<AuthController> {
           validator: (value) => value!.isEmpty
               ? AppLocalizations.of(context)!.fieldRequired
               : null,
-          style: const TextStyle(color: Colors.white),
-          decoration:
-              _inputDecoration(AppLocalizations.of(context)!.registerPosition),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: isLargeTablet ? 18.0 : 16.sp,
+          ),
+          decoration: _inputDecoration(
+              AppLocalizations.of(context)!.registerPosition,
+              context: context),
         ),
       ),
     );
   }
 
-  InputDecoration _inputDecoration(String hint, {Widget? suffixIcon}) {
+  InputDecoration _inputDecoration(String hint,
+      {Widget? suffixIcon, BuildContext? context}) {
+    final screenWidth = context != null ? MediaQuery.of(context).size.width : 0;
+    final isLargeTablet = screenWidth >= 1200;
+    final fontSize = isLargeTablet ? 18.0 : 16.sp;
+
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white70),
-      enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white70)),
-      focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white)),
-      errorBorder:
-          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-      focusedErrorBorder:
-          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      hintStyle: TextStyle(
+        color: Colors.white70,
+        fontSize: fontSize,
+      ),
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+        color: Colors.white70,
+        width: isLargeTablet ? 2.0 : 1.0,
+      )),
+      focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+        color: Colors.white,
+        width: isLargeTablet ? 2.0 : 1.0,
+      )),
+      errorBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+        color: Colors.red,
+        width: isLargeTablet ? 2.0 : 1.0,
+      )),
+      focusedErrorBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+        color: Colors.red,
+        width: isLargeTablet ? 2.0 : 1.0,
+      )),
       suffixIcon: suffixIcon,
     );
   }
 
   Widget _buildForgetPasswordButton(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
@@ -239,7 +316,7 @@ class AuthScreen extends GetView<AuthController> {
           AppLocalizations.of(context)!.loginResetPassword,
           style: TextStyle(
             color: Colors.white70,
-            fontSize: 14.sp,
+            fontSize: isLargeTablet ? 16.0 : 14.sp,
             decoration: TextDecoration.underline,
           ),
         ),
@@ -248,6 +325,9 @@ class AuthScreen extends GetView<AuthController> {
   }
 
   Widget _buildSubmitButton(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Obx(() => ModernPrimaryButton(
           text: isLogin
               ? AppLocalizations.of(context)!.loginButton
@@ -255,7 +335,7 @@ class AuthScreen extends GetView<AuthController> {
           icon: Icon(
             isLogin ? Icons.login : Icons.person_add,
             color: Colors.white,
-            size: 20.sp,
+            size: isLargeTablet ? 28.0 : 20.sp,
           ),
           onPressed: controller.isLoading.value ? null : _submitForm,
           isLoading: controller.isLoading.value,

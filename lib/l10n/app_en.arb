@@ -360,5 +360,18 @@
   "teamErrorInvalidTimestamp": "Invalid date format",
   "teamErrorMemberNotFound": "Member not found",
   "teamErrorDataInvalid": "Team data is invalid",
-  "teamErrorUserDataMissing": "User data is missing"
+  "teamErrorUserDataMissing": "User data is missing",
+  "teamDataNotFound": "Team data not found",
+  "addWorker": "Add Worker",
+  "uploadedBy": "Uploaded by",
+  "uploadedOn": "Uploaded on:",
+  "deadlineDate": "Deadline date:",
+  "deadlineNotFinished": "Deadline is not finished yet",
+  "deadlinePassed": "Deadline passed",
+  "status": "Status",
+  "taskCompleted": "Completed",
+  "taskInProgress": "In Progress",
+  "addComment": "Add Comment",
+  "writeYourComment": "Write your comment...",
+  "send": "Send"
 } 

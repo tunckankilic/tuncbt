@@ -66,90 +66,108 @@ class ProfileScreen extends GetView<InnerScreenController> {
           );
         }
 
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isLargeTablet = screenWidth >= 1200;
+        final horizontalPadding = isLargeTablet ? screenWidth * 0.2 : 16.w;
+
         return SingleChildScrollView(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileHeader(user),
-              SizedBox(height: 24.h),
-              _buildInfoCard(
-                title: AppLocalizations.of(context)!.personalInfo,
-                items: [
-                  InfoItem(
-                    icon: Icons.person,
-                    label: AppLocalizations.of(context)!.fullName,
-                    value: user.name,
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: isLargeTablet ? 32.0 : 16.w,
+          ),
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: isLargeTablet ? 800.0 : double.infinity,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildProfileHeader(user, isLargeTablet),
+                  SizedBox(height: isLargeTablet ? 40.0 : 24.h),
+                  _buildInfoCard(
+                    context: context,
+                    isLargeTablet: isLargeTablet,
+                    title: AppLocalizations.of(context)!.personalInfo,
+                    items: [
+                      InfoItem(
+                        icon: Icons.person,
+                        label: AppLocalizations.of(context)!.fullName,
+                        value: user.name,
+                      ),
+                      InfoItem(
+                        icon: Icons.email,
+                        label: AppLocalizations.of(context)!.email,
+                        value: user.email,
+                      ),
+                      InfoItem(
+                        icon: Icons.phone,
+                        label: AppLocalizations.of(context)!.phoneNumber,
+                        value: user.phoneNumber,
+                      ),
+                      InfoItem(
+                        icon: Icons.work,
+                        label: AppLocalizations.of(context)!.position,
+                        value: user.position,
+                      ),
+                    ],
                   ),
-                  InfoItem(
-                    icon: Icons.email,
-                    label: AppLocalizations.of(context)!.email,
-                    value: user.email,
+                  SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+                  _buildInfoCard(
+                    context: context,
+                    isLargeTablet: isLargeTablet,
+                    title: AppLocalizations.of(context)!.teamInfo,
+                    items: [
+                      InfoItem(
+                        icon: Icons.group,
+                        label: AppLocalizations.of(context)!.teamName,
+                        value: teamController.currentTeam?.teamName ??
+                            AppLocalizations.of(context)!.teamNotFoundText,
+                      ),
+                      InfoItem(
+                        icon: Icons.admin_panel_settings,
+                        label: AppLocalizations.of(context)!.teamRole,
+                        value: user.teamRole?.name.toUpperCase() ??
+                            AppLocalizations.of(context)!.roleNotFoundText,
+                      ),
+                    ],
                   ),
-                  InfoItem(
-                    icon: Icons.phone,
-                    label: AppLocalizations.of(context)!.phoneNumber,
-                    value: user.phoneNumber,
-                  ),
-                  InfoItem(
-                    icon: Icons.work,
-                    label: AppLocalizations.of(context)!.position,
-                    value: user.position,
-                  ),
+                  Divider(height: isLargeTablet ? 48.0 : 32.0),
+                  _buildDeleteAccountButton(context, isLargeTablet),
                 ],
               ),
-              SizedBox(height: 16.h),
-              _buildInfoCard(
-                title: AppLocalizations.of(context)!.teamInfo,
-                items: [
-                  InfoItem(
-                    icon: Icons.group,
-                    label: AppLocalizations.of(context)!.teamName,
-                    value: teamController.currentTeam?.teamName ??
-                        AppLocalizations.of(context)!.teamNotFoundText,
-                  ),
-                  InfoItem(
-                    icon: Icons.admin_panel_settings,
-                    label: AppLocalizations.of(context)!.teamRole,
-                    value: user.teamRole?.name.toUpperCase() ??
-                        AppLocalizations.of(context)!.roleNotFoundText,
-                  ),
-                ],
-              ),
-              const Divider(height: 32),
-              _buildDeleteAccountButton(context),
-            ],
+            ),
           ),
         );
       }),
     );
   }
 
-  Widget _buildProfileHeader(UserModel user) {
+  Widget _buildProfileHeader(UserModel user, bool isLargeTablet) {
     return Center(
       child: Column(
         children: [
           CircleAvatar(
-            radius: 50.r,
+            radius: isLargeTablet ? 75.0 : 50.r,
             backgroundImage: NetworkImage(
               user.imageUrl.isEmpty
                   ? 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
                   : user.imageUrl,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: isLargeTablet ? 24.0 : 16.h),
           Text(
             user.name,
             style: TextStyle(
-              fontSize: 24.sp,
+              fontSize: isLargeTablet ? 32.0 : 24.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: isLargeTablet ? 12.0 : 8.h),
           Text(
             user.position,
             style: TextStyle(
-              fontSize: 16.sp,
+              fontSize: isLargeTablet ? 20.0 : 16.sp,
               color: Colors.grey,
             ),
           ),
@@ -161,54 +179,60 @@ class ProfileScreen extends GetView<InnerScreenController> {
   Widget _buildInfoCard({
     required String title,
     required List<InfoItem> items,
+    required BuildContext context,
+    required bool isLargeTablet,
   }) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.r),
+        borderRadius: BorderRadius.circular(isLargeTablet ? 20.0 : 15.r),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: isLargeTablet ? 24.0 : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primaryColor,
               ),
             ),
-            SizedBox(height: 16.h),
-            ...items.map((item) => _buildInfoItem(item)),
+            SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+            ...items.map((item) => _buildInfoItem(item, isLargeTablet)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoItem(InfoItem item) {
+  Widget _buildInfoItem(InfoItem item, bool isLargeTablet) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: isLargeTablet ? 16.0 : 12.h),
       child: Row(
         children: [
-          Icon(item.icon, color: AppTheme.primaryColor, size: 24.sp),
-          SizedBox(width: 12.w),
+          Icon(
+            item.icon,
+            color: AppTheme.primaryColor,
+            size: isLargeTablet ? 32.0 : 24.sp,
+          ),
+          SizedBox(width: isLargeTablet ? 16.0 : 12.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 item.label,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: isLargeTablet ? 18.0 : 14.sp,
                   color: Colors.grey,
                 ),
               ),
               Text(
                 item.value,
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: isLargeTablet ? 20.0 : 16.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -219,27 +243,39 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  Widget _buildDeleteAccountButton(BuildContext context) {
+  Widget _buildDeleteAccountButton(BuildContext context, bool isLargeTablet) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeTablet ? 24.0 : 16.w,
+        vertical: isLargeTablet ? 12.0 : 8.h,
+      ),
       child: ElevatedButton(
-        onPressed: () => _showDeleteAccountDialog(context),
+        onPressed: () => _showDeleteAccountDialog(context, isLargeTablet),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+            vertical: isLargeTablet ? 20.0 : 12.h,
+            horizontal: isLargeTablet ? 32.0 : 24.w,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.delete_forever, size: 24.sp),
-            SizedBox(width: 8.w),
+            Icon(
+              Icons.delete_forever,
+              size: isLargeTablet ? 32.0 : 24.sp,
+            ),
+            SizedBox(width: isLargeTablet ? 12.0 : 8.w),
             Text(
               AppLocalizations.of(context)!.deleteAccount,
-              style: TextStyle(fontSize: 16.sp),
+              style: TextStyle(
+                fontSize: isLargeTablet ? 20.0 : 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -247,21 +283,43 @@ class ProfileScreen extends GetView<InnerScreenController> {
     );
   }
 
-  void _showDeleteAccountDialog(BuildContext context) {
+  void _showDeleteAccountDialog(BuildContext context, bool isLargeTablet) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
           AppLocalizations.of(context)!.deleteAccount,
-          style: TextStyle(color: Colors.red),
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: isLargeTablet ? 24.0 : 20.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        content: Text(AppLocalizations.of(context)!.deleteAccountConfirm),
+        content: Container(
+          width: isLargeTablet ? 600.0 : null,
+          child: Text(
+            AppLocalizations.of(context)!.deleteAccountConfirm,
+            style: TextStyle(
+              fontSize: isLargeTablet ? 18.0 : 16.0,
+            ),
+          ),
+        ),
+        contentPadding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                vertical: isLargeTablet ? 16.0 : 12.0,
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+              ),
+            ),
             child: Text(
               AppLocalizations.of(context)!.cancel,
-              style: TextStyle(color: AppTheme.textColor),
+              style: TextStyle(
+                color: AppTheme.textColor,
+                fontSize: isLargeTablet ? 18.0 : 16.0,
+              ),
             ),
           ),
           TextButton(
@@ -270,9 +328,19 @@ class ProfileScreen extends GetView<InnerScreenController> {
               final accountDeletionService = AccountDeletionService();
               await accountDeletionService.deleteAccount(LoginType.email);
             },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                vertical: isLargeTablet ? 16.0 : 12.0,
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+              ),
+            ),
             child: Text(
               AppLocalizations.of(context)!.delete,
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: isLargeTablet ? 18.0 : 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

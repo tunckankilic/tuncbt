@@ -18,128 +18,134 @@ class Login extends GetView<AuthController> {
     return Scaffold(
       body: Stack(
         children: [
-          Obx(() => CachedNetworkImage(
-                imageUrl:
-                    "https://media.istockphoto.com/photos/businesswoman-using-computer-in-dark-office-picture-id557608443?k=6&m=557608443&s=612x612&w=0&h=fWWESl6nk7T6ufo4sRjRBSeSiaiVYAzVrY-CLlfMptM=",
-                placeholder: (context, url) => Image.asset(
-                    'assets/images/wallpaper.jpg',
-                    fit: BoxFit.fill),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-                alignment: FractionalOffset(controller.animationValue.value, 0),
-              )),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.r),
-            child: ListView(
-              children: [
-                SizedBox(height: size.height * 0.05.h),
-                Text(
-                  AppLocalizations.of(context)!.appTitle,
-                  style: TextStyle(
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Obx(() => CachedNetworkImage(
+                  imageUrl:
+                      "https://media.istockphoto.com/photos/businesswoman-using-computer-in-dark-office-picture-id557608443?k=6&m=557608443&s=612x612&w=0&h=fWWESl6nk7T6ufo4sRjRBSeSiaiVYAzVrY-CLlfMptM=",
+                  placeholder: (context, url) => Image.asset(
+                      'assets/images/wallpaper.jpg',
+                      fit: BoxFit.cover),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  alignment:
+                      FractionalOffset(controller.animationValue.value, 0),
+                )),
+          ),
+          Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: size.width >= 1200 ? 800.0 : double.infinity,
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width >= 1200 ? size.width * 0.2 : 16.r,
+              ),
+              child: ListView(
+                children: [
+                  SizedBox(
+                      height:
+                          size.width >= 1200 ? 100.0 : size.height * 0.05.h),
+                  Text(
+                    AppLocalizations.of(context)!.appTitle,
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 36.sp),
-                ),
-                SizedBox(height: 10.h),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.loginNoAccount,
-                      style: TextStyle(
+                      fontSize: size.width >= 1200 ? 48.0 : 36.sp,
+                    ),
+                  ),
+                  SizedBox(height: size.width >= 1200 ? 16.0 : 10.h),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.loginNoAccount,
+                        style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14.sp),
+                          fontSize: size.width >= 1200 ? 18.0 : 14.sp,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () =>
+                            Get.to(() => SignUp(), binding: AuthBindings()),
+                        child: Text(
+                          AppLocalizations.of(context)!.register,
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.red[900],
+                            fontWeight: FontWeight.bold,
+                            fontSize: size.width >= 1200 ? 22.0 : 18.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.width >= 1200 ? 60.0 : 40.h),
+                  Form(
+                      key: controller.emailKey,
+                      child: _buildEmailField(context)),
+                  SizedBox(height: size.width >= 1200 ? 24.0 : 15.h),
+                  Form(
+                      key: controller.passKay,
+                      child: _buildPasswordField(context)),
+                  SizedBox(height: size.width >= 1200 ? 24.0 : 15.h),
+                  Container(
+                    padding: EdgeInsets.all(size.width >= 1200 ? 8.0 : 5.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                          size.width >= 1200 ? 20.0 : 15.sp),
                     ),
-                    GestureDetector(
-                      onTap: () =>
-                          Get.to(() => SignUp(), binding: AuthBindings()),
+                    child: TextButton(
+                      onPressed: () => Get.toNamed(PasswordRenew.routeName),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          vertical: size.width >= 1200 ? 16.0 : 12.h,
+                          horizontal: size.width >= 1200 ? 24.0 : 16.w,
+                        ),
+                      ),
                       child: Text(
-                        AppLocalizations.of(context)!.register,
+                        AppLocalizations.of(context)!.loginResetPassword,
                         style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Colors.red[900],
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
+                          fontSize: size.width >= 1200 ? 18.0 : 14.sp,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 40.h),
-                Form(
-                    key: controller.emailKey, child: _buildEmailField(context)),
-                SizedBox(height: 15.h),
-                Form(
-                    key: controller.passKay,
-                    child: _buildPasswordField(context)),
-                SizedBox(height: 15.h),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.sp)),
-                  child: TextButton(
-                    onPressed: () => Get.toNamed(PasswordRenew.routeName),
-                    child: Text(
-                      AppLocalizations.of(context)!.loginResetPassword,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
-                          decoration: TextDecoration.underline),
-                    ),
                   ),
-                ),
-                SizedBox(height: 15.h),
-                Container(
-                  padding: EdgeInsets.all(5.sp),
-                  decoration: BoxDecoration(
+                  SizedBox(height: size.width >= 1200 ? 24.0 : 15.h),
+                  Container(
+                    padding: EdgeInsets.all(size.width >= 1200 ? 8.0 : 5.sp),
+                    decoration: BoxDecoration(
                       color: Colors.black,
-                      borderRadius: BorderRadius.circular(15.sp)),
-                  child: TextButton(
-                    onPressed: () => controller.login(),
-                    child: Text(
-                      AppLocalizations.of(context)!.login,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(
+                          size.width >= 1200 ? 20.0 : 15.sp),
+                    ),
+                    child: TextButton(
+                      onPressed: () => controller.login(),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          vertical: size.width >= 1200 ? 20.0 : 16.h,
+                          horizontal: size.width >= 1200 ? 32.0 : 24.w,
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: size.width >= 1200 ? 22.0 : 17.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                // SizedBox(height: 5.h),
-                // Text(
-                //   'Or ',
-                //   style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 24.sp,
-                //       fontWeight: FontWeight.bold),
-                //   textAlign: TextAlign.center,
-                // ),
-                // SizedBox(height: 5.h),
-                // Column(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     if (Platform.isIOS)
-                //       SizedBox(
-                //         width: 200.w,
-                //         child: SignInWithAppleButton(
-                //           onPressed: () => controller.signInWithApple(),
-                //           borderRadius: BorderRadius.circular(30.r),
-                //         ),
-                //       ),
-                //     SizedBox(height: 5.h),
-                //     if (Platform.isAndroid)
-                //       GoogleSignInButton(
-                //         onPressed: () => controller.signInWithGoogle(),
-                //       ),
-                //   ],
-                // ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -147,25 +153,10 @@ class Login extends GetView<AuthController> {
     );
   }
 
-  // Widget _socialLoginButton({
-  //   required VoidCallback onPressed,
-  //   required IconData icon,
-  //   required String label,
-  // }) {
-  //   return ElevatedButton.icon(
-  //     onPressed: onPressed,
-  //     icon: Icon(icon, color: Colors.white),
-  //     label: Text(label),
-  //     style: ElevatedButton.styleFrom(
-  //       backgroundColor: Colors.pink.shade700,
-  //       shape:
-  //           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-  //       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-  //     ),
-  //   );
-  // }
-
   Widget _buildEmailField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,13 +165,16 @@ class Login extends GetView<AuthController> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
+            fontSize: isLargeTablet ? 20.0 : 16.sp,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: isLargeTablet ? 12.0 : 8.h),
         TextFormField(
           controller: controller.emailController,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: isLargeTablet ? 18.0 : 16.sp,
+          ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -195,12 +189,26 @@ class Login extends GetView<AuthController> {
             filled: true,
             fillColor: Colors.white,
             hintText: AppLocalizations.of(context)!.loginEmail,
+            hintStyle: TextStyle(
+              fontSize: isLargeTablet ? 18.0 : 16.sp,
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
               borderSide: BorderSide.none,
             ),
-            prefixIcon: const Icon(Icons.email, color: Colors.grey),
-            errorStyle: const TextStyle(color: Colors.white),
+            prefixIcon: Icon(
+              Icons.email,
+              color: Colors.grey,
+              size: isLargeTablet ? 28.0 : 24.sp,
+            ),
+            errorStyle: TextStyle(
+              color: Colors.white,
+              fontSize: isLargeTablet ? 16.0 : 14.sp,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: isLargeTablet ? 20.0 : 16.h,
+              horizontal: isLargeTablet ? 24.0 : 16.w,
+            ),
           ),
         ),
       ],
@@ -208,6 +216,9 @@ class Login extends GetView<AuthController> {
   }
 
   Widget _buildPasswordField(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -216,13 +227,16 @@ class Login extends GetView<AuthController> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
+            fontSize: isLargeTablet ? 20.0 : 16.sp,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: isLargeTablet ? 12.0 : 8.h),
         TextFormField(
           controller: controller.passwordController,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: isLargeTablet ? 18.0 : 16.sp,
+          ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -234,12 +248,26 @@ class Login extends GetView<AuthController> {
             filled: true,
             fillColor: Colors.white,
             hintText: AppLocalizations.of(context)!.loginPassword,
+            hintStyle: TextStyle(
+              fontSize: isLargeTablet ? 18.0 : 16.sp,
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
               borderSide: BorderSide.none,
             ),
-            prefixIcon: const Icon(Icons.password, color: Colors.grey),
-            errorStyle: const TextStyle(color: Colors.white),
+            prefixIcon: Icon(
+              Icons.password,
+              color: Colors.grey,
+              size: isLargeTablet ? 28.0 : 24.sp,
+            ),
+            errorStyle: TextStyle(
+              color: Colors.white,
+              fontSize: isLargeTablet ? 16.0 : 14.sp,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: isLargeTablet ? 20.0 : 16.h,
+              horizontal: isLargeTablet ? 24.0 : 16.w,
+            ),
           ),
         ),
       ],
@@ -257,39 +285,43 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black87,
         backgroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 50),
+        minimumSize: Size(double.infinity, isLargeTablet ? 64.0 : 50.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(isLargeTablet ? 48.0 : 40.0),
         ),
         elevation: 0,
         side: const BorderSide(color: Colors.grey),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'assets/google_logo.png',
-              height: 24.0,
-              width: 24.0,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Sign in with Google',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+        padding: EdgeInsets.symmetric(
+          vertical: isLargeTablet ? 16.0 : 10.0,
+          horizontal: isLargeTablet ? 32.0 : 24.0,
         ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/google_logo.png',
+            height: isLargeTablet ? 32.0 : 24.0,
+            width: isLargeTablet ? 32.0 : 24.0,
+          ),
+          SizedBox(width: isLargeTablet ? 16.0 : 10.0),
+          Text(
+            'Sign in with Google',
+            style: TextStyle(
+              fontSize: isLargeTablet ? 20.0 : 16.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

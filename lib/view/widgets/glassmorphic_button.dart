@@ -33,6 +33,7 @@ class GlassmorphicButton extends StatefulWidget {
   final Border? border;
   final double elevation;
   final bool fullWidth;
+  final bool isLargeTablet;
 
   const GlassmorphicButton({
     Key? key,
@@ -55,6 +56,7 @@ class GlassmorphicButton extends StatefulWidget {
     this.border,
     this.elevation = 4.0,
     this.fullWidth = false,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -154,9 +156,12 @@ class _GlassmorphicButtonState extends State<GlassmorphicButton>
               duration: const Duration(milliseconds: 200),
               child: Container(
                 width: widget.fullWidth ? double.infinity : widget.width,
-                height: widget.height ?? 50.h,
+                height: widget.height ?? (widget.isLargeTablet ? 60.0 : 50.h),
                 padding: widget.padding ??
-                    EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                    EdgeInsets.symmetric(
+                      horizontal: widget.isLargeTablet ? 32.0 : 24.w,
+                      vertical: widget.isLargeTablet ? 16.0 : 12.h,
+                    ),
                 decoration: _buildDecoration(isDarkMode),
                 child: _buildContent(),
               ),
@@ -288,10 +293,10 @@ class _GlassmorphicButtonState extends State<GlassmorphicButton>
 
     if (widget.isLoading) {
       content = SizedBox(
-        width: 20.w,
-        height: 20.w,
+        width: widget.isLargeTablet ? 28.0 : 20.w,
+        height: widget.isLargeTablet ? 28.0 : 20.w,
         child: CircularProgressIndicator(
-          strokeWidth: 2,
+          strokeWidth: widget.isLargeTablet ? 3.0 : 2.0,
           valueColor: AlwaysStoppedAnimation<Color>(
             _getTextColor(),
           ),
@@ -304,12 +309,13 @@ class _GlassmorphicButtonState extends State<GlassmorphicButton>
         children: [
           if (widget.icon != null) ...[
             widget.icon!,
-            SizedBox(width: 8.w),
+            SizedBox(width: widget.isLargeTablet ? 12.0 : 8.w),
           ],
           Text(
             widget.text,
             style: TextStyle(
-              fontSize: widget.fontSize ?? 16.sp,
+              fontSize:
+                  widget.fontSize ?? (widget.isLargeTablet ? 18.0 : 16.sp),
               fontWeight: widget.fontWeight ?? FontWeight.w600,
               color: _getTextColor(),
             ),
@@ -375,6 +381,7 @@ class ModernPrimaryButton extends StatelessWidget {
   final Widget? icon;
   final bool isLoading;
   final bool fullWidth;
+  final bool isLargeTablet;
 
   const ModernPrimaryButton({
     Key? key,
@@ -383,6 +390,7 @@ class ModernPrimaryButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.fullWidth = false,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -395,6 +403,7 @@ class ModernPrimaryButton extends StatelessWidget {
       style: ButtonStyle.gradient,
       fullWidth: fullWidth,
       gradientColors: Constants.primaryGradient,
+      isLargeTablet: isLargeTablet,
     );
   }
 }
@@ -405,6 +414,7 @@ class ModernSecondaryButton extends StatelessWidget {
   final Widget? icon;
   final bool isLoading;
   final bool fullWidth;
+  final bool isLargeTablet;
 
   const ModernSecondaryButton({
     Key? key,
@@ -413,6 +423,7 @@ class ModernSecondaryButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.fullWidth = false,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -425,6 +436,7 @@ class ModernSecondaryButton extends StatelessWidget {
       style: ButtonStyle.outlined,
       fullWidth: fullWidth,
       backgroundColor: AppTheme.primaryColor,
+      isLargeTablet: isLargeTablet,
     );
   }
 }
@@ -435,6 +447,7 @@ class ModernGlassButton extends StatelessWidget {
   final Widget? icon;
   final bool isLoading;
   final bool fullWidth;
+  final bool isLargeTablet;
 
   const ModernGlassButton({
     Key? key,
@@ -443,6 +456,7 @@ class ModernGlassButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.fullWidth = false,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -454,6 +468,7 @@ class ModernGlassButton extends StatelessWidget {
       isLoading: isLoading,
       style: ButtonStyle.glassmorphic,
       fullWidth: fullWidth,
+      isLargeTablet: isLargeTablet,
     );
   }
 }
@@ -464,6 +479,7 @@ class ModernNeumorphicButton extends StatelessWidget {
   final Widget? icon;
   final bool isLoading;
   final bool fullWidth;
+  final bool isLargeTablet;
 
   const ModernNeumorphicButton({
     Key? key,
@@ -472,6 +488,7 @@ class ModernNeumorphicButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.fullWidth = false,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -483,6 +500,7 @@ class ModernNeumorphicButton extends StatelessWidget {
       isLoading: isLoading,
       style: ButtonStyle.neumorphic,
       fullWidth: fullWidth,
+      isLargeTablet: isLargeTablet,
     );
   }
 }

@@ -24,8 +24,8 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
     if (teamController.teamId == null) {
       Get.back();
       Get.snackbar(
-        'Hata',
-        'Takım bilgisi bulunamadı',
+        AppLocalizations.of(context)!.error,
+        AppLocalizations.of(context)!.teamDataNotFound,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -171,9 +171,8 @@ class AllWorkersScreen extends GetView<AllWorkersController> {
 class AddWorkerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Implement your AddWorkerScreen here
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Worker')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.addWorker)),
       body: const Center(child: Text('Add Worker Form')),
     );
   }
