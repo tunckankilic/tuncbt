@@ -1785,6 +1785,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User data is missing'**
   String get teamErrorUserDataMissing;
+
+  /// No description provided for @teamDataNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Team data not found'**
+  String get teamDataNotFound;
+
+  /// No description provided for @addWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Worker'**
+  String get addWorker;
+
+  /// No description provided for @uploadedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded by'**
+  String get uploadedBy;
+
+  /// No description provided for @uploadedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded on:'**
+  String get uploadedOn;
+
+  /// No description provided for @deadlineDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline date:'**
+  String get deadlineDate;
+
+  /// No description provided for @deadlineNotFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline is not finished yet'**
+  String get deadlineNotFinished;
+
+  /// No description provided for @deadlinePassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline passed'**
+  String get deadlinePassed;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @taskCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get taskCompleted;
+
+  /// No description provided for @taskInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get taskInProgress;
+
+  /// No description provided for @addComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Comment'**
+  String get addComment;
+
+  /// No description provided for @writeYourComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your comment...'**
+  String get writeYourComment;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
 }
 
 class _AppLocalizationsDelegate

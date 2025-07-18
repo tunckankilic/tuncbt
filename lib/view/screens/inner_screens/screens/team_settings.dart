@@ -24,46 +24,94 @@ class TeamSettingsScreen extends StatelessWidget {
         title: Text(l10n.teamSettings),
         elevation: 0,
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16.sp),
-        children: [
-          _buildTeamInfoSection(context, team, l10n),
-          SizedBox(height: 24.h),
-          if (teamController.isAdmin) ...[
-            _buildMemberManagementSection(context, l10n, team),
-            SizedBox(height: 24.h),
-          ],
-          _buildDangerZoneSection(context, teamController, l10n),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isLargeTablet = constraints.maxWidth >= 1200;
+          final horizontalPadding =
+              isLargeTablet ? constraints.maxWidth * 0.2 : 16.sp;
+
+          return Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: isLargeTablet ? 800.0 : double.infinity,
+              ),
+              child: ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: isLargeTablet ? 32.0 : 16.sp,
+                ),
+                children: [
+                  _buildTeamInfoSection(context, team, l10n, isLargeTablet),
+                  SizedBox(height: isLargeTablet ? 32.0 : 24.h),
+                  if (teamController.isAdmin) ...[
+                    _buildMemberManagementSection(
+                        context, l10n, team, isLargeTablet),
+                    SizedBox(height: isLargeTablet ? 32.0 : 24.h),
+                  ],
+                  _buildDangerZoneSection(
+                      context, teamController, l10n, isLargeTablet),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTeamInfoSection(BuildContext context, team, l10n) {
+  Widget _buildTeamInfoSection(
+      BuildContext context, team, l10n, bool isLargeTablet) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 12.0),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(16.sp),
+        padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.teamInformation,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: isLargeTablet ? 24.0 : 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: isLargeTablet ? 24.0 : 16.h),
             ListTile(
-              leading: const Icon(Icons.group),
-              title: Text(l10n.teamName),
-              subtitle: Text(team.teamName),
+              leading: Icon(
+                Icons.group,
+                size: isLargeTablet ? 32.0 : 24.0,
+              ),
+              title: Text(
+                l10n.teamName,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 16.0,
+                ),
+              ),
+              subtitle: Text(
+                team.teamName,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 16.0 : 14.0,
+                ),
+              ),
             ),
             ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: Text(l10n.teamCreationDate),
+              leading: Icon(
+                Icons.calendar_today,
+                size: isLargeTablet ? 32.0 : 24.0,
+              ),
+              title: Text(
+                l10n.teamCreationDate,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 16.0,
+                ),
+              ),
               subtitle: Text(
                 l10n.lastUpdated(team.createdAt.toString()),
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 16.0 : 14.0,
+                ),
               ),
             ),
           ],
@@ -72,29 +120,57 @@ class TeamSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberManagementSection(BuildContext context, l10n, team) {
+  Widget _buildMemberManagementSection(
+      BuildContext context, l10n, team, bool isLargeTablet) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 12.0),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(16.sp),
+        padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.memberManagement,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: isLargeTablet ? 24.0 : 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: isLargeTablet ? 24.0 : 16.h),
             ListTile(
-              leading: const Icon(Icons.person_add),
-              title: Text(l10n.inviteMembers),
+              leading: Icon(
+                Icons.person_add,
+                size: isLargeTablet ? 32.0 : 24.0,
+              ),
+              title: Text(
+                l10n.inviteMembers,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 16.0,
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
               onTap: () => Get.toNamed(InviteMembersScreen.routeName),
             ),
             ListTile(
-              leading: const Icon(Icons.share),
-              title: Text(l10n.shareReferralCode),
+              leading: Icon(
+                Icons.share,
+                size: isLargeTablet ? 32.0 : 24.0,
+              ),
+              title: Text(
+                l10n.shareReferralCode,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 16.0,
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
               onTap: () => Share.share(
                 l10n.shareReferralCodeMessage(team.referralCode),
                 subject: l10n.shareReferralCode,
@@ -106,31 +182,46 @@ class TeamSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDangerZoneSection(
-      BuildContext context, TeamController teamController, l10n) {
+  Widget _buildDangerZoneSection(BuildContext context,
+      TeamController teamController, l10n, bool isLargeTablet) {
     return Card(
       color: Colors.red.shade50,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 12.0),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(16.sp),
+        padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.dangerZone,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: isLargeTablet ? 24.0 : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: isLargeTablet ? 24.0 : 16.h),
             ListTile(
-              leading: const Icon(Icons.exit_to_app, color: Colors.red),
+              leading: Icon(
+                Icons.exit_to_app,
+                color: Colors.red,
+                size: isLargeTablet ? 32.0 : 24.0,
+              ),
               title: Text(
                 l10n.leaveTeam,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: isLargeTablet ? 18.0 : 16.0,
+                ),
               ),
-              onTap: () => _showLeaveTeamDialog(context, teamController, l10n),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
+              onTap: () => _showLeaveTeamDialog(
+                  context, teamController, l10n, isLargeTablet),
             ),
           ],
         ),
@@ -138,17 +229,43 @@ class TeamSettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showLeaveTeamDialog(
-      BuildContext context, TeamController teamController, l10n) {
+  void _showLeaveTeamDialog(BuildContext context, TeamController teamController,
+      l10n, bool isLargeTablet) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.leaveTeam),
-        content: Text(l10n.leaveTeamConfirm),
+        title: Text(
+          l10n.leaveTeam,
+          style: TextStyle(
+            fontSize: isLargeTablet ? 24.0 : 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Container(
+          width: isLargeTablet ? 600.0 : null,
+          child: Text(
+            l10n.leaveTeamConfirm,
+            style: TextStyle(
+              fontSize: isLargeTablet ? 18.0 : 16.0,
+            ),
+          ),
+        ),
+        contentPadding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(l10n.cancel),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                vertical: isLargeTablet ? 16.0 : 12.0,
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+              ),
+            ),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                fontSize: isLargeTablet ? 18.0 : 16.0,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -156,9 +273,19 @@ class TeamSettingsScreen extends StatelessWidget {
               await teamController.leaveTeam();
               Get.offAllNamed('/auth');
             },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                vertical: isLargeTablet ? 16.0 : 12.0,
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+              ),
+            ),
             child: Text(
               l10n.leave,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: isLargeTablet ? 18.0 : 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

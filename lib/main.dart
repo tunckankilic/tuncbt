@@ -123,12 +123,38 @@ class MyAppState extends State<MyApp> {
     });
   }
 
+  // Responsive design için dinamik boyut hesaplama
+  Size _getDesignSize(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+    print('Screen Size: ${screenWidth}x${screenHeight}');
+
+    // 13 inch tablet için çok büyük design size
+    if (screenWidth >= 1200) {
+      // Büyük tablet (13 inch+) için maksimum boyut
+      return Size(screenWidth * 0.9, screenHeight * 0.9);
+    } else if (screenWidth >= 800) {
+      // Orta tablet için
+      return Size(screenWidth * 0.85, screenHeight * 0.85);
+    } else if (screenWidth >= 600) {
+      // Küçük tablet için
+      return Size(screenWidth * 0.8, screenHeight * 0.8);
+    } else {
+      // Telefon için standart boyut
+      return const Size(360, 690);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
+      designSize: _getDesignSize(context),
       minTextAdapt: true,
       splitScreenMode: true,
+      ensureScreenSize: true,
+      useInheritedMediaQuery: true,
       builder: (context, child) {
         return GetMaterialApp(
           title: 'TuncBT',
@@ -136,7 +162,20 @@ class MyAppState extends State<MyApp> {
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
+            useMaterial3: true,
           ),
+          builder: (context, child) {
+            // 13 inch tablet için ek responsive ayar
+            final screenWidth = MediaQuery.of(context).size.width;
+            if (screenWidth >= 1200) {
+              return SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: child,
+              );
+            }
+            return child!;
+          },
           locale: _locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,

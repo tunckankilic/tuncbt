@@ -894,4 +894,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teamErrorUserDataMissing => 'User data is missing';
+
+  @override
+  String get teamDataNotFound => 'Team data not found';
+
+  @override
+  String get addWorker => 'Add Worker';
+
+  @override
+  String get uploadedBy => 'Uploaded by';
+
+  @override
+  String get uploadedOn => 'Uploaded on:';
+
+  @override
+  String get deadlineDate => 'Deadline date:';
+
+  @override
+  String get deadlineNotFinished => 'Deadline is not finished yet';
+
+  @override
+  String get deadlinePassed => 'Deadline passed';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get taskCompleted => 'Completed';
+
+  @override
+  String get taskInProgress => 'In Progress';
+
+  @override
+  String get addComment => 'Add Comment';
+
+  @override
+  String get writeYourComment => 'Write your comment...';
+
+  @override
+  String get send => 'Send';
 }

@@ -19,6 +19,7 @@ class AllWorkersWidget extends StatelessWidget {
   final String phoneNumber;
   final String userImageUrl;
   final String teamRole;
+  final bool isLargeTablet;
 
   const AllWorkersWidget({
     Key? key,
@@ -29,12 +30,16 @@ class AllWorkersWidget extends StatelessWidget {
     required this.phoneNumber,
     required this.userImageUrl,
     required this.teamRole,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeTablet ? 16.0 : 10.w,
+        vertical: isLargeTablet ? 10.0 : 6.h,
+      ),
       child: OpenContainer(
         transitionDuration: Duration(milliseconds: 500),
         openBuilder: (context, _) {
@@ -46,24 +51,28 @@ class AllWorkersWidget extends StatelessWidget {
             userType: UserType.worker,
           );
         },
-        closedElevation: 5,
-        closedShape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+        closedElevation: isLargeTablet ? 8.0 : 5.0,
+        closedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 10.r),
+        ),
         closedColor: Theme.of(context).cardColor,
         closedBuilder: (context, openContainer) => InkWell(
           onTap: openContainer,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: isLargeTablet ? 32.0 : 20.w,
+              vertical: isLargeTablet ? 24.0 : 15.h,
+            ),
             child: Row(
               children: [
                 _buildLeadingAvatar(),
-                SizedBox(width: 15.w),
+                SizedBox(width: isLargeTablet ? 24.0 : 15.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildTitle(),
-                      SizedBox(height: 5.h),
+                      SizedBox(height: isLargeTablet ? 8.0 : 5.h),
                       _buildSubtitle(),
                     ],
                   ),
@@ -83,30 +92,30 @@ class AllWorkersWidget extends StatelessWidget {
         Hero(
           tag: 'avatar_$userID',
           child: Container(
-            width: 50.w,
-            height: 50.w,
+            width: isLargeTablet ? 72.0 : 50.w,
+            height: isLargeTablet ? 72.0 : 50.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
                 color: _getRoleColor(),
-                width: 2.w,
+                width: isLargeTablet ? 3.0 : 2.w,
               ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: Offset(0, 3),
+                  blurRadius: isLargeTablet ? 12.0 : 8.0,
+                  offset: Offset(0, isLargeTablet ? 4.0 : 3.0),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(25.r),
+              borderRadius: BorderRadius.circular(isLargeTablet ? 36.0 : 25.r),
               child: Image.network(
                 userImageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   Icons.person,
-                  size: 30.sp,
+                  size: isLargeTablet ? 42.0 : 30.sp,
                   color: Theme.of(Get.context!).primaryColor,
                 ),
               ),
@@ -117,18 +126,18 @@ class AllWorkersWidget extends StatelessWidget {
           right: 0,
           bottom: 0,
           child: Container(
-            padding: EdgeInsets.all(4.r),
+            padding: EdgeInsets.all(isLargeTablet ? 6.0 : 4.r),
             decoration: BoxDecoration(
               color: _getRoleColor(),
               shape: BoxShape.circle,
               border: Border.all(
                 color: Colors.white,
-                width: 1.5.w,
+                width: isLargeTablet ? 2.0 : 1.5.w,
               ),
             ),
             child: Icon(
               _getRoleIcon(),
-              size: 10.sp,
+              size: isLargeTablet ? 14.0 : 10.sp,
               color: Colors.white,
             ),
           ),
@@ -173,21 +182,24 @@ class AllWorkersWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
+              fontSize: isLargeTablet ? 20.0 : 16.sp,
               color: AppTheme.primaryColor,
             ),
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: isLargeTablet ? 12.0 : 8.w,
+            vertical: isLargeTablet ? 4.0 : 2.h,
+          ),
           decoration: BoxDecoration(
             color: _getRoleColor().withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 12.r),
           ),
           child: Text(
             teamRole.capitalize!,
             style: TextStyle(
-              fontSize: 12.sp,
+              fontSize: isLargeTablet ? 14.0 : 12.sp,
               color: _getRoleColor(),
               fontWeight: FontWeight.w500,
             ),
@@ -206,15 +218,15 @@ class AllWorkersWidget extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: 14.sp,
+            fontSize: isLargeTablet ? 16.0 : 14.sp,
             color: AppTheme.secondaryColor,
           ),
         ),
-        SizedBox(height: 2.h),
+        SizedBox(height: isLargeTablet ? 4.0 : 2.h),
         Text(
           phoneNumber,
           style: TextStyle(
-            fontSize: 12.sp,
+            fontSize: isLargeTablet ? 14.0 : 12.sp,
             color: AppTheme.lightTextColor,
           ),
         ),
@@ -230,29 +242,44 @@ class AllWorkersWidget extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.mail_outline,
-            size: 24.sp,
+            size: isLargeTablet ? 32.0 : 24.sp,
             color: AppTheme.accentColor,
           ),
           onPressed: () => _mailTo(context),
           tooltip: l10n.sendEmail,
+          padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
+          constraints: BoxConstraints(
+            minWidth: isLargeTablet ? 48.0 : 40.0,
+            minHeight: isLargeTablet ? 48.0 : 40.0,
+          ),
         ),
         IconButton(
           icon: Icon(
             FontAwesomeIcons.whatsapp,
-            size: 24.sp,
+            size: isLargeTablet ? 32.0 : 24.sp,
             color: Colors.green,
           ),
           onPressed: () => _openWhatsApp(context),
           tooltip: l10n.sendWhatsApp,
+          padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
+          constraints: BoxConstraints(
+            minWidth: isLargeTablet ? 48.0 : 40.0,
+            minHeight: isLargeTablet ? 48.0 : 40.0,
+          ),
         ),
         IconButton(
           icon: Icon(
             Icons.chat_bubble_outline,
-            size: 24.sp,
+            size: isLargeTablet ? 32.0 : 24.sp,
             color: AppTheme.accentColor,
           ),
           onPressed: () => _openChat(context),
           tooltip: l10n.startChat,
+          padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
+          constraints: BoxConstraints(
+            minWidth: isLargeTablet ? 48.0 : 40.0,
+            minHeight: isLargeTablet ? 48.0 : 40.0,
+          ),
         ),
       ],
     );

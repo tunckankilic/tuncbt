@@ -919,4 +919,43 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get teamErrorUserDataMissing => 'Benutzerdaten fehlen';
+
+  @override
+  String get teamDataNotFound => 'Team-Daten nicht gefunden';
+
+  @override
+  String get addWorker => 'Mitarbeiter hinzufügen';
+
+  @override
+  String get uploadedBy => 'Hochgeladen von';
+
+  @override
+  String get uploadedOn => 'Hochgeladen am:';
+
+  @override
+  String get deadlineDate => 'Fälligkeitsdatum:';
+
+  @override
+  String get deadlineNotFinished => 'Frist noch nicht abgelaufen';
+
+  @override
+  String get deadlinePassed => 'Frist abgelaufen';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get taskCompleted => 'Abgeschlossen';
+
+  @override
+  String get taskInProgress => 'In Bearbeitung';
+
+  @override
+  String get addComment => 'Kommentar hinzufügen';
+
+  @override
+  String get writeYourComment => 'Schreiben Sie Ihren Kommentar...';
+
+  @override
+  String get send => 'Senden';
 }

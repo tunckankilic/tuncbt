@@ -905,4 +905,43 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get teamErrorUserDataMissing => 'Kullanıcı verisi eksik';
+
+  @override
+  String get teamDataNotFound => 'Takım bilgisi bulunamadı';
+
+  @override
+  String get addWorker => 'Çalışan Ekle';
+
+  @override
+  String get uploadedBy => 'Yükleyen';
+
+  @override
+  String get uploadedOn => 'Yüklenme Tarihi:';
+
+  @override
+  String get deadlineDate => 'Son Tarih:';
+
+  @override
+  String get deadlineNotFinished => 'Son tarih henüz gelmedi';
+
+  @override
+  String get deadlinePassed => 'Son tarih geçti';
+
+  @override
+  String get status => 'Durum';
+
+  @override
+  String get taskCompleted => 'Tamamlandı';
+
+  @override
+  String get taskInProgress => 'Devam Ediyor';
+
+  @override
+  String get addComment => 'Yorum Ekle';
+
+  @override
+  String get writeYourComment => 'Yorumunuzu yazın...';
+
+  @override
+  String get send => 'Gönder';
 }

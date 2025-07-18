@@ -18,6 +18,7 @@ class ModernCardWidget extends StatefulWidget {
   final Border? border;
   final bool animated;
   final Duration animationDuration;
+  final bool isLargeTablet;
 
   const ModernCardWidget({
     Key? key,
@@ -35,6 +36,7 @@ class ModernCardWidget extends StatefulWidget {
     this.border,
     this.animated = true,
     this.animationDuration = const Duration(milliseconds: 200),
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -97,9 +99,10 @@ class _ModernCardWidgetState extends State<ModernCardWidget>
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     Widget card = Container(
-      width: widget.width,
+      width: widget.width ?? double.infinity,
       height: widget.height,
-      margin: widget.margin ?? EdgeInsets.all(8.w),
+      margin:
+          widget.margin ?? EdgeInsets.all(widget.isLargeTablet ? 12.0 : 8.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(widget.borderRadius.r),
         border: widget.border ??
@@ -184,7 +187,8 @@ class _ModernCardWidgetState extends State<ModernCardWidget>
           ),
         ),
         child: Padding(
-          padding: widget.padding ?? EdgeInsets.all(16.w),
+          padding: widget.padding ??
+              EdgeInsets.all(widget.isLargeTablet ? 24.0 : 16.w),
           child: widget.child,
         ),
       ),
@@ -205,7 +209,8 @@ class _ModernCardWidgetState extends State<ModernCardWidget>
             : null,
       ),
       child: Padding(
-        padding: widget.padding ?? EdgeInsets.all(16.w),
+        padding: widget.padding ??
+            EdgeInsets.all(widget.isLargeTablet ? 24.0 : 16.w),
         child: widget.child,
       ),
     );
@@ -218,6 +223,7 @@ class ModernTaskCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isCompleted;
   final Color? accentColor;
+  final bool isLargeTablet;
 
   const ModernTaskCard({
     Key? key,
@@ -225,6 +231,7 @@ class ModernTaskCard extends StatelessWidget {
     this.onTap,
     this.isCompleted = false,
     this.accentColor,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -233,11 +240,14 @@ class ModernTaskCard extends StatelessWidget {
 
     return ModernCardWidget(
       onTap: onTap,
-      borderRadius: 16,
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      borderRadius: isLargeTablet ? 20.0 : 16.0,
+      margin: EdgeInsets.symmetric(
+        horizontal: isLargeTablet ? 24.0 : 16.w,
+        vertical: isLargeTablet ? 12.0 : 8.h,
+      ),
       border: Border.all(
         color: (accentColor ?? AppTheme.primaryColor).withOpacity(0.2),
-        width: 1,
+        width: isLargeTablet ? 2.0 : 1.0,
       ),
       gradientColors: isCompleted
           ? [
@@ -245,12 +255,13 @@ class ModernTaskCard extends StatelessWidget {
               AppTheme.successColor.withOpacity(0.05),
             ]
           : null,
+      isLargeTablet: isLargeTablet,
       child: Container(
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(
               color: accentColor ?? AppTheme.primaryColor,
-              width: 4.w,
+              width: isLargeTablet ? 6.0 : 4.w,
             ),
           ),
         ),
@@ -265,6 +276,7 @@ class ModernInfoCard extends StatelessWidget {
   final IconData? icon;
   final Color? iconColor;
   final VoidCallback? onTap;
+  final bool isLargeTablet;
 
   const ModernInfoCard({
     Key? key,
@@ -272,6 +284,7 @@ class ModernInfoCard extends StatelessWidget {
     this.icon,
     this.iconColor,
     this.onTap,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
@@ -279,24 +292,26 @@ class ModernInfoCard extends StatelessWidget {
     return ModernCardWidget(
       onTap: onTap,
       isGlassmorphic: true,
-      borderRadius: 20,
-      margin: EdgeInsets.all(16.w),
+      borderRadius: isLargeTablet ? 24.0 : 20.0,
+      margin: EdgeInsets.all(isLargeTablet ? 24.0 : 16.w),
+      isLargeTablet: isLargeTablet,
       child: Row(
         children: [
           if (icon != null) ...[
             Container(
-              padding: EdgeInsets.all(12.w),
+              padding: EdgeInsets.all(isLargeTablet ? 16.0 : 12.w),
               decoration: BoxDecoration(
                 color: (iconColor ?? AppTheme.primaryColor).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius:
+                    BorderRadius.circular(isLargeTablet ? 16.0 : 12.r),
               ),
               child: Icon(
                 icon,
                 color: iconColor ?? AppTheme.primaryColor,
-                size: 24.sp,
+                size: isLargeTablet ? 32.0 : 24.sp,
               ),
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: isLargeTablet ? 24.0 : 16.w),
           ],
           Expanded(child: child),
         ],
@@ -312,6 +327,7 @@ class ModernStatsCard extends StatelessWidget {
   final Color color;
   final String? subtitle;
   final VoidCallback? onTap;
+  final bool isLargeTablet;
 
   const ModernStatsCard({
     Key? key,
@@ -321,16 +337,19 @@ class ModernStatsCard extends StatelessWidget {
     required this.color,
     this.subtitle,
     this.onTap,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ModernCardWidget(
       onTap: onTap,
+      width: double.infinity,
       gradientColors: [
         color.withOpacity(0.1),
         color.withOpacity(0.05),
       ],
+      isLargeTablet: isLargeTablet,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -338,42 +357,43 @@ class ModernStatsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: EdgeInsets.all(8.w),
+                padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.w),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius:
+                      BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
                 ),
                 child: Icon(
                   icon,
                   color: color,
-                  size: 20.sp,
+                  size: isLargeTablet ? 28.0 : 20.sp,
                 ),
               ),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 24.sp,
+                  fontSize: isLargeTablet ? 32.0 : 24.sp,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: isLargeTablet ? 16.0 : 12.h),
           Text(
             title,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: isLargeTablet ? 18.0 : 14.sp,
               fontWeight: FontWeight.w500,
               color: AppTheme.onSurfaceColor,
             ),
           ),
           if (subtitle != null) ...[
-            SizedBox(height: 4.h),
+            SizedBox(height: isLargeTablet ? 6.0 : 4.h),
             Text(
               subtitle!,
               style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: isLargeTablet ? 14.0 : 12.sp,
                 color: AppTheme.onSurfaceVariantColor,
               ),
             ),

@@ -78,6 +78,9 @@ class _TasksScreenState extends State<TasksScreen> {
       drawer: DrawerWidget(),
       extendBodyBehindAppBar: true,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        constraints: const BoxConstraints.expand(),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -139,8 +142,11 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Widget _buildSliverAppBar(
       BuildContext context, TeamController teamController) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final expandedHeight = screenWidth >= 1200 ? 300.0 : 200.h;
+
     return SliverAppBar(
-      expandedHeight: 200.h,
+      expandedHeight: expandedHeight,
       floating: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
@@ -188,64 +194,76 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   Widget _buildStatsSection(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeTablet = screenWidth >= 1200;
+    final padding = isLargeTablet ? 24.0 : 16.sp;
+    final fontSize = isLargeTablet ? 22.0 : 18.sp;
+
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.all(16.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.quickActions,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+      child: Container(
+        width: double.infinity,
+        constraints: BoxConstraints(
+          maxWidth: screenWidth,
+          minWidth: screenWidth,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.quickActions,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              children: [
-                Expanded(
-                  child: ModernStatsCard(
-                    title: AppLocalizations.of(context)!.totalTasks,
-                    value: controller.tasks.length.toString(),
-                    icon: Icons.assignment,
-                    color: AppTheme.primaryColor,
+              SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: ModernStatsCard(
+                      title: AppLocalizations.of(context)!.totalTasks,
+                      value: controller.tasks.length.toString(),
+                      icon: Icons.assignment,
+                      color: AppTheme.primaryColor,
+                    ),
                   ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: ModernStatsCard(
-                    title: AppLocalizations.of(context)!.completedTasks,
-                    value: controller.tasks
-                        .where((task) => task['isDone'] ?? false)
-                        .length
-                        .toString(),
-                    icon: Icons.check_circle,
-                    color: Colors.green,
+                  SizedBox(width: isLargeTablet ? 24.0 : 16.w),
+                  Expanded(
+                    child: ModernStatsCard(
+                      title: AppLocalizations.of(context)!.completedTasks,
+                      value: controller.tasks
+                          .where((task) => task['isDone'] ?? false)
+                          .length
+                          .toString(),
+                      icon: Icons.check_circle,
+                      color: Colors.green,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              children: [
-                Expanded(
-                  child: ModernStatsCard(
-                    title: AppLocalizations.of(context)!.pendingTasks,
-                    value: controller.tasks
-                        .where((task) => !(task['isDone'] ?? false))
-                        .length
-                        .toString(),
-                    icon: Icons.pending_actions,
-                    color: Colors.orange,
+                ],
+              ),
+              SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: ModernStatsCard(
+                      title: AppLocalizations.of(context)!.pendingTasks,
+                      value: controller.tasks
+                          .where((task) => !(task['isDone'] ?? false))
+                          .length
+                          .toString(),
+                      icon: Icons.pending_actions,
+                      color: Colors.orange,
+                    ),
                   ),
-                ),
-                SizedBox(width: 16.w),
-                const Expanded(child: SizedBox()),
-              ],
-            ),
-          ],
+                  SizedBox(width: isLargeTablet ? 24.0 : 16.w),
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -297,30 +315,89 @@ class _TasksScreenState extends State<TasksScreen> {
         );
       }
 
-      final tasks = controller.tasks.toList(); // Liste kopyası oluştur
+      final tasks = controller.tasks.toList();
+      final screenWidth = MediaQuery.of(context).size.width;
 
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            if (index >= tasks.length) {
-              return SizedBox(height: 80.h);
-            }
-            final task = tasks[index];
-            return TaskWidget(
-              key: ValueKey(task['taskId']), // Unique key ekle
-              taskTitle:
-                  task['taskTitle'] ?? AppLocalizations.of(context)!.noTitle,
-              taskDescription: task['taskDescription'] ??
-                  AppLocalizations.of(context)!.noDescription,
-              taskId: task['taskId'],
-              uploadedBy: task['uploadedBy'] ?? '',
-              isDone: task['isDone'] ?? false,
-              teamId: Get.find<TeamController>().teamId ?? '',
-            );
-          },
-          childCount: tasks.length + 1,
-        ),
-      );
+      print('Tasks Screen Width: $screenWidth');
+
+      // Tablet algılama ve responsive grid
+      if (screenWidth >= 600) {
+        // Tablet için grid layout - 13 inch için optimize
+        int crossAxisCount;
+        double childAspectRatio;
+        double padding;
+
+        if (screenWidth >= 1200) {
+          // 13 inch+ tablet için
+          crossAxisCount = 4;
+          childAspectRatio = 1.3;
+          padding = 24.0;
+        } else if (screenWidth >= 900) {
+          // Büyük tablet için
+          crossAxisCount = 3;
+          childAspectRatio = 1.2;
+          padding = 20.0;
+        } else {
+          // Küçük tablet için
+          crossAxisCount = 2;
+          childAspectRatio = 1.0;
+          padding = 16.0;
+        }
+
+        return SliverPadding(
+          padding: EdgeInsets.all(padding),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: padding,
+              crossAxisSpacing: padding,
+              childAspectRatio: childAspectRatio,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index >= tasks.length) return null;
+                final task = tasks[index];
+                return TaskWidget(
+                  key: ValueKey(task['taskId']),
+                  taskTitle: task['taskTitle'] ??
+                      AppLocalizations.of(context)!.noTitle,
+                  taskDescription: task['taskDescription'] ??
+                      AppLocalizations.of(context)!.noDescription,
+                  taskId: task['taskId'],
+                  uploadedBy: task['uploadedBy'] ?? '',
+                  isDone: task['isDone'] ?? false,
+                  teamId: Get.find<TeamController>().teamId ?? '',
+                );
+              },
+              childCount: tasks.length,
+            ),
+          ),
+        );
+      } else {
+        // Telefon için liste layout
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (index >= tasks.length) {
+                return SizedBox(height: 80.h);
+              }
+              final task = tasks[index];
+              return TaskWidget(
+                key: ValueKey(task['taskId']),
+                taskTitle:
+                    task['taskTitle'] ?? AppLocalizations.of(context)!.noTitle,
+                taskDescription: task['taskDescription'] ??
+                    AppLocalizations.of(context)!.noDescription,
+                taskId: task['taskId'],
+                uploadedBy: task['uploadedBy'] ?? '',
+                isDone: task['isDone'] ?? false,
+                teamId: Get.find<TeamController>().teamId ?? '',
+              );
+            },
+            childCount: tasks.length + 1,
+          ),
+        );
+      }
     });
   }
 
@@ -330,6 +407,9 @@ class _TasksScreenState extends State<TasksScreen> {
         return const SizedBox.shrink();
       }
 
+      final screenWidth = MediaQuery.of(context).size.width;
+      final isLargeTablet = screenWidth >= 1200;
+
       return ModernGlassButton(
         text: '',
         onPressed: () {
@@ -338,7 +418,7 @@ class _TasksScreenState extends State<TasksScreen> {
         icon: Icon(
           Icons.add,
           color: Colors.white,
-          size: 24.sp,
+          size: isLargeTablet ? 32.0 : 24.sp,
         ),
       );
     });

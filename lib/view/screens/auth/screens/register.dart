@@ -28,28 +28,36 @@ class SignUp extends GetView<AuthController> {
         children: [
           _buildBackgroundImage(),
           SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: size.height * 0.1),
-                  _buildHeader(size, context),
-                  SizedBox(height: 20.h),
-                  _buildReferralCodeField(context),
-                  SizedBox(height: 20.h),
-                  if (controller.teamName.value.isNotEmpty) ...[
-                    _buildTeamInfo(context),
-                    SizedBox(height: 20.h),
+            child: Center(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: size.width >= 1200 ? 800.0 : double.infinity,
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width >= 1200 ? size.width * 0.2 : 16.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                        height: size.width >= 1200 ? 100.0 : size.height * 0.1),
+                    _buildHeader(size, context),
+                    SizedBox(height: size.width >= 1200 ? 32.0 : 20.h),
+                    _buildReferralCodeField(context),
+                    SizedBox(height: size.width >= 1200 ? 32.0 : 20.h),
+                    if (controller.teamName.value.isNotEmpty) ...[
+                      _buildTeamInfo(context),
+                      SizedBox(height: size.width >= 1200 ? 32.0 : 20.h),
+                    ],
+                    _buildForm(size, context),
+                    SizedBox(height: size.width >= 1200 ? 60.0 : 40.h),
+                    _buildLegalChecks(context),
+                    SizedBox(height: size.width >= 1200 ? 32.0 : 20.h),
+                    _buildNotificationPermission(context),
+                    SizedBox(height: size.width >= 1200 ? 32.0 : 20.h),
+                    _buildSignUpButton(context),
                   ],
-                  _buildForm(size, context),
-                  SizedBox(height: 40.h),
-                  _buildLegalChecks(context),
-                  SizedBox(height: 20.h),
-                  _buildNotificationPermission(context),
-                  SizedBox(height: 20.h),
-                  _buildSignUpButton(context),
-                ],
+                ),
               ),
             ),
           ),
@@ -80,31 +88,35 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildHeader(Size size, BuildContext context) {
+    final isLargeTablet = size.width >= 1200;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)!.createTeam,
           style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 30.sp),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: isLargeTablet ? 42.0 : 30.sp,
+          ),
         ),
         Row(
           children: [
             SizedBox(
-              width: 150.w,
+              width: isLargeTablet ? 200.0 : 150.w,
               child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
                       text: AppLocalizations.of(context)!.registerHasAccount,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isLargeTablet ? 24.0 : 20.sp,
+                      ),
                     ),
-                    const TextSpan(text: '    '),
+                    TextSpan(text: isLargeTablet ? '      ' : '    '),
                     TextSpan(
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => Get.back(),
@@ -113,14 +125,14 @@ class SignUp extends GetView<AuthController> {
                         decoration: TextDecoration.underline,
                         color: Colors.red[200],
                         fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
+                        fontSize: isLargeTablet ? 20.0 : 16.sp,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 10.w),
+            SizedBox(width: isLargeTablet ? 16.0 : 10.w),
             _buildImageContainer(size),
             _buildImageEditButton(),
           ],
@@ -130,12 +142,17 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildReferralCodeField(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue),
+        borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.0),
+        border: Border.all(
+          color: Colors.blue,
+          width: isLargeTablet ? 2.0 : 1.0,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,22 +161,36 @@ class SignUp extends GetView<AuthController> {
             AppLocalizations.of(context)!.referralCode,
             style: TextStyle(
               color: Colors.black87,
-              fontSize: 16.sp,
+              fontSize: isLargeTablet ? 20.0 : 16.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: isLargeTablet ? 12.0 : 8.0),
           Row(
             children: [
               Expanded(
                 child: TextFormField(
                   controller: controller.referralCodeController,
+                  style: TextStyle(
+                    fontSize: isLargeTablet ? 18.0 : 16.sp,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'XXXXXXXX',
-                    hintStyle: const TextStyle(color: Colors.black54),
+                    hintStyle: TextStyle(
+                      color: Colors.black54,
+                      fontSize: isLargeTablet ? 18.0 : 16.sp,
+                    ),
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.info_outline),
+                      icon: Icon(
+                        Icons.info_outline,
+                        size: isLargeTablet ? 28.0 : 24.0,
+                      ),
                       onPressed: () => _showReferralInfo(context),
+                      padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: isLargeTablet ? 20.0 : 16.0,
+                      horizontal: isLargeTablet ? 24.0 : 16.0,
                     ),
                   ),
                   inputFormatters: [
@@ -173,12 +204,12 @@ class SignUp extends GetView<AuthController> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: isLargeTablet ? 12.0 : 8.0),
           Text(
             AppLocalizations.of(context)!.referralCodeOptional,
             style: TextStyle(
               color: Colors.black54,
-              fontSize: 12.sp,
+              fontSize: isLargeTablet ? 14.0 : 12.sp,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -188,15 +219,43 @@ class SignUp extends GetView<AuthController> {
   }
 
   void _showReferralInfo(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.referralCodeTitle),
-        content: Text(AppLocalizations.of(context)!.referralCodeDescription),
+        title: Text(
+          AppLocalizations.of(context)!.referralCodeTitle,
+          style: TextStyle(
+            fontSize: isLargeTablet ? 24.0 : 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Container(
+          width: isLargeTablet ? 600.0 : null,
+          child: Text(
+            AppLocalizations.of(context)!.referralCodeDescription,
+            style: TextStyle(
+              fontSize: isLargeTablet ? 18.0 : 16.0,
+            ),
+          ),
+        ),
+        contentPadding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.ok),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                vertical: isLargeTablet ? 16.0 : 12.0,
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.ok,
+              style: TextStyle(
+                fontSize: isLargeTablet ? 18.0 : 16.0,
+              ),
+            ),
           ),
         ],
       ),
@@ -204,12 +263,17 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildTeamInfo(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.green),
+        borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.0),
+        border: Border.all(
+          color: Colors.green,
+          width: isLargeTablet ? 2.0 : 1.0,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,21 +282,25 @@ class SignUp extends GetView<AuthController> {
             AppLocalizations.of(context)!.joinTeam,
             style: TextStyle(
               color: Colors.black87,
-              fontSize: 16.sp,
+              fontSize: isLargeTablet ? 20.0 : 16.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: isLargeTablet ? 12.0 : 8.0),
           Row(
             children: [
-              Icon(Icons.group, color: Colors.green, size: 24.sp),
-              const SizedBox(width: 8),
+              Icon(
+                Icons.group,
+                color: Colors.green,
+                size: isLargeTablet ? 32.0 : 24.sp,
+              ),
+              SizedBox(width: isLargeTablet ? 12.0 : 8.0),
               Expanded(
                 child: Text(
                   controller.teamName.value,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 18.sp,
+                    fontSize: isLargeTablet ? 24.0 : 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -308,17 +376,23 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildImageContainer(Size size) {
+    final isLargeTablet = size.width >= 1200;
+    final containerSize = isLargeTablet ? 200.0 : size.width * 0.24;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
       child: Container(
-        width: size.width * 0.24,
-        height: size.width * 0.24,
+        width: containerSize,
+        height: containerSize,
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Colors.white),
-          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            width: isLargeTablet ? 2.0 : 1.0,
+            color: Colors.white,
+          ),
+          borderRadius: BorderRadius.circular(isLargeTablet ? 24.0 : 16.r),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(isLargeTablet ? 24.0 : 16.r),
           child: Obx(() {
             if (controller.imageFile.value != null) {
               return Image.file(
@@ -331,7 +405,7 @@ class SignUp extends GetView<AuthController> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   Icons.person,
-                  size: size.width * 0.12,
+                  size: isLargeTablet ? containerSize * 0.5 : size.width * 0.12,
                   color: Colors.grey,
                 ),
               );
@@ -343,22 +417,27 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildImageEditButton() {
+    final isLargeTablet = MediaQuery.of(Get.context!).size.width >= 1200;
+
     return InkWell(
       onTap: () => controller.showImageDialog(),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.pink,
-          border: Border.all(width: 2, color: Colors.white),
+          border: Border.all(
+            width: isLargeTablet ? 3.0 : 2.0,
+            color: Colors.white,
+          ),
           shape: BoxShape.circle,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(isLargeTablet ? 12.0 : 8.0),
           child: Icon(
             controller.imageFile.value == null
                 ? Icons.add_a_photo
                 : Icons.edit_outlined,
             color: Colors.white,
-            size: 18,
+            size: isLargeTablet ? 24.0 : 18.0,
           ),
         ),
       ),
@@ -470,6 +549,8 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildLegalChecks(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     return Column(
       children: [
         Obx(() => Material(
@@ -483,7 +564,10 @@ class SignUp extends GetView<AuthController> {
                       controller.acceptedTerms.value = value ?? false,
                   title: Text(
                     AppLocalizations.of(context)!.acceptTerms,
-                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: isLargeTablet ? 18.0 : 14.sp,
+                      color: Colors.white,
+                    ),
                   ),
                   subtitle: Wrap(
                     alignment: WrapAlignment.start,
@@ -491,21 +575,41 @@ class SignUp extends GetView<AuthController> {
                     children: [
                       TextButton(
                         onPressed: () => Get.toNamed('/terms-of-service'),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            vertical: isLargeTablet ? 12.0 : 8.0,
+                            horizontal: isLargeTablet ? 16.0 : 12.0,
+                          ),
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.termsOfService,
-                          style:
-                              TextStyle(fontSize: 12.sp, color: Colors.white70),
+                          style: TextStyle(
+                            fontSize: isLargeTablet ? 16.0 : 12.sp,
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
-                      Text(' & ',
-                          style:
-                              TextStyle(fontSize: 12.sp, color: Colors.white)),
+                      Text(
+                        ' & ',
+                        style: TextStyle(
+                          fontSize: isLargeTablet ? 16.0 : 12.sp,
+                          color: Colors.white,
+                        ),
+                      ),
                       TextButton(
                         onPressed: () => Get.toNamed('/privacy-policy'),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            vertical: isLargeTablet ? 12.0 : 8.0,
+                            horizontal: isLargeTablet ? 16.0 : 12.0,
+                          ),
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.privacyPolicy,
-                          style:
-                              TextStyle(fontSize: 12.sp, color: Colors.white70),
+                          style: TextStyle(
+                            fontSize: isLargeTablet ? 16.0 : 12.sp,
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ],
@@ -513,6 +617,10 @@ class SignUp extends GetView<AuthController> {
                   controlAffinity: ListTileControlAffinity.leading,
                   activeColor: Colors.white,
                   checkColor: Colors.black,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: isLargeTablet ? 24.0 : 16.0,
+                    vertical: isLargeTablet ? 12.0 : 8.0,
+                  ),
                 ),
               ),
             )),
@@ -527,11 +635,18 @@ class SignUp extends GetView<AuthController> {
                       controller.acceptedDataProcessing.value = value ?? false,
                   title: Text(
                     AppLocalizations.of(context)!.acceptDataProcessing,
-                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: isLargeTablet ? 18.0 : 14.sp,
+                      color: Colors.white,
+                    ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   activeColor: Colors.white,
                   checkColor: Colors.black,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: isLargeTablet ? 24.0 : 16.0,
+                    vertical: isLargeTablet ? 12.0 : 8.0,
+                  ),
                 ),
               ),
             )),
@@ -546,11 +661,18 @@ class SignUp extends GetView<AuthController> {
                       controller.acceptedAgeRestriction.value = value ?? false,
                   title: Text(
                     AppLocalizations.of(context)!.acceptAgeRestriction,
-                    style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: isLargeTablet ? 18.0 : 14.sp,
+                      color: Colors.white,
+                    ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   activeColor: Colors.white,
                   checkColor: Colors.black,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: isLargeTablet ? 24.0 : 16.0,
+                    vertical: isLargeTablet ? 12.0 : 8.0,
+                  ),
                 ),
               ),
             )),
@@ -559,6 +681,8 @@ class SignUp extends GetView<AuthController> {
   }
 
   Widget _buildNotificationPermission(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     return Obx(() => Material(
           color: Colors.transparent,
           child: InkWell(
@@ -570,17 +694,26 @@ class SignUp extends GetView<AuthController> {
                   controller.acceptedNotifications.value = value ?? false,
               title: Text(
                 AppLocalizations.of(context)!.notificationPermissionText,
-                style: TextStyle(fontSize: 14.sp, color: Colors.white),
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 14.sp,
+                  color: Colors.white,
+                ),
               ),
               controlAffinity: ListTileControlAffinity.leading,
               activeColor: Colors.white,
               checkColor: Colors.black,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 24.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
             ),
           ),
         ));
   }
 
   Widget _buildSignUpButton(BuildContext context) {
+    final isLargeTablet = MediaQuery.of(context).size.width >= 1200;
+
     return Obx(() {
       final canSignUp = controller.acceptedTerms.value &&
           controller.acceptedDataProcessing.value &&
@@ -596,13 +729,19 @@ class SignUp extends GetView<AuthController> {
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: canSignUp ? AppTheme.primaryColor : Colors.grey,
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: isLargeTablet ? 60.0 : 40.w,
+            vertical: isLargeTablet ? 20.0 : 12.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 8.0),
+          ),
         ),
         child: Text(
           AppLocalizations.of(context)!.register,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 16.sp,
+            fontSize: isLargeTablet ? 20.0 : 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),

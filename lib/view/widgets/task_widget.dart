@@ -16,6 +16,7 @@ class TaskWidget extends StatelessWidget {
   final String uploadedBy;
   final bool isDone;
   final String teamId;
+  final bool isLargeTablet;
 
   const TaskWidget({
     Key? key,
@@ -25,12 +26,15 @@ class TaskWidget extends StatelessWidget {
     required this.uploadedBy,
     required this.isDone,
     required this.teamId,
+    this.isLargeTablet = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      padding: isLargeTablet
+          ? EdgeInsets.all(16.0)
+          : EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       child: Dismissible(
         key: Key(taskId),
         background: _buildDismissibleBackground(),
@@ -57,24 +61,24 @@ class TaskWidget extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.all(16.r),
+              padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.r),
               child: Row(
                 children: [
-                  _buildLeadingIcon(),
-                  SizedBox(width: 16.w),
+                  _buildLeadingIcon(isLargeTablet),
+                  SizedBox(width: isLargeTablet ? 24.0 : 16.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTitle(),
-                        SizedBox(height: 8.h),
-                        _buildSubtitle(),
+                        _buildTitle(isLargeTablet),
+                        SizedBox(height: isLargeTablet ? 12.0 : 8.h),
+                        _buildSubtitle(isLargeTablet),
                       ],
                     ),
                   ),
                   Icon(
                     Icons.keyboard_arrow_right,
-                    size: 30.sp,
+                    size: isLargeTablet ? 36.0 : 30.sp,
                     color: AppTheme.accentColor,
                   ),
                 ],
@@ -95,10 +99,10 @@ class TaskWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLeadingIcon() {
+  Widget _buildLeadingIcon(bool isLargeTablet) {
     return Container(
-      width: 50.w,
-      height: 50.w,
+      width: isLargeTablet ? 60.0 : 50.w,
+      height: isLargeTablet ? 60.0 : 50.w,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isDone ? AppTheme.successColor : AppTheme.warningColor,
@@ -106,31 +110,31 @@ class TaskWidget extends StatelessWidget {
       child: Icon(
         isDone ? Icons.check : Icons.access_time,
         color: Colors.white,
-        size: 24.sp,
+        size: isLargeTablet ? 28.0 : 24.sp,
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(bool isLargeTablet) {
     return Text(
       taskTitle,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 16.sp,
+        fontSize: isLargeTablet ? 20.0 : 16.sp,
         color: AppTheme.primaryColor,
       ),
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _buildSubtitle(bool isLargeTablet) {
     return Text(
       taskDescription,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
-        fontSize: 14.sp,
+        fontSize: isLargeTablet ? 16.0 : 14.sp,
         color: AppTheme.secondaryColor,
       ),
     );
@@ -155,24 +159,63 @@ class TaskWidget extends StatelessWidget {
     return await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text(AppLocalizations.of(context)!.deleteTask,
-                style: TextStyle(color: AppTheme.primaryColor)),
-            content: Text(AppLocalizations.of(context)!.deleteTaskConfirm),
+            title: Text(
+              AppLocalizations.of(context)!.deleteTask,
+              style: TextStyle(
+                color: AppTheme.primaryColor,
+                fontSize: isLargeTablet ? 20.0 : 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text(
+              AppLocalizations.of(context)!.deleteTaskConfirm,
+              style: TextStyle(
+                fontSize: isLargeTablet ? 16.0 : 14.0,
+              ),
+            ),
+            contentPadding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(AppLocalizations.of(context)!.cancel,
-                    style: TextStyle(color: AppTheme.secondaryColor)),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isLargeTablet ? 20.0 : 16.0,
+                    vertical: isLargeTablet ? 12.0 : 8.0,
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: TextStyle(
+                    color: AppTheme.secondaryColor,
+                    fontSize: isLargeTablet ? 16.0 : 14.0,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isLargeTablet ? 20.0 : 16.0,
+                    vertical: isLargeTablet ? 12.0 : 8.0,
+                  ),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
-                    SizedBox(width: 8.w),
-                    Text(AppLocalizations.of(context)!.delete,
-                        style: TextStyle(color: Colors.red)),
+                    Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                      size: isLargeTablet ? 24.0 : 20.0,
+                    ),
+                    SizedBox(width: isLargeTablet ? 12.0 : 8.w),
+                    Text(
+                      AppLocalizations.of(context)!.delete,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: isLargeTablet ? 16.0 : 14.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -241,7 +284,7 @@ class TaskWidget extends StatelessWidget {
         msg: AppLocalizations.of(context)!.taskDeleted,
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.grey,
-        fontSize: 18.0,
+        fontSize: isLargeTablet ? 20.0 : 18.0,
       );
     } catch (error) {
       GlobalMethod.showErrorDialog(

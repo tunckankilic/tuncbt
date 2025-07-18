@@ -15,6 +15,7 @@ class CommentWidget extends StatelessWidget {
   final String commenterImageUrl;
   final String commenterTeamRole;
   final DateTime commentTime;
+  final bool isLargeTablet;
 
   const CommentWidget({
     Key? key,
@@ -25,6 +26,7 @@ class CommentWidget extends StatelessWidget {
     required this.commenterImageUrl,
     required this.commenterTeamRole,
     required this.commentTime,
+    required this.isLargeTablet,
   }) : super(key: key);
 
   @override
@@ -42,12 +44,15 @@ class CommentWidget extends StatelessWidget {
 
     return Card(
       elevation: 2,
-      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      margin: EdgeInsets.symmetric(
+        vertical: isLargeTablet ? 12.0 : 8.h,
+        horizontal: isLargeTablet ? 24.0 : 16.w,
+      ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(isLargeTablet ? 16.0 : 12.r),
       ),
       child: Padding(
-        padding: EdgeInsets.all(12.w),
+        padding: EdgeInsets.all(isLargeTablet ? 20.0 : 12.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,14 +60,14 @@ class CommentWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  radius: 20.r,
+                  radius: isLargeTablet ? 28.0 : 20.r,
                   backgroundImage: NetworkImage(
                     commenterImageUrl.isEmpty
                         ? 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
                         : commenterImageUrl,
                   ),
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: isLargeTablet ? 16.0 : 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,14 +82,14 @@ class CommentWidget extends StatelessWidget {
                                 commenterName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp,
+                                  fontSize: isLargeTablet ? 18.0 : 14.sp,
                                   color: AppTheme.primaryColor,
                                 ),
                               ),
                               Text(
                                 commenterTeamRole,
                                 style: TextStyle(
-                                  fontSize: 12.sp,
+                                  fontSize: isLargeTablet ? 16.0 : 12.sp,
                                   color: AppTheme.secondaryColor,
                                 ),
                               ),
@@ -114,9 +119,18 @@ class CommentWidget extends StatelessWidget {
                                   value: 'edit',
                                   child: Row(
                                     children: [
-                                      Icon(Icons.edit, size: 18.sp),
-                                      SizedBox(width: 8.w),
-                                      Text(AppLocalizations.of(context)!.edit),
+                                      Icon(
+                                        Icons.edit,
+                                        size: isLargeTablet ? 24.0 : 18.sp,
+                                      ),
+                                      SizedBox(
+                                          width: isLargeTablet ? 12.0 : 8.w),
+                                      Text(
+                                        AppLocalizations.of(context)!.edit,
+                                        style: TextStyle(
+                                          fontSize: isLargeTablet ? 16.0 : 14.0,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -124,11 +138,20 @@ class CommentWidget extends StatelessWidget {
                                   value: 'delete',
                                   child: Row(
                                     children: [
-                                      Icon(Icons.delete,
-                                          size: 18.sp, color: Colors.red),
-                                      SizedBox(width: 8.w),
-                                      Text(AppLocalizations.of(context)!.delete,
-                                          style: TextStyle(color: Colors.red)),
+                                      Icon(
+                                        Icons.delete,
+                                        size: isLargeTablet ? 24.0 : 18.sp,
+                                        color: Colors.red,
+                                      ),
+                                      SizedBox(
+                                          width: isLargeTablet ? 12.0 : 8.w),
+                                      Text(
+                                        AppLocalizations.of(context)!.delete,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: isLargeTablet ? 16.0 : 14.0,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -145,27 +168,66 @@ class CommentWidget extends StatelessWidget {
                               TextField(
                                 controller: controller.editCommentController,
                                 maxLines: null,
+                                style: TextStyle(
+                                  fontSize: isLargeTablet ? 16.0 : 14.0,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: 'Yorumu düzenle...',
+                                  hintStyle: TextStyle(
+                                    fontSize: isLargeTablet ? 16.0 : 14.0,
+                                  ),
+                                  contentPadding: EdgeInsets.all(
+                                    isLargeTablet ? 16.0 : 12.0,
+                                  ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8.r),
+                                    borderRadius: BorderRadius.circular(
+                                      isLargeTablet ? 12.0 : 8.r,
+                                    ),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 8.h),
+                              SizedBox(height: isLargeTablet ? 16.0 : 8.h),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   TextButton(
                                     onPressed: () =>
                                         controller.cancelEditingComment(),
-                                    child: Text('İptal'),
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isLargeTablet ? 20.0 : 16.0,
+                                        vertical: isLargeTablet ? 12.0 : 8.0,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'İptal',
+                                      style: TextStyle(
+                                        fontSize: isLargeTablet ? 16.0 : 14.0,
+                                      ),
+                                    ),
                                   ),
-                                  SizedBox(width: 8.w),
+                                  SizedBox(width: isLargeTablet ? 16.0 : 8.w),
                                   ElevatedButton(
                                     onPressed: () =>
                                         controller.updateComment(commentId),
-                                    child: Text('Kaydet'),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isLargeTablet ? 24.0 : 16.0,
+                                        vertical: isLargeTablet ? 16.0 : 12.0,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          isLargeTablet ? 12.0 : 8.r,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Kaydet',
+                                      style: TextStyle(
+                                        fontSize: isLargeTablet ? 16.0 : 14.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -174,19 +236,20 @@ class CommentWidget extends StatelessWidget {
                         }
                         return Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(12.w),
+                          padding: EdgeInsets.all(isLargeTablet ? 20.0 : 12.w),
                           decoration: BoxDecoration(
                             color: AppTheme.backgroundColor.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(
+                                isLargeTablet ? 12.0 : 8.r),
                             border: Border.all(
                               color: AppTheme.primaryColor.withOpacity(0.1),
-                              width: 1,
+                              width: isLargeTablet ? 2.0 : 1.0,
                             ),
                           ),
                           child: Text(
                             commentBody,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: isLargeTablet ? 16.0 : 14.sp,
                               color: AppTheme.textColor,
                               height: 1.5,
                             ),
@@ -198,13 +261,13 @@ class CommentWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: isLargeTablet ? 16.0 : 8.h),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
                 _getTimeAgo(commentTime),
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: isLargeTablet ? 14.0 : 12.sp,
                   color: AppTheme.lightTextColor,
                 ),
               ),
@@ -220,20 +283,55 @@ class CommentWidget extends StatelessWidget {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteComment),
-        content: Text(AppLocalizations.of(context)!.deleteCommentConfirm),
+        title: Text(
+          AppLocalizations.of(context)!.deleteComment,
+          style: TextStyle(
+            fontSize: isLargeTablet ? 20.0 : 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.deleteCommentConfirm,
+          style: TextStyle(
+            fontSize: isLargeTablet ? 16.0 : 14.0,
+          ),
+        ),
+        contentPadding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.0),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 20.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: TextStyle(
+                fontSize: isLargeTablet ? 16.0 : 14.0,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               controller.deleteComment(commentId);
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(AppLocalizations.of(context)!.delete),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+              padding: EdgeInsets.symmetric(
+                horizontal: isLargeTablet ? 20.0 : 16.0,
+                vertical: isLargeTablet ? 12.0 : 8.0,
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.delete,
+              style: TextStyle(
+                fontSize: isLargeTablet ? 16.0 : 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),

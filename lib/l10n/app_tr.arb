@@ -38,6 +38,8 @@
   "taskCategory": "Görev Kategorisi",
   "uploadTask": "Görev Yükle",
   "addComment": "Yorum Ekle",
+  "writeYourComment": "Yorumunuzu yazın...",
+  "send": "Gönder",
   "taskDone": "Görev Tamamlandı",
   "taskNotDone": "Görev Devam Ediyor",
   "deleteTask": "Görevi Sil",
@@ -402,5 +404,15 @@
   "teamErrorInvalidTimestamp": "Geçersiz tarih formatı",
   "teamErrorMemberNotFound": "Üye bulunamadı",
   "teamErrorDataInvalid": "Takım verisi geçersiz",
-  "teamErrorUserDataMissing": "Kullanıcı verisi eksik"
+  "teamErrorUserDataMissing": "Kullanıcı verisi eksik",
+  "teamDataNotFound": "Takım bilgisi bulunamadı",
+  "addWorker": "Çalışan Ekle",
+  "uploadedBy": "Yükleyen",
+  "uploadedOn": "Yüklenme Tarihi:",
+  "deadlineDate": "Son Tarih:",
+  "deadlineNotFinished": "Son tarih henüz gelmedi",
+  "deadlinePassed": "Son tarih geçti",
+  "status": "Durum",
+  "taskCompleted": "Tamamlandı",
+  "taskInProgress": "Devam Ediyor"
 } 

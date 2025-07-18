@@ -368,6 +368,19 @@
   "teamErrorInvalidTimestamp": "Ungültiges Datumsformat",
   "teamErrorMemberNotFound": "Mitglied nicht gefunden",
   "teamErrorDataInvalid": "Teamdaten sind ungültig",
-  "teamErrorUserDataMissing": "Benutzerdaten fehlen"
+  "teamErrorUserDataMissing": "Benutzerdaten fehlen",
+  "teamDataNotFound": "Team-Daten nicht gefunden",
+  "addWorker": "Mitarbeiter hinzufügen",
+  "uploadedBy": "Hochgeladen von",
+  "uploadedOn": "Hochgeladen am:",
+  "deadlineDate": "Fälligkeitsdatum:",
+  "deadlineNotFinished": "Frist noch nicht abgelaufen",
+  "deadlinePassed": "Frist abgelaufen",
+  "status": "Status",
+  "taskCompleted": "Abgeschlossen",
+  "taskInProgress": "In Bearbeitung",
+  "addComment": "Kommentar hinzufügen",
+  "writeYourComment": "Schreiben Sie Ihren Kommentar...",
+  "send": "Senden"
 } 
 
