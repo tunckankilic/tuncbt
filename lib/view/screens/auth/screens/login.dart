@@ -238,6 +238,7 @@ class Login extends GetView<AuthController> {
             fontSize: isLargeTablet ? 18.0 : 16.sp,
           ),
           keyboardType: TextInputType.emailAddress,
+          obscureText: true,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter your password';
