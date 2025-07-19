@@ -96,5 +96,11 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>site.tunckankilic.tuncbt.refresh</string>
+		<string>site.tunckankilic.tuncbt.processing</string>
+		<string>site.tunckankilic.tuncbt.fetch</string>
+	</array>
 </dict>
 </plist>
