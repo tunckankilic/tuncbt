@@ -7,6 +7,7 @@ import 'package:tuncbt/core/services/team_service.dart';
 import 'package:tuncbt/core/models/team.dart';
 import 'package:tuncbt/core/models/user_model.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
+import 'package:tuncbt/view/screens/auth/auth/login.dart';
 import 'package:tuncbt/view/screens/bindings.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/profile.dart';
 import 'package:tuncbt/view/screens/inner_screens/screens/team_settings.dart';
@@ -254,7 +255,9 @@ class DrawerWidget extends StatelessWidget {
       Navigator.of(context).pop(); // Drawer'ı kapat
 
       final logoutService = Get.find<LogoutService>();
-      await logoutService.logout();
+      await logoutService.logout().whenComplete(() {
+        Get.offAll(() => Login());
+      });
     } catch (e) {
       print('Sign out error: $e');
       Get.snackbar(
