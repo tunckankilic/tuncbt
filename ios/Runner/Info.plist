@@ -6,12 +6,6 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>tr</string>
-		<string>en</string>
-		<string>de</string>
-	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Tuncbt</string>
 	<key>CFBundleExecutable</key>
@@ -20,6 +14,12 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>tr</string>
+		<string>en</string>
+		<string>de</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>tuncbt</string>
 	<key>CFBundlePackageType</key>
@@ -39,6 +39,12 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>https</string>
@@ -49,16 +55,25 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires camera access to take profile photos, make video calls, and share media content.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires microphone access to send voice messages, make audio/video calls, and record sound during video capture.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires photo library access to share photos and videos, select profile pictures, and save media content.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app requires access to save shared media to your photo library.</string>
 	<key>NSDocumentsUsageDescription</key>
 	<string>This app requires access to documents for file sharing and management.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires microphone access to send voice messages, make audio/video calls, and record sound during video capture.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to save shared media to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires photo library access to share photos and videos, select profile pictures, and save media content.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -68,6 +83,8 @@
 		<string>processing</string>
 		<string>audio</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -75,23 +92,14 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
-	<key>FirebaseMessagingAutoInitEnabled</key>
-	<false/>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
 </dict>
 </plist>
