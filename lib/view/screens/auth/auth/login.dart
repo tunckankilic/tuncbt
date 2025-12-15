@@ -119,31 +119,46 @@ class Login extends GetView<AuthController> {
                     ),
                   ),
                   SizedBox(height: size.width >= 1200 ? 24.0 : 15.h),
-                  Container(
-                    padding: EdgeInsets.all(size.width >= 1200 ? 8.0 : 5.sp),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(
-                          size.width >= 1200 ? 20.0 : 15.sp),
-                    ),
-                    child: TextButton(
-                      onPressed: () => controller.login(),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.width >= 1200 ? 20.0 : 16.h,
-                          horizontal: size.width >= 1200 ? 32.0 : 24.w,
+                  Obx(() => Container(
+                        padding:
+                            EdgeInsets.all(size.width >= 1200 ? 8.0 : 5.sp),
+                        decoration: BoxDecoration(
+                          color: controller.isLoading.value
+                              ? Colors.grey
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(
+                              size.width >= 1200 ? 20.0 : 15.sp),
                         ),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.login,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: size.width >= 1200 ? 22.0 : 17.sp,
-                          fontWeight: FontWeight.bold,
+                        child: TextButton(
+                          onPressed: controller.isLoading.value
+                              ? null
+                              : () => controller.login(),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              vertical: size.width >= 1200 ? 20.0 : 16.h,
+                              horizontal: size.width >= 1200 ? 32.0 : 24.w,
+                            ),
+                          ),
+                          child: controller.isLoading.value
+                              ? SizedBox(
+                                  height: size.width >= 1200 ? 24.0 : 20.h,
+                                  width: size.width >= 1200 ? 24.0 : 20.h,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : Text(
+                                  AppLocalizations.of(context)!.login,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.width >= 1200 ? 22.0 : 17.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
-                      ),
-                    ),
-                  ),
+                      )),
                 ],
               ),
             ),

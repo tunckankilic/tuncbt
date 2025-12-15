@@ -150,26 +150,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  void _showLoadingOverlay() {
-    Get.dialog(
-      Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
-  }
-
-  void _hideLoadingOverlay() {
-    if (Get.isDialogOpen!) {
-      Get.back();
-    }
-  }
-
   // Team status check is now handled by AuthService
 
   Future<void> login() async {
     if (isLoading.value) return;
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       isLoading.value = true;
-      _showLoadingOverlay();
       try {
         await _auth.signInWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
@@ -177,11 +163,9 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         );
 
         // AuthService will automatically handle auth state change and team status
+        // UserState will handle navigation
         emailController.text = "";
         passwordController.text = "";
-
-        // Navigation will be handled by UserState based on AuthService state
-        // Just close the loading overlay, UserState will redirect appropriately
       } on FirebaseAuthException catch (e) {
         Get.snackbar('Giriş Başarısız', _getReadableAuthError(e));
       } catch (error) {
@@ -189,7 +173,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
             'Hata', 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
       } finally {
         isLoading.value = false;
-        _hideLoadingOverlay();
       }
     } else {
       Get.snackbar("Hata", "Lütfen tüm alanları doldurun",
@@ -201,7 +184,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
   Future<void> resetPassword() async {
     if (isLoading.value) return;
     isLoading.value = true;
-    _showLoadingOverlay();
     try {
       await _auth.sendPasswordResetEmail(
         email: forgetPassTextController.text.trim().toLowerCase(),
@@ -214,7 +196,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       Get.snackbar('Error', 'An unexpected error occurred. Please try again.');
     } finally {
       isLoading.value = false;
-      _hideLoadingOverlay();
     }
   }
 
@@ -583,6 +564,9 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     String? uid; // Rollback için kullanıcı ID
 
     try {
+      // Kayıt işleminin başladığını AuthService'e bildir
+      _authService.setRegistrationInProgress(true);
+
       // Loading ekranını göster
       Get.to(() => LoadingScreen(
             message: AppLocalizations.of(Get.context!)!.creatingTeam,
@@ -809,6 +793,12 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       print(
           'Kayıt işlemi başarılı, AuthService auth state\'i handle edecek...');
 
+      // Kayıt işlemi tamamlandı, bayrağı temizle
+      _authService.setRegistrationInProgress(false);
+
+      // Kullanıcı verilerini yeniden yükle
+      await _authService.refreshUserData();
+
       // Close loading screen
       Get.back();
 
@@ -871,6 +861,8 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         duration: const Duration(seconds: 5),
       );
     } finally {
+      // Kayıt işlemi bayrağını her durumda temizle
+      _authService.setRegistrationInProgress(false);
       isLoading.value = false;
     }
   }

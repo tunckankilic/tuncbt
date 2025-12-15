@@ -7,7 +7,6 @@ import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/chat/chat_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:tuncbt/view/screens/chat/chat_controller.dart';
 import 'package:tuncbt/view/screens/chat/chat_bindings.dart';
 
 class ChatIndexScreen extends StatelessWidget {
@@ -163,8 +162,7 @@ class ChatIndexScreen extends StatelessWidget {
                   return const SizedBox();
                 }
 
-                final userData =
-                    userSnapshot.data!.data() as Map<String, dynamic>;
+                userSnapshot.data!.data() as Map<String, dynamic>;
                 final user = UserModel.fromFirestore(userSnapshot.data!);
 
                 return ListTile(

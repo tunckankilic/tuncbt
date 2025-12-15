@@ -26,8 +26,8 @@ class TasksScreenController extends GetxController {
     _listenerService = Get.find<FirebaseListenerService>();
   }
 
-  // Get tasks from FirebaseListenerService
-  List<Map<String, dynamic>> get tasks => _listenerService.teamTasks;
+  // Get tasks from FirebaseListenerService (reactive)
+  RxList<Map<String, dynamic>> get tasks => _listenerService.teamTasks;
 
   @override
   void onInit() {
