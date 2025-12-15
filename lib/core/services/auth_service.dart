@@ -22,6 +22,9 @@ class AuthService extends GetxService {
   final RxBool hasTeam = false.obs;
   final RxBool isLoading = false.obs;
 
+  // Kayıt işlemi devam ediyor bayrağı
+  bool _registrationInProgress = false;
+
   StreamSubscription<User?>? _authSubscription;
 
   @override
@@ -87,6 +90,14 @@ class AuthService extends GetxService {
             'AuthService: Kullanıcı verileri yüklendi - ${currentUser.value?.name}');
       } else {
         print('AuthService: Kullanıcı dokümanı bulunamadı');
+
+        // Eğer kayıt işlemi devam ediyorsa, bekle
+        if (_registrationInProgress) {
+          print(
+              'AuthService: Kayıt işlemi devam ediyor, otomatik çıkış yapılmayacak');
+          return;
+        }
+
         print(
             'AuthService: Kullanıcı Firebase Auth\'da var ama Firestore\'da yok - Otomatik çıkış yapılıyor');
 
@@ -100,6 +111,13 @@ class AuthService extends GetxService {
     } catch (e) {
       print('AuthService: Kullanıcı verileri yüklenirken hata: $e');
       currentUser.value = null;
+
+      // Kayıt işlemi devam ediyorsa çıkış yapma
+      if (_registrationInProgress) {
+        print(
+            'AuthService: Kayıt işlemi devam ediyor, hata durumunda da çıkış yapılmayacak');
+        return;
+      }
 
       // Kritik bir hata durumunda da çıkış yap
       try {
@@ -167,6 +185,12 @@ class AuthService extends GetxService {
     if (user != null) {
       await _handleAuthStateChange(user);
     }
+  }
+
+  // Kayıt işlemi kontrolü için metodlar
+  void setRegistrationInProgress(bool value) {
+    _registrationInProgress = value;
+    print('AuthService: Kayıt işlemi bayrağı: $_registrationInProgress');
   }
 
   // Getter methods

@@ -575,6 +575,47 @@ class InnerScreenController extends GetxController {
     }
   }
 
+  Future<void> updateUserProfile({
+    required String name,
+    required String phoneNumber,
+    required String position,
+  }) async {
+    try {
+      isLoading.value = true;
+      final User? user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar('Hata', 'Kullanıcı bulunamadı');
+        return;
+      }
+
+      await _firestore.collection('users').doc(user.uid).update({
+        'name': name,
+        'phoneNumber': phoneNumber,
+        'position': position,
+      });
+
+      // Kullanıcı verilerini yeniden yükle
+      await getUserData(user.uid);
+
+      Get.snackbar(
+        'Başarılı',
+        'Profil bilgileriniz güncellendi',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      log('Error updating user profile: $e');
+      Get.snackbar(
+        'Hata',
+        'Profil güncellenirken hata oluştu',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void toggleCommenting() {
     isCommenting.value = !isCommenting.value;
   }
