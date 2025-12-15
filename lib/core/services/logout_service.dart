@@ -1,22 +1,18 @@
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/services/team_service_controller.dart';
 import 'package:tuncbt/core/services/firebase_listener_service.dart';
 import 'package:tuncbt/core/services/cache_service.dart';
-import 'package:tuncbt/core/services/navigation_service.dart';
 
 class LogoutService extends GetxService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Services
-  late final AuthService _authService;
   late final TeamServiceController _teamService;
   late final FirebaseListenerService _listenerService;
   late final CacheService _cacheService;
-  late final NavigationService _navigationService;
 
   // State
   final RxBool isLoggingOut = false.obs;
@@ -29,11 +25,9 @@ class LogoutService extends GetxService {
   }
 
   void _initializeServices() {
-    _authService = Get.find<AuthService>();
     _teamService = Get.find<TeamServiceController>();
     _listenerService = Get.find<FirebaseListenerService>();
     _cacheService = Get.find<CacheService>();
-    _navigationService = Get.find<NavigationService>();
   }
 
   Future<bool> logout() async {
@@ -63,9 +57,8 @@ class LogoutService extends GetxService {
       // 5. Sign out from Firebase
       await _auth.signOut();
 
-      // 6. Navigate to login
-      await Get.offAllNamed('/auth');
-
+      // 6. AuthService will handle navigation via UserState - no need to navigate manually
+      // UserState is listening to AuthService and will automatically navigate to Login
       print('LogoutService: Çıkış işlemi başarılı');
       return true;
     } catch (e) {
@@ -125,11 +118,13 @@ class LogoutService extends GetxService {
       // Then sign out
       await _auth.signOut();
 
-      // Navigate to login with message
-      _navigationService.navigateTo(
-        NavigationDestination.login,
-        clearStack: true,
-        arguments: {'message': reason ?? 'Oturumunuz sonlandırıldı'},
+      // UserState will handle navigation automatically
+      // Show message via snackbar
+      Get.snackbar(
+        'Bildirim',
+        reason ?? 'Oturumunuz sonlandırıldı',
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
       );
 
       print('LogoutService: Zorunlu çıkış başarılı');

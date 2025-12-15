@@ -200,72 +200,72 @@ class _TasksScreenState extends State<TasksScreen> {
     final fontSize = isLargeTablet ? 22.0 : 18.sp;
 
     return SliverToBoxAdapter(
-      child: Container(
-        width: double.infinity,
-        constraints: BoxConstraints(
-          maxWidth: screenWidth,
-          minWidth: screenWidth,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.quickActions,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: isLargeTablet ? 24.0 : 16.h),
-              Row(
+      child: Obx(() => Container(
+            width: double.infinity,
+            constraints: BoxConstraints(
+              maxWidth: screenWidth,
+              minWidth: screenWidth,
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: ModernStatsCard(
-                      title: AppLocalizations.of(context)!.totalTasks,
-                      value: controller.tasks.length.toString(),
-                      icon: Icons.assignment,
-                      color: AppTheme.primaryColor,
+                  Text(
+                    AppLocalizations.of(context)!.quickActions,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(width: isLargeTablet ? 24.0 : 16.w),
-                  Expanded(
-                    child: ModernStatsCard(
-                      title: AppLocalizations.of(context)!.completedTasks,
-                      value: controller.tasks
-                          .where((task) => task['isDone'] ?? false)
-                          .length
-                          .toString(),
-                      icon: Icons.check_circle,
-                      color: Colors.green,
-                    ),
+                  SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ModernStatsCard(
+                          title: AppLocalizations.of(context)!.totalTasks,
+                          value: controller.tasks.length.toString(),
+                          icon: Icons.assignment,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                      SizedBox(width: isLargeTablet ? 24.0 : 16.w),
+                      Expanded(
+                        child: ModernStatsCard(
+                          title: AppLocalizations.of(context)!.completedTasks,
+                          value: controller.tasks
+                              .where((task) => task['isDone'] ?? false)
+                              .length
+                              .toString(),
+                          icon: Icons.check_circle,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: isLargeTablet ? 24.0 : 16.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ModernStatsCard(
+                          title: AppLocalizations.of(context)!.pendingTasks,
+                          value: controller.tasks
+                              .where((task) => !(task['isDone'] ?? false))
+                              .length
+                              .toString(),
+                          icon: Icons.pending_actions,
+                          color: Colors.orange,
+                        ),
+                      ),
+                      SizedBox(width: isLargeTablet ? 24.0 : 16.w),
+                      const Expanded(child: SizedBox()),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: isLargeTablet ? 24.0 : 16.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: ModernStatsCard(
-                      title: AppLocalizations.of(context)!.pendingTasks,
-                      value: controller.tasks
-                          .where((task) => !(task['isDone'] ?? false))
-                          .length
-                          .toString(),
-                      icon: Icons.pending_actions,
-                      color: Colors.orange,
-                    ),
-                  ),
-                  SizedBox(width: isLargeTablet ? 24.0 : 16.w),
-                  const Expanded(child: SizedBox()),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          )),
     );
   }
 

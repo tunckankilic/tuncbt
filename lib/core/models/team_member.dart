@@ -18,6 +18,17 @@ class TeamMember {
     this.isActive = true,
   });
 
+  factory TeamMember.empty() {
+    return TeamMember(
+      teamId: '',
+      userId: '',
+      invitedBy: null,
+      joinedAt: DateTime.now(),
+      role: TeamRole.member,
+      isActive: false,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'teamId': teamId,

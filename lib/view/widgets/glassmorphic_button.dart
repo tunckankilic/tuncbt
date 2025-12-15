@@ -270,7 +270,6 @@ class _GlassmorphicButtonState extends State<GlassmorphicButton>
         );
 
       case ButtonStyle.filled:
-      default:
         return BoxDecoration(
           borderRadius: BorderRadius.circular(widget.borderRadius.r),
           color: widget.backgroundColor ?? AppTheme.primaryColor,
@@ -368,7 +367,6 @@ class _GlassmorphicButtonState extends State<GlassmorphicButton>
             : Colors.black87;
       case ButtonStyle.filled:
       case ButtonStyle.gradient:
-      default:
         return Colors.white;
     }
   }

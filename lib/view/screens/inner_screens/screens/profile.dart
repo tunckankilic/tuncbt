@@ -85,6 +85,33 @@ class ProfileScreen extends GetView<InnerScreenController> {
                 children: [
                   _buildProfileHeader(user, isLargeTablet),
                   SizedBox(height: isLargeTablet ? 40.0 : 24.h),
+                  // Edit Button (sadece kendi profilinde görünsün)
+                  if (userType == UserType.currentUser)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: isLargeTablet ? 16.0 : 12.h),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showEditProfileModal(context, user, isLargeTablet),
+                          icon: Icon(Icons.edit, size: isLargeTablet ? 20.0 : 18.sp),
+                          label: Text(
+                            'Profili Düzenle',
+                            style: TextStyle(fontSize: isLargeTablet ? 18.0 : 14.sp),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLargeTablet ? 24.0 : 16.w,
+                              vertical: isLargeTablet ? 16.0 : 12.h,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   _buildInfoCard(
                     context: context,
                     isLargeTablet: isLargeTablet,
@@ -275,6 +302,298 @@ class ProfileScreen extends GetView<InnerScreenController> {
               style: TextStyle(
                 fontSize: isLargeTablet ? 20.0 : 16.sp,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditProfileModal(BuildContext context, UserModel user, bool isLargeTablet) {
+    final nameController = TextEditingController(text: user.name);
+    final phoneController = TextEditingController(text: user.phoneNumber);
+    final positionController = TextEditingController(text: user.position);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(isLargeTablet ? 24.0 : 20.r),
+            topRight: Radius.circular(isLargeTablet ? 24.0 : 20.r),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(isLargeTablet ? 32.0 : 24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Profili Düzenle',
+                    style: TextStyle(
+                      fontSize: isLargeTablet ? 28.0 : 22.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close,
+                      size: isLargeTablet ? 32.0 : 24.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: isLargeTablet ? 32.0 : 24.h),
+
+              // Name Field
+              Text(
+                AppLocalizations.of(context)!.fullName,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 12.0 : 8.h),
+              TextField(
+                controller: nameController,
+                style: TextStyle(fontSize: isLargeTablet ? 18.0 : 16.sp),
+                decoration: InputDecoration(
+                  hintText: 'Adınızı giriniz',
+                  prefixIcon: Icon(Icons.person, size: isLargeTablet ? 28.0 : 24.sp),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                    borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: isLargeTablet ? 20.0 : 16.h,
+                    horizontal: isLargeTablet ? 16.0 : 12.w,
+                  ),
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 24.0 : 20.h),
+
+              // Phone Field
+              Text(
+                AppLocalizations.of(context)!.phoneNumber,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 12.0 : 8.h),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                style: TextStyle(fontSize: isLargeTablet ? 18.0 : 16.sp),
+                decoration: InputDecoration(
+                  hintText: 'Telefon numaranızı giriniz',
+                  prefixIcon: Icon(Icons.phone, size: isLargeTablet ? 28.0 : 24.sp),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                    borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: isLargeTablet ? 20.0 : 16.h,
+                    horizontal: isLargeTablet ? 16.0 : 12.w,
+                  ),
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 24.0 : 20.h),
+
+              // Position Field (Dropdown)
+              Text(
+                AppLocalizations.of(context)!.position,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 18.0 : 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 12.0 : 8.h),
+              GestureDetector(
+                onTap: () {
+                  _showPositionPicker(context, positionController, isLargeTablet);
+                },
+                child: AbsorbPointer(
+                  child: TextField(
+                    controller: positionController,
+                    style: TextStyle(fontSize: isLargeTablet ? 18.0 : 16.sp),
+                    decoration: InputDecoration(
+                      hintText: 'Pozisyonunuzu seçiniz',
+                      prefixIcon: Icon(Icons.work, size: isLargeTablet ? 28.0 : 24.sp),
+                      suffixIcon: Icon(Icons.arrow_drop_down, size: isLargeTablet ? 32.0 : 28.sp),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                        borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: isLargeTablet ? 20.0 : 16.h,
+                        horizontal: isLargeTablet ? 16.0 : 12.w,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: isLargeTablet ? 32.0 : 24.h),
+
+              // Update Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (nameController.text.trim().isEmpty) {
+                      Get.snackbar('Hata', 'İsim boş olamaz');
+                      return;
+                    }
+                    if (phoneController.text.trim().isEmpty) {
+                      Get.snackbar('Hata', 'Telefon numarası boş olamaz');
+                      return;
+                    }
+                    if (positionController.text.trim().isEmpty) {
+                      Get.snackbar('Hata', 'Pozisyon boş olamaz');
+                      return;
+                    }
+
+                    await controller.updateUserProfile(
+                      name: nameController.text.trim(),
+                      phoneNumber: phoneController.text.trim(),
+                      position: positionController.text.trim(),
+                    );
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: isLargeTablet ? 20.0 : 16.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                    ),
+                  ),
+                  child: Obx(() => controller.isLoading.value
+                      ? SizedBox(
+                          height: isLargeTablet ? 24.0 : 20.h,
+                          width: isLargeTablet ? 24.0 : 20.h,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          'Güncelle',
+                          style: TextStyle(
+                            fontSize: isLargeTablet ? 20.0 : 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPositionPicker(
+    BuildContext context,
+    TextEditingController positionController,
+    bool isLargeTablet,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(isLargeTablet ? 24.0 : 20.r),
+            topRight: Radius.circular(isLargeTablet ? 24.0 : 20.r),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(isLargeTablet ? 24.0 : 16.w),
+              child: Text(
+                AppLocalizations.of(context)!.chooseYourJob,
+                style: TextStyle(
+                  fontSize: isLargeTablet ? 24.0 : 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+            ),
+            Divider(height: 1),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: Constants.jobsList.length,
+                itemBuilder: (context, index) {
+                  final position = Constants.jobsList[index];
+                  return ListTile(
+                    leading: Container(
+                      width: isLargeTablet ? 48.0 : 40.w,
+                      height: isLargeTablet ? 48.0 : 40.w,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(isLargeTablet ? 12.0 : 8.r),
+                      ),
+                      child: Icon(
+                        Icons.work,
+                        color: AppTheme.primaryColor,
+                        size: isLargeTablet ? 28.0 : 24.sp,
+                      ),
+                    ),
+                    title: Text(
+                      position,
+                      style: TextStyle(
+                        fontSize: isLargeTablet ? 18.0 : 16.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    trailing: Icon(
+                      positionController.text == position
+                          ? Icons.check_circle
+                          : Icons.circle_outlined,
+                      color: positionController.text == position
+                          ? AppTheme.primaryColor
+                          : Colors.grey,
+                      size: isLargeTablet ? 28.0 : 24.sp,
+                    ),
+                    onTap: () {
+                      positionController.text = position;
+                      Navigator.pop(context);
+                    },
+                  );
+                },
               ),
             ),
           ],
