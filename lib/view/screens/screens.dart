@@ -1,5 +1,5 @@
 export 'all_workers/all_workers.dart';
-export 'auth/screens/forget_pass.dart';
+export 'auth/auth/forget_pass.dart';
 
 export 'inner_screens/screens/profile.dart';
 export 'inner_screens/screens/task_details.dart';

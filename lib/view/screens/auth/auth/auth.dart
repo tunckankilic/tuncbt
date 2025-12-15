@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
-import 'package:tuncbt/view/screens/auth/screens/forget_pass.dart';
+import 'package:tuncbt/view/screens/auth/auth/forget_pass.dart';
 import 'package:tuncbt/view/widgets/modern_card_widget.dart';
 import 'package:tuncbt/view/widgets/glassmorphic_button.dart';
 

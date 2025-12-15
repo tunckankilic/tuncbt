@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:tuncbt/core/services/auth_service.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 
@@ -103,6 +104,42 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
     );
   }
 
+  Future<void> _handleBackPress() async {
+    // Kullanıcı authenticated ama team yok, geri gitmek isterse çıkış yap
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(
+          'Takıma katılmadan geri dönemezsiniz. Çıkış yapmak ister misiniz?',
+          style: const TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              AppLocalizations.of(context)!.logout,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      try {
+        final authService = Get.find<AuthService>();
+        await authService.signOut();
+      } catch (e) {
+        print('Çıkış hatası: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +147,7 @@ class _ReferralInputScreenState extends State<ReferralInputScreen> {
         title: Text(AppLocalizations.of(context)!.referralCode),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
+          onPressed: _handleBackPress,
         ),
       ),
       body: LayoutBuilder(

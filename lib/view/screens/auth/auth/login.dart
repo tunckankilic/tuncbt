@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
 import 'package:tuncbt/view/screens/auth/auth_bindings.dart';
 import 'package:tuncbt/view/screens/auth/auth_controller.dart';
-import 'package:tuncbt/view/screens/auth/screens/password_renew.dart';
-import 'package:tuncbt/view/screens/auth/screens/register.dart';
+import 'package:tuncbt/view/screens/auth/auth/password_renew.dart';
+import 'package:tuncbt/view/screens/auth/auth/register.dart';
 
 class Login extends GetView<AuthController> {
   static const routeName = "/login";

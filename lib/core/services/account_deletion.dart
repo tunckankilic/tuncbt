@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:tuncbt/view/screens/auth/screens/login.dart';
+import 'package:tuncbt/view/screens/auth/auth/login.dart';
 
 class AccountDeletionService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;

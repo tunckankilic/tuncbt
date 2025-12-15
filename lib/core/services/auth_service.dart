@@ -87,11 +87,26 @@ class AuthService extends GetxService {
             'AuthService: Kullanıcı verileri yüklendi - ${currentUser.value?.name}');
       } else {
         print('AuthService: Kullanıcı dokümanı bulunamadı');
+        print(
+            'AuthService: Kullanıcı Firebase Auth\'da var ama Firestore\'da yok - Otomatik çıkış yapılıyor');
+
+        // Kullanıcı Firebase Auth'da var ama Firestore'da yok
+        // Bu durum kayıt sırasında hata olduğunu gösterir
+        // Kullanıcıyı çıkış yaptır
         currentUser.value = null;
+        await _auth.signOut();
+        return;
       }
     } catch (e) {
       print('AuthService: Kullanıcı verileri yüklenirken hata: $e');
       currentUser.value = null;
+
+      // Kritik bir hata durumunda da çıkış yap
+      try {
+        await _auth.signOut();
+      } catch (signOutError) {
+        print('AuthService: Çıkış yapılırken hata: $signOutError');
+      }
     }
   }
 

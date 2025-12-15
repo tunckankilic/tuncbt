@@ -16,9 +16,6 @@ import 'package:mime/mime.dart';
 import 'package:tuncbt/view/widgets/loading_screen.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
 import 'package:tuncbt/core/services/auth_service.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController with GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -279,6 +276,14 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
     try {
       print('Profil resmi yükleme işlemi başlatılıyor...');
 
+      // Resim boyutunu kontrol et
+      final fileSize = await imageFile.length();
+      final maxSize = 5 * 1024 * 1024; // 5MB
+      if (fileSize > maxSize) {
+        final context = Get.context!;
+        throw Exception(AppLocalizations.of(context)!.profile_image_size_error);
+      }
+
       // Resim formatını kontrol et
       final fileType = lookupMimeType(imageFile.path);
       if (fileType == null || !fileType.startsWith('image/')) {
@@ -286,301 +291,46 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
         throw Exception(AppLocalizations.of(context)!.invalid_image_format);
       }
 
-      // 1. Resmi sıkıştır (%70 boyut azaltma)
-      final compressedImage = await _compressImage(imageFile);
-      if (compressedImage == null) {
-        throw Exception('Resim sıkıştırma başarısız');
-      }
-
-      // Sıkıştırılmış resim boyutunu kontrol et
-      final fileSize = await compressedImage.length();
-      final maxSize = 5 * 1024 * 1024; // 5MB
-      if (fileSize > maxSize) {
-        final context = Get.context!;
-        throw Exception(AppLocalizations.of(context)!.profile_image_size_error);
-      }
-
       // Storage referansını oluştur
       final fileName = '$uid.jpg';
       final storageRef =
           _storage.ref().child('profilePics').child(uid).child(fileName);
 
-      // 2. Retry mekanizması ile yükle
-      final downloadUrl = await _retryOperation<String>(
-        operationName: 'Profil resmi yükleme',
-        operation: () async {
-          print('Resim yükleniyor...');
-          final uploadTask = await storageRef.putFile(
-            compressedImage,
-            SettableMetadata(
-              contentType: 'image/jpeg',
-              customMetadata: {
-                'uploadedBy': uid,
-                'timestamp': DateTime.now().toIso8601String(),
-              },
-            ),
-          );
-
-          if (uploadTask.state == TaskState.success) {
-            // Download URL'yi al
-            return await storageRef.getDownloadURL();
-          } else {
-            final context = Get.context!;
-            throw Exception(
-                AppLocalizations.of(context)!.profile_image_upload_failed);
-          }
-        },
+      // Resmi yükle
+      print('Resim yükleniyor...');
+      final uploadTask = await storageRef.putFile(
+        imageFile,
+        SettableMetadata(
+          contentType: 'image/jpeg',
+          customMetadata: {
+            'uploadedBy': uid,
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        ),
       );
 
-      print('✓ Profil resmi başarıyla yüklendi: $downloadUrl');
-      return downloadUrl;
+      if (uploadTask.state == TaskState.success) {
+        // Download URL'yi al
+        final downloadUrl = await storageRef.getDownloadURL();
+        print('Profil resmi başarıyla yüklendi: $downloadUrl');
+        return downloadUrl;
+      } else {
+        final context = Get.context!;
+        throw Exception(
+            AppLocalizations.of(context)!.profile_image_upload_failed);
+      }
     } catch (e) {
-      print('❌ Profil resmi yükleme hatası: $e');
+      print('Profil resmi yükleme hatası: $e');
       rethrow;
     }
   }
 
-  /// Kayıt işlemi başarısız olduğunda tüm verileri temizler
-  Future<void> _rollbackRegistration({
-    required String uid,
-    User? authUser,
-    String? teamId,
-    String? referralCode,
-  }) async {
-    print(' Rollback başlatılıyor...');
-
-    try {
-      // 1. Firebase Auth kullanıcısını sil
-      if (authUser != null) {
-        try {
-          await authUser.delete();
-          print('✓ Firebase Auth kullanıcısı silindi');
-        } catch (e) {
-          print('✗ Firebase Auth silme hatası: $e');
-        }
-      }
-
-      // 2. Firestore kullanıcı dokümanını sil
-      try {
-        final userDoc = await _firestore.collection('users').doc(uid).get();
-        if (userDoc.exists) {
-          await _firestore.collection('users').doc(uid).delete();
-          print('✓ Kullanıcı dokümanı silindi');
-        }
-      } catch (e) {
-        print('✗ Kullanıcı dokümanı silme hatası: $e');
-      }
-
-      // 3. Team members dokümanını sil
-      if (teamId != null) {
-        try {
-          final memberDoc = await _firestore
-              .collection('team_members')
-              .doc('${teamId}_$uid')
-              .get();
-          if (memberDoc.exists) {
-            await _firestore
-                .collection('team_members')
-                .doc('${teamId}_$uid')
-                .delete();
-            print('✓ Takım üyeliği silindi');
-          }
-        } catch (e) {
-          print('✗ Takım üyeliği silme hatası: $e');
-        }
-      }
-
-      // 4. Yeni oluşturulan takımı sil (sadece admin ise)
-      if (teamId != null && referralCode == null) {
-        try {
-          final teamDoc =
-              await _firestore.collection('teams').doc(teamId).get();
-          if (teamDoc.exists && teamDoc.data()?['createdBy'] == uid) {
-            await _firestore.collection('teams').doc(teamId).delete();
-            print('✓ Takım silindi');
-
-            // Referral kodu da varsa onu sil
-            final referralCodeValue = teamDoc.data()?['referralCode'];
-            if (referralCodeValue != null) {
-              try {
-                await _firestore
-                    .collection('referral_codes')
-                    .doc(referralCodeValue)
-                    .delete();
-                print('✓ Referral kodu silindi');
-              } catch (e) {
-                print('✗ Referral kodu silme hatası: $e');
-              }
-            }
-          }
-        } catch (e) {
-          print('✗ Takım silme hatası: $e');
-        }
-      }
-
-      // 5. Profil resmini sil
-      try {
-        final profileRef =
-            _storage.ref().child('profilePics').child(uid).child('$uid.jpg');
-        await profileRef.delete();
-        print('✓ Profil resmi silindi');
-      } catch (e) {
-        // Profil resmi yoksa hata vermez
-        print('✓ Profil resmi yok veya zaten silinmiş');
-      }
-
-      // 6. Referral kodu kullanıldıysa geri al
-      if (referralCode != null) {
-        try {
-          final codeDoc = await _firestore
-              .collection('referral_codes')
-              .doc(referralCode)
-              .get();
-          if (codeDoc.exists) {
-            await _firestore
-                .collection('referral_codes')
-                .doc(referralCode)
-                .update({
-              'usedBy': FieldValue.delete(),
-              'usedAt': FieldValue.delete(),
-              'isActive': true,
-            });
-            print('✓ Referral kodu aktif hale getirildi');
-
-            // Team memberCount'u azalt
-            if (teamId != null) {
-              await _firestore.collection('teams').doc(teamId).update({
-                'memberCount': FieldValue.increment(-1),
-              });
-              print('✓ Takım üye sayısı azaltıldı');
-            }
-          }
-        } catch (e) {
-          print('✗ Referral kodu geri alma hatası: $e');
-        }
-      }
-
-      print('✓ Rollback tamamlandı');
-    } catch (e) {
-      print('✗ Rollback genel hatası: $e');
-    }
-  }
-
-  /// Resmi sıkıştırır ve optimize eder (%70 boyut azaltma)
-  Future<File?> _compressImage(File imageFile) async {
-    try {
-      print('🗜️ Resim sıkıştırma başlatılıyor...');
-      final originalSize = await imageFile.length();
-      print(
-          '  Orijinal boyut: ${(originalSize / 1024 / 1024).toStringAsFixed(2)} MB');
-
-      // Geçici dizin al
-      final tempDir = await getTemporaryDirectory();
-      final targetPath =
-          '${tempDir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-      // Resmi sıkıştır
-      final compressedFile = await FlutterImageCompress.compressAndGetFile(
-        imageFile.absolute.path,
-        targetPath,
-        quality: 70, // %70 kalite - boyutu ~%70 azaltır
-        minWidth: 1024, // Max genişlik 1024px
-        minHeight: 1024, // Max yükseklik 1024px
-        format: CompressFormat.jpeg,
-      );
-
-      if (compressedFile == null) {
-        print('⚠️ Sıkıştırma başarısız, orijinal dosya kullanılacak');
-        return imageFile;
-      }
-
-      final compressedSize = await compressedFile.length();
-      final reduction =
-          ((1 - compressedSize / originalSize) * 100).toStringAsFixed(1);
-      print(
-          '✓ Sıkıştırıldı: ${(compressedSize / 1024 / 1024).toStringAsFixed(2)} MB');
-      print('✓ Boyut azalması: %$reduction');
-
-      return File(compressedFile.path);
-    } catch (e) {
-      print('⚠️ Sıkıştırma hatası, orijinal dosya kullanılacak: $e');
-      return imageFile;
-    }
-  }
-
-  /// Rate limiting kontrolü - Kötüye kullanım önleme
-  Future<bool> _checkRateLimit() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final lastRegisterTime = prefs.getInt('last_register_attempt');
-      final now = DateTime.now().millisecondsSinceEpoch;
-
-      if (lastRegisterTime != null) {
-        final timeDiff = now - lastRegisterTime;
-        final waitTime = 60 * 1000; // 1 dakika (60 saniye)
-
-        if (timeDiff < waitTime) {
-          final remainingSeconds = ((waitTime - timeDiff) / 1000).ceil();
-          Get.snackbar(
-            '⏱Çok Hızlı',
-            'Lütfen $remainingSeconds saniye bekleyin.',
-            backgroundColor: Colors.orange,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 3),
-          );
-          return false;
-        }
-      }
-
-      // Son deneme zamanını kaydet
-      await prefs.setInt('last_register_attempt', now);
-      return true;
-    } catch (e) {
-      print(' Rate limit kontrolü başarısız: $e');
-      return true; // Hata durumunda devam et
-    }
-  }
-
-  /// Retry mekanizması ile işlem yapma
-  Future<T> _retryOperation<T>({
-    required Future<T> Function() operation,
-    required String operationName,
-    int maxRetries = 3,
-    Duration retryDelay = const Duration(seconds: 2),
-  }) async {
-    int attempt = 0;
-    while (attempt < maxRetries) {
-      try {
-        attempt++;
-        print('🔄 $operationName: Deneme $attempt/$maxRetries');
-        return await operation();
-      } catch (e) {
-        if (attempt >= maxRetries) {
-          print(' $operationName başarısız (tüm denemeler tükendi): $e');
-          rethrow;
-        }
-        print(
-            ' $operationName başarısız, $retryDelay sonra tekrar denenecek: $e');
-        await Future.delayed(retryDelay);
-      }
-    }
-    throw Exception('$operationName maksimum deneme sayısına ulaştı');
-  }
-
   Future<void> signUp() async {
     if (isLoading.value) return;
-
-    // Rate limiting kontrolü (kötüye kullanım önleme)
-    final canProceed = await _checkRateLimit();
-    if (!canProceed) {
-      return;
-    }
-
     isLoading.value = true;
 
     User? createdUser; // Hata durumunda kullanıcıyı silmek için
-    String? createdTeamId; // Rollback için takım ID
-    String? uid; // Rollback için kullanıcı ID
+    Future<String>? imageUploadFuture; // Profil resmini arka planda yükle
 
     try {
       // Loading ekranını göster
@@ -595,12 +345,20 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       );
 
       createdUser = userCredential.user; // Hata durumunda silmek için sakla
-      uid = userCredential.user!.uid;
+      final uid = userCredential.user!.uid;
 
-      // Email doğrulama gönder
-      print(' Email doğrulama gönderiliyor...');
-      await createdUser!.sendEmailVerification();
-      print('✓ Email doğrulama gönderildi: ${createdUser.email}');
+      //  Profil resmini arka planda yükle
+      if (imageFile.value != null) {
+        print('Profil resmi arka planda yükleniyor...');
+        imageUploadFuture =
+            _uploadProfileImage(uid, imageFile.value!).then((url) {
+          print('Profil resmi yüklendi: $url');
+          return url ?? '';
+        }).catchError((e) {
+          print('Profil resmi yükleme hatası: $e');
+          return '';
+        });
+      }
 
       if (_referralCode == null) {
         print('Yeni takım oluşturuluyor...');
@@ -613,7 +371,6 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           'isActive': true,
         });
         print('Takım oluşturuldu. Team ID: ${teamRef.id}');
-        createdTeamId = teamRef.id; // Rollback için sakla
 
         // Referans kodu oluştur
         final referralService = ReferralService();
@@ -629,12 +386,15 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           'referralCode': referralCode,
         });
 
-        // ÖNCE kullanıcı dokümanını (resim olmadan) oluştur
+        // Kullanıcı ve takım üyeliği kaydını parallel yap
+        final imageUrl =
+            imageUploadFuture != null ? await imageUploadFuture : '';
+
         UserModel newUser = UserModel(
           id: uid,
           name: fullNameController.text,
           email: emailController.text,
-          imageUrl: '', // Önce boş, sonra güncellenecek
+          imageUrl: imageUrl,
           phoneNumber: phoneNumberController.text,
           position: positionCPController.text,
           createdAt: DateTime.now(),
@@ -643,58 +403,18 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           teamRole: TeamRole.admin,
         );
 
-        print('Kullanıcı ve takım üyeliği kaydediliyor (Batch Write)...');
-
-        // Batch write kullan - Atomik işlem (hepsi başarılı veya hepsi başarısız)
-        final batch = _firestore.batch();
-
-        // Kullanıcı dokümanı
-        batch.set(
-          _firestore.collection('users').doc(uid),
-          newUser.toFirestore(),
-        );
-
-        // Takım üyeliği
-        batch.set(
-          _firestore.collection('team_members').doc('${teamRef.id}_$uid'),
-          {
+        print('Kullanıcı ve takım üyeliği parallel kaydediliyor...');
+        await Future.wait([
+          _firestore.collection('users').doc(uid).set(newUser.toFirestore()),
+          _firestore.collection('team_members').doc('${teamRef.id}_$uid').set({
             'userId': uid,
             'teamId': teamRef.id,
             'role': TeamRole.admin.toString().split('.').last,
             'joinedAt': FieldValue.serverTimestamp(),
             'isActive': true,
-          },
-        );
-
-        // Batch işlemini commit et
-        await batch.commit();
-        print('✓ Kullanıcı ve takım üyeliği atomik olarak kaydedildi');
-
-        // SONRA profil resmini yükle ve güncelle
-        if (imageFile.value != null) {
-          print('Profil resmi yükleniyor...');
-          try {
-            final imageUrl = await _uploadProfileImage(uid, imageFile.value!);
-            if (imageUrl != null && imageUrl.isNotEmpty) {
-              print('Profil resmi yüklendi: $imageUrl');
-              // Kullanıcı dokümanını güncelle
-              await _firestore.collection('users').doc(uid).update({
-                'imageUrl': imageUrl,
-              });
-              print('Kullanıcı profil resmi güncellendi');
-
-              // Firebase Auth profilini güncelle
-              await _auth.currentUser!
-                  .updateDisplayName(fullNameController.text);
-              await _auth.currentUser!.updatePhotoURL(imageUrl);
-              await _auth.currentUser!.reload();
-              print('Firebase Auth profili güncellendi');
-            }
-          } catch (e) {
-            print('Profil resmi yükleme hatası (devam ediliyor): $e');
-            // Resim yüklenemese de devam et
-          }
-        }
+          }),
+        ]);
+        print('Kullanıcı ve takım üyeliği kaydedildi');
       } else {
         print('Mevcut takıma katılma işlemi başlatılıyor...');
         print('Referans kodu: $_referralCode, Team ID: $_teamId');
@@ -717,12 +437,15 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           throw TeamCapacityException();
         }
 
-        // ÖNCE kullanıcı dokümanını (resim olmadan) oluştur
+        // Resim yüklenene kadar bekle
+        final imageUrl =
+            imageUploadFuture != null ? await imageUploadFuture : '';
+
         UserModel newUser = UserModel(
           id: uid,
           name: fullNameController.text,
           email: emailController.text,
-          imageUrl: '', // Önce boş, sonra güncellenecek
+          imageUrl: imageUrl,
           phoneNumber: phoneNumberController.text,
           position: positionCPController.text,
           createdAt: DateTime.now(),
@@ -732,77 +455,54 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
           teamRole: TeamRole.member,
         );
 
-        //  Tüm Firestore operasyonlarını atomik yap (Batch Write)
+        //  Tüm Firestore operasyonlarını parallel yap
         print(
-            'Kullanıcı, takım üyeliği ve güncellemeler yapılıyor (Batch Write)...');
-
-        final batch = _firestore.batch();
-
-        // Kullanıcı dokümanı
-        batch.set(
-          _firestore.collection('users').doc(uid),
-          newUser.toFirestore(),
-        );
-
-        // Takım üyeliği
-        batch.set(
-          _firestore.collection('team_members').doc('${_teamId}_$uid'),
-          {
+            'Kullanıcı, takım üyeliği ve güncellemeler parallel yapılıyor...');
+        final futures = <Future>[
+          _firestore.collection('users').doc(uid).set(newUser.toFirestore()),
+          _firestore.collection('team_members').doc('${_teamId}_$uid').set({
             'userId': uid,
             'teamId': _teamId,
             'role': TeamRole.member.toString().split('.').last,
             'joinedAt': FieldValue.serverTimestamp(),
             'isActive': true,
             'invitedBy': _invitedBy,
-          },
-        );
+          }),
+          _firestore.collection('teams').doc(_teamId).update({
+            'memberCount': FieldValue.increment(1),
+          }),
+        ];
 
-        // Takım üye sayısını artır
-        batch.update(
-          _firestore.collection('teams').doc(_teamId),
-          {'memberCount': FieldValue.increment(1)},
-        );
-
-        // Referral kodu kullan
         if (_referralCode != null) {
-          batch.update(
-            _firestore.collection('referral_codes').doc(_referralCode),
-            {
+          futures.add(
+            _firestore.collection('referral_codes').doc(_referralCode).update({
               'usedBy': uid,
               'usedAt': FieldValue.serverTimestamp(),
               'isActive': false,
-            },
+            }),
           );
         }
 
-        // Batch işlemini commit et
-        await batch.commit();
-        print('✓ Kullanıcı ve takım kayıtları atomik olarak tamamlandı');
+        await Future.wait(futures);
+        print('Tüm kayıtlar tamamlandı');
+      }
 
-        // SONRA profil resmini yükle ve güncelle
-        if (imageFile.value != null) {
-          print('Profil resmi yükleniyor...');
-          try {
-            final imageUrl = await _uploadProfileImage(uid, imageFile.value!);
-            if (imageUrl != null && imageUrl.isNotEmpty) {
-              print('Profil resmi yüklendi: $imageUrl');
-              // Kullanıcı dokümanını güncelle
-              await _firestore.collection('users').doc(uid).update({
-                'imageUrl': imageUrl,
-              });
-              print('Kullanıcı profil resmi güncellendi');
-
-              // Firebase Auth profilini güncelle
-              await _auth.currentUser!
-                  .updateDisplayName(fullNameController.text);
-              await _auth.currentUser!.updatePhotoURL(imageUrl);
-              await _auth.currentUser!.reload();
-              print('Firebase Auth profili güncellendi');
-            }
-          } catch (e) {
-            print('Profil resmi yükleme hatası (devam ediliyor): $e');
-            // Resim yüklenemese de devam et
-          }
+      //  Firebase Auth profilini arka planda güncelle (bekleme yok)
+      if (imageFile.value != null) {
+        final imageUrl = await imageUploadFuture!;
+        if (imageUrl.isNotEmpty) {
+          print('Firebase Auth profili arka planda güncelleniyor...');
+          _auth.currentUser!
+              .updateDisplayName(fullNameController.text)
+              .catchError((e) {
+            print('Display name güncelleme hatası: $e');
+          });
+          _auth.currentUser!.updatePhotoURL(imageUrl).catchError((e) {
+            print('Photo URL güncelleme hatası: $e');
+          });
+          _auth.currentUser!.reload().catchError((e) {
+            print('Auth reload hatası: $e');
+          });
         }
       }
 
@@ -812,31 +512,20 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       // Close loading screen
       Get.back();
 
-      // Email doğrulama bildirimi göster
-      Get.snackbar(
-        '✓ Kayıt Başarılı',
-        'Lütfen email adresinize gönderilen doğrulama linkine tıklayın.',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 7),
-        icon: const Icon(Icons.mail_outline, color: Colors.white),
-      );
-
       // Ana sayfaya yönlendir ve önceki sayfaları temizle
       Get.offAllNamed('/tasks');
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.code} - ${e.message}');
 
-      // Tam rollback yap (email-already-in-use hariç)
-      if (createdUser != null &&
-          uid != null &&
-          e.code != 'email-already-in-use') {
-        await _rollbackRegistration(
-          uid: uid,
-          authUser: createdUser,
-          teamId: createdTeamId,
-          referralCode: _referralCode,
-        );
+      // Eğer kullanıcı oluşturulduysa ama başka bir hata olduysa, kullanıcıyı sil
+      if (createdUser != null && e.code != 'email-already-in-use') {
+        try {
+          print('Hata oluştu, Firebase Auth kullanıcısı siliniyor...');
+          await createdUser.delete();
+          print('Firebase Auth kullanıcısı silindi');
+        } catch (deleteError) {
+          print('Kullanıcı silinemedi: $deleteError');
+        }
       }
 
       Get.back(); // Loading ekranını kapat
@@ -852,14 +541,15 @@ class AuthController extends GetxController with GetTickerProviderStateMixin {
       print('Hata detayı: ${error.toString()}');
       print('Stack trace: ${StackTrace.current}');
 
-      // Tam rollback yap
-      if (createdUser != null && uid != null) {
-        await _rollbackRegistration(
-          uid: uid,
-          authUser: createdUser,
-          teamId: createdTeamId,
-          referralCode: _referralCode,
-        );
+      // Hata oluştu ve kullanıcı oluşturulduysa, kullanıcıyı sil
+      if (createdUser != null) {
+        try {
+          print('Hata oluştu, Firebase Auth kullanıcısı siliniyor...');
+          await createdUser.delete();
+          print('Firebase Auth kullanıcısı silindi');
+        } catch (deleteError) {
+          print('Kullanıcı silinemedi: $deleteError');
+        }
       }
 
       Get.back(); // Loading ekranını kapat

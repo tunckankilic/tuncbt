@@ -118,7 +118,7 @@ class EnvConfig {
       'FIREBASE_PROJECT_ID',
     ];
 
-    // ✅ FIX: Use dotenv.env directly instead of _getEnvVar to avoid initialization check
+    // Use dotenv.env directly instead of _getEnvVar to avoid initialization check
     final missingVars = requiredVars.where((variable) {
       final value = dotenv.env[variable];
       return value == null || value.isEmpty;
