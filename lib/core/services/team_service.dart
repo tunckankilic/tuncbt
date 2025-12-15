@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tuncbt/core/config/firebase_constants.dart';
-import 'package:uuid/uuid.dart';
 import '../models/team.dart';
 import '../models/team_member.dart';
 import '../models/user_model.dart';
@@ -16,7 +15,6 @@ import 'package:tuncbt/utils/team_security.dart';
 import 'package:tuncbt/utils/team_sync.dart';
 import 'package:tuncbt/core/services/referral_service.dart';
 import 'package:tuncbt/l10n/app_localizations.dart';
-import 'dart:convert';
 
 class TeamService extends GetxService {
   final errorMessage = ''.obs;
@@ -31,7 +29,6 @@ class TeamService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _hasNetworkConnection = true;
   final _sync = Get.put(TeamSync());
-  final _uuid = Uuid();
 
   @override
   void onClose() {
@@ -445,7 +442,8 @@ class TeamService extends GetxService {
             invitedBy: memberUserData['invitedBy'] as String?,
           );
         }),
-      ).then((members) => members.where((member) => member != null).toList());
+      ).then((members) =>
+          members.where((member) => member != TeamMember.empty).toList());
 
       // Önbelleğe ekle
       _cache.cacheTeamMembers(teamId, members);

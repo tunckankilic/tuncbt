@@ -236,8 +236,6 @@ class ModernTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return ModernCardWidget(
       onTap: onTap,
       borderRadius: isLargeTablet ? 20.0 : 16.0,
