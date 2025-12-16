@@ -76,6 +76,10 @@
 	<string>This app requires photo library access to share photos and videos, select profile pictures, and save media content.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>site.tunckankilic.tuncbt.backgroundprocessing</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
